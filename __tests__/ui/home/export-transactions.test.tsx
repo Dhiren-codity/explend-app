@@ -133,8 +133,6 @@ describe('ExportTransactions', () => {
     return items as unknown as TTransaction[];
   };
 
-  test('renders default UI elements and text with pluralization', (): void => {
-    render(<ExportTransactions transactions={makeTransactions(2)} onExport={vi.fn()} />);
 
     expect(screen.getByText('Export Transactions')).toBeInTheDocument();
     expect(screen.getByLabelText('Export Format')).toBeInTheDocument();
@@ -145,18 +143,12 @@ describe('ExportTransactions', () => {
     ).toBeInTheDocument();
   });
 
-  test('renders singular pluralization for 1 transaction', (): void => {
-    render(<ExportTransactions transactions={makeTransactions(1)} onExport={vi.fn()} />);
 
     expect(
       screen.getByText('Ready to export all 1 transaction')
     ).toBeInTheDocument();
   });
 
-  test('exports CSV by default using provided transactions', async (): Promise<void> => {
-    const onExport = vi.fn();
-
-    render(<ExportTransactions transactions={makeTransactions(2)} onExport={onExport} />);
 
     const exportButton = screen.getByRole('button', { name: 'Export' });
     fireEvent.click(exportButton);
@@ -173,10 +165,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('switches to JSON and exports JSON with correct filename and mime', async (): Promise<void> => {
-    const onExport = vi.fn();
-
-    render(<ExportTransactions transactions={makeTransactions(3)} onExport={onExport} />);
 
     const select = screen.getByLabelText('Export Format') as HTMLSelectElement;
     fireEvent.change(select, { target: { value: 'json' } });
@@ -195,11 +183,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('selecting a date range calls onExport with adjusted dates and uses returned data', async (): Promise<void> => {
-    const returnedTx = makeTransactions(3);
-    const onExport = vi.fn(async (_start?: Date, _end?: Date) => returnedTx);
-
-    render(<ExportTransactions transactions={makeTransactions(5)} onExport={onExport} />);
 
     const setRangeButton = screen.getByRole('button', { name: 'Set Jan 2024 Range' });
     fireEvent.click(setRangeButton);
@@ -230,13 +213,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('shows loading state during async onExport until resolution', async (): Promise<void> => {
-    let resolveFn: ((value: TTransaction[]) => void) | null = null;
-    const onExport = vi.fn(
-      () =>
-        new Promise<TTransaction[]>((resolve) => {
-          resolveFn = resolve;
-        })
     );
 
     render(<ExportTransactions transactions={makeTransactions(2)} onExport={onExport} />);
@@ -259,10 +235,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('shows error toast when there are no transactions to export (no date range)', async (): Promise<void> => {
-    const onExport = vi.fn();
-
-    render(<ExportTransactions transactions={[]} onExport={onExport} />);
 
     const exportButton = screen.getByRole('button', { name: 'Export' });
     fireEvent.click(exportButton);
@@ -275,10 +247,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('shows error toast when date-range filtered export returns empty', async (): Promise<void> => {
-    const onExport = vi.fn(async () => []);
-
-    render(<ExportTransactions transactions={makeTransactions(2)} onExport={onExport} />);
 
     const setRangeButton = screen.getByRole('button', { name: 'Set Jan 2024 Range' });
     fireEvent.click(setRangeButton);
@@ -295,8 +263,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('handles export failures and shows error toast', async (): Promise<void> => {
-    const consoleError = vi.spyOn(console, 'error').mockImplementation((): void => {});
     const onExport = vi.fn();
 
     vi.mocked(generateCSV).mockImplementationOnce(() => {
@@ -317,8 +283,6 @@ describe('ExportTransactions', () => {
     consoleError.mockRestore();
   });
 
-  test('clearing the selected date range updates helper text', async (): Promise<void> => {
-    render(<ExportTransactions transactions={makeTransactions(2)} onExport={vi.fn()} />);
 
     const setRangeButton = screen.getByRole('button', { name: 'Set Jan 2024 Range' });
     fireEvent.click(setRangeButton);

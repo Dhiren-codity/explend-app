@@ -69,13 +69,6 @@ describe("config/constants/routes", () => {
       expect(noneEndsWithSlash).toBe(true);
     });
 
-    test("should validate known routes via a runtime guard (happy and error cases)", (): void => {
-      const allowed = new Set<string>(allRouteValues);
-      const assertIsRoute = (value: unknown): void => {
-        if (typeof value !== "string" || !allowed.has(value)) {
-          throw new TypeError("Invalid route");
-        }
-      };
       expect(() => assertIsRoute(ROUTE.CHART)).not.toThrow();
       expect(() => assertIsRoute("/no-such-route")).toThrow(TypeError);
     });

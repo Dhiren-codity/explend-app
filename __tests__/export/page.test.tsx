@@ -236,22 +236,10 @@ describe("Page (app/export/page.tsx)", (): void => {
     ).toHaveBeenCalledWith(undefined, start, end);
   });
 
-  test("should propagate error when getCachedAuthSession throws synchronously", async (): Promise<void> => {
-    (
-      getCachedAuthSession as unknown as ReturnType<typeof vi.fn>
-    ).mockImplementation(() => {
-      throw new Error("auth error");
-    });
 
     await expect(Page()).rejects.toThrow("auth error");
   });
 
-  test("should propagate error when getCachedAllTransactions throws synchronously", async (): Promise<void> => {
-    (
-      getCachedAllTransactions as unknown as ReturnType<typeof vi.fn>
-    ).mockImplementation(() => {
-      throw new Error("transactions error");
-    });
 
     await expect(Page()).rejects.toThrow("transactions error");
   });

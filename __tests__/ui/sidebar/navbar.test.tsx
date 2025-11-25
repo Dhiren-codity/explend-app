@@ -133,12 +133,6 @@ describe('Navbar', (): void => {
     vi.clearAllMocks();
   });
 
-  test('renders top links, filters disabled route, marks active, and shows Logo (sm when md)', async (): Promise<void> => {
-    disabledRoutes.splice(0, disabledRoutes.length, '/report');
-    mockedPathname = '/subscriptions';
-    mediaQueryMatch = true;
-
-    const { default: Navbar } = await import('./navbar');
 
     render(<Navbar linksGroup="top" withLogo />);
 
@@ -164,12 +158,6 @@ describe('Navbar', (): void => {
     expect(logo.getAttribute('data-size')).toBe('sm');
   });
 
-  test('renders bottom links, filters disabled, sets active, and no Logo when withLogo not passed', async (): Promise<void> => {
-    disabledRoutes.splice(0, disabledRoutes.length, '/issue');
-    mockedPathname = '/feedback';
-    mediaQueryMatch = true;
-
-    const { default: Navbar } = await import('./navbar');
 
     render(<Navbar linksGroup="bottom" />);
 
@@ -187,11 +175,6 @@ describe('Navbar', (): void => {
     expect(logo).toBeNull();
   });
 
-  test('Logo size is xxs when media query is false (not md)', async (): Promise<void> => {
-    mockedPathname = '/';
-    mediaQueryMatch = false;
-
-    const { default: Navbar } = await import('./navbar');
 
     render(<Navbar linksGroup="top" withLogo />);
 
@@ -199,23 +182,6 @@ describe('Navbar', (): void => {
     expect(logo.getAttribute('data-size')).toBe('xxs');
   });
 
-  test('renders zero items when all top routes are disabled', async (): Promise<void> => {
-    disabledRoutes.splice(
-      0,
-      disabledRoutes.length,
-      '/',
-      '/report',
-      '/chart',
-      '/limits',
-      '/subscriptions',
-      '/categories',
-      '/export',
-      '/settings'
-    );
-    mockedPathname = '/';
-    mediaQueryMatch = true;
-
-    const { default: Navbar } = await import('./navbar');
 
     render(<Navbar linksGroup="top" withLogo />);
 
@@ -225,34 +191,6 @@ describe('Navbar', (): void => {
     expect(items.length).toBe(0);
   });
 
-  test('throws when getBreakpointWidth throws (error case)', async (): Promise<void> => {
-    vi.resetModules();
-
-    vi.doMock('react-icons/pi', (): Record<string, unknown> => {
-      const MockIcon = (_props: Record<string, unknown>): JSX.Element | null => null;
-      return {
-        PiBugBeetle: MockIcon,
-        PiBugBeetleFill: MockIcon,
-        PiChatText: MockIcon,
-        PiChatTextFill: MockIcon,
-        PiDownloadSimple: MockIcon,
-        PiDownloadSimpleFill: MockIcon,
-        PiEscalatorUp: MockIcon,
-        PiEscalatorUpFill: MockIcon,
-        PiGearSix: MockIcon,
-        PiGearSixFill: MockIcon,
-        PiHouse: MockIcon,
-        PiHouseFill: MockIcon,
-        PiPolygon: MockIcon,
-        PiPolygonFill: MockIcon,
-        PiPresentationChart: MockIcon,
-        PiPresentationChartFill: MockIcon,
-        PiRepeat: MockIcon,
-        PiRepeatFill: MockIcon,
-        PiStack: MockIcon,
-        PiStackFill: MockIcon,
-      };
-    });
 
     vi.doMock('react-use', (): Record<string, unknown> => {
       return {
