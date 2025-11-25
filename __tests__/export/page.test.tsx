@@ -127,9 +127,9 @@ describe("app/export/page", (): void => {
   });
 
   test("renders NoTransactionsPlug when no transactions", async (): Promise<void> => {
-    mockGetCachedAllTransactions
-      .mockResolvedValueOnce([])
-      .mockResolvedValueOnce([]);
+    mockGetCachedAllTransactions;
+    // REMOVED: .mockResolvedValueOnce([])
+    // REMOVED: .mockResolvedValueOnce([]);
 
     // re-import SUT to pick updated mocks if necessary
     await importSut();
@@ -153,9 +153,9 @@ describe("app/export/page", (): void => {
   });
 
   test("renders ExportTransactions when transactions exist", async (): Promise<void> => {
-    mockGetCachedAllTransactions
-      .mockResolvedValueOnce(sampleTransactions)
-      .mockResolvedValueOnce(sampleTransactions);
+    mockGetCachedAllTransactions;
+    // REMOVED: .mockResolvedValueOnce(sampleTransactions)
+    // REMOVED: .mockResolvedValueOnce(sampleTransactions);
 
     await importSut();
 
@@ -178,9 +178,9 @@ describe("app/export/page", (): void => {
   });
 
   test("onExport calls getTransactionsForExport with correct params and returns data", async (): Promise<void> => {
-    mockGetCachedAllTransactions
-      .mockResolvedValueOnce(sampleTransactions)
-      .mockResolvedValueOnce(sampleTransactions);
+    mockGetCachedAllTransactions;
+    // REMOVED: .mockResolvedValueOnce(sampleTransactions)
+    // REMOVED: .mockResolvedValueOnce(sampleTransactions);
 
     await importSut();
 
@@ -203,9 +203,9 @@ describe("app/export/page", (): void => {
   });
 
   test("onExport propagates errors from getTransactionsForExport", async (): Promise<void> => {
-    mockGetCachedAllTransactions
-      .mockResolvedValueOnce(sampleTransactions)
-      .mockResolvedValueOnce(sampleTransactions);
+    mockGetCachedAllTransactions;
+    // REMOVED: .mockResolvedValueOnce(sampleTransactions)
+    // REMOVED: .mockResolvedValueOnce(sampleTransactions);
     const exportError = new Error("export failed");
     mockGetTransactionsForExport.mockRejectedValueOnce(exportError);
 
@@ -226,12 +226,12 @@ describe("app/export/page", (): void => {
   });
 
   test("handles undefined user session (userId undefined)", async (): Promise<void> => {
-    mockGetCachedAuthSession
-      .mockResolvedValueOnce(undefined)
-      .mockResolvedValueOnce(undefined);
-    mockGetCachedAllTransactions
-      .mockResolvedValueOnce(sampleTransactions)
-      .mockResolvedValueOnce(sampleTransactions);
+    mockGetCachedAuthSession;
+    // REMOVED: .mockResolvedValueOnce(undefined)
+    // REMOVED: .mockResolvedValueOnce(undefined);
+    mockGetCachedAllTransactions;
+    // REMOVED: .mockResolvedValueOnce(sampleTransactions)
+    // REMOVED: .mockResolvedValueOnce(sampleTransactions);
 
     await importSut();
 

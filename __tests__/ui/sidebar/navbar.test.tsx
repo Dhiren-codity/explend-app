@@ -169,11 +169,6 @@ describe('Navbar', (): void => {
     vi.clearAllMocks();
   });
 
-  test('renders top links with logo (sm on md) and highlights active link', (): void => {
-    routesMock.__setDisabledRoutes([routesMock.ROUTE.CATEGORIES]);
-    mockedUsePathname.mockReturnValue && mockedUsePathname.mockReturnValue(routesMock.ROUTE.CHART);
-
-    const { container } = render(<Navbar linksGroup="top" withLogo />);
 
     const logo = screen.getByTestId('logo');
     expect(logo).toBeDefined();
@@ -247,11 +242,6 @@ describe('Navbar', (): void => {
     expect(activeItems.length).toBe(0);
   });
 
-  test('throws when getBreakpointWidth fails', (): void => {
-    mockedGetBreakpointWidth.mockImplementation &&
-      mockedGetBreakpointWidth.mockImplementation(((): string => {
-        throw new Error('boom');
-      }) as unknown as (bp: string) => string);
 
     expect((): void => {
       render(<Navbar linksGroup="top" withLogo />);

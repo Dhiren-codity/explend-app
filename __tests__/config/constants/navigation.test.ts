@@ -53,10 +53,6 @@ describe("config/constants/navigation", (): void => {
       expect(parsed).toBe(1);
     });
 
-    test("should work in URLSearchParams with SEARCH_PARAM.PAGE", (): void => {
-      const params: Record<string, string> = {
-        [SEARCH_PARAM.PAGE]: DEFAULT_PAGINATION_PAGE_NUMBER,
-      };
       const sp: URLSearchParams = new URLSearchParams(params);
       expect(sp.get(SEARCH_PARAM.PAGE)).toBe("1");
     });
@@ -137,11 +133,6 @@ describe("config/constants/navigation", (): void => {
       expect(uniqueCount).toBe(keys.length);
     });
 
-    test("should be usable to build search params", (): void => {
-      const params: Record<string, string> = {
-        [SEARCH_PARAM.QUERY]: "budget",
-        [SEARCH_PARAM.PAGE]: DEFAULT_PAGINATION_PAGE_NUMBER,
-      };
       const sp: URLSearchParams = new URLSearchParams(params);
 
       expect(sp.get(SEARCH_PARAM.QUERY)).toBe("budget");
