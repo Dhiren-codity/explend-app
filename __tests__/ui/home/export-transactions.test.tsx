@@ -134,26 +134,26 @@ describe('ExportTransactions', () => {
   };
 
 
-    expect(screen.getByText('Export Transactions')).toBeInTheDocument();
+    expect(screen.screen.getByText('Export Transactions')).toBeInTheDocument();
     expect(screen.getByLabelText('Export Format')).toBeInTheDocument();
-    expect(screen.getByText('Date Range (Optional)')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
+    expect(screen.screen.getByText('Date Range (Optional)')).toBeInTheDocument();
+    expect(screen.screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
     expect(
-      screen.getByText('Ready to export all 2 transactions')
+      screen.screen.getByText('Ready to export all 2 transactions')
     ).toBeInTheDocument();
   });
 
 
     expect(
-      screen.getByText('Ready to export all 1 transaction')
+      screen.screen.getByText('Ready to export all 1 transaction')
     ).toBeInTheDocument();
   });
 
 
-    const exportButton = screen.getByRole('button', { name: 'Export' });
+    const exportButton = screen.screen.getByRole('button', { name: 'Export' });
     fireEvent.click(exportButton);
 
-    await waitFor((): void => {
+    await await waitFor((): void => {
       expect(onExport).not.toHaveBeenCalled();
       expect(generateCSV).toHaveBeenCalledTimes(1);
       expect(generateCSV).toHaveBeenCalledWith(expect.any(Array));
@@ -169,10 +169,10 @@ describe('ExportTransactions', () => {
     const select = screen.getByLabelText('Export Format') as HTMLSelectElement;
     fireEvent.change(select, { target: { value: 'json' } });
 
-    const exportButton = screen.getByRole('button', { name: 'Export' });
+    const exportButton = screen.screen.getByRole('button', { name: 'Export' });
     fireEvent.click(exportButton);
 
-    await waitFor((): void => {
+    await await waitFor((): void => {
       expect(onExport).not.toHaveBeenCalled();
       expect(generateJSON).toHaveBeenCalledTimes(1);
       expect(generateJSON).toHaveBeenCalledWith(expect.any(Array));
@@ -184,18 +184,18 @@ describe('ExportTransactions', () => {
   });
 
 
-    const setRangeButton = screen.getByRole('button', { name: 'Set Jan 2024 Range' });
+    const setRangeButton = screen.screen.getByRole('button', { name: 'Set Jan 2024 Range' });
     fireEvent.click(setRangeButton);
 
     // Footer text reflects selected range
     expect(
-      screen.getByText('Exporting transactions from 2024-01-01 to 2024-01-31')
+      screen.screen.getByText('Exporting transactions from 2024-01-01 to 2024-01-31')
     ).toBeInTheDocument();
 
-    const exportButton = screen.getByRole('button', { name: 'Export' });
+    const exportButton = screen.screen.getByRole('button', { name: 'Export' });
     fireEvent.click(exportButton);
 
-    await waitFor((): void => {
+    await await waitFor((): void => {
       expect(onExport).toHaveBeenCalledTimes(1);
       const [startArg, endArg] = onExport.mock.calls[0] as [Date, Date];
 
@@ -217,29 +217,29 @@ describe('ExportTransactions', () => {
 
     render(<ExportTransactions transactions={makeTransactions(2)} onExport={onExport} />);
 
-    const setRangeButton = screen.getByRole('button', { name: 'Set Jan 2024 Range' });
+    const setRangeButton = screen.screen.getByRole('button', { name: 'Set Jan 2024 Range' });
     fireEvent.click(setRangeButton);
 
-    const exportButton = screen.getByRole('button', { name: 'Export' });
+    const exportButton = screen.screen.getByRole('button', { name: 'Export' });
     fireEvent.click(exportButton);
 
     // Loading text should be visible while promise is pending
-    expect(screen.getByRole('button', { name: 'Exporting...' })).toBeInTheDocument();
+    expect(screen.screen.getByRole('button', { name: 'Exporting...' })).toBeInTheDocument();
 
     // Resolve the promise
     resolveFn?.(makeTransactions(4));
 
-    await waitFor((): void => {
-      expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
+    await await waitFor((): void => {
+      expect(screen.screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
       expect(toast.success).toHaveBeenCalledWith('Exported 4 transactions');
     });
   });
 
 
-    const exportButton = screen.getByRole('button', { name: 'Export' });
+    const exportButton = screen.screen.getByRole('button', { name: 'Export' });
     fireEvent.click(exportButton);
 
-    await waitFor((): void => {
+    await await waitFor((): void => {
       expect(toast.error).toHaveBeenCalledWith('No transactions to export');
       expect(downloadFile).not.toHaveBeenCalled();
       expect(generateCSV).not.toHaveBeenCalled();
@@ -248,13 +248,13 @@ describe('ExportTransactions', () => {
   });
 
 
-    const setRangeButton = screen.getByRole('button', { name: 'Set Jan 2024 Range' });
+    const setRangeButton = screen.screen.getByRole('button', { name: 'Set Jan 2024 Range' });
     fireEvent.click(setRangeButton);
 
-    const exportButton = screen.getByRole('button', { name: 'Export' });
+    const exportButton = screen.screen.getByRole('button', { name: 'Export' });
     fireEvent.click(exportButton);
 
-    await waitFor((): void => {
+    await await waitFor((): void => {
       expect(onExport).toHaveBeenCalledTimes(1);
       expect(toast.error).toHaveBeenCalledWith('No transactions to export');
       expect(downloadFile).not.toHaveBeenCalled();
@@ -271,32 +271,32 @@ describe('ExportTransactions', () => {
 
     render(<ExportTransactions transactions={makeTransactions(2)} onExport={onExport} />);
 
-    const exportButton = screen.getByRole('button', { name: 'Export' });
+    const exportButton = screen.screen.getByRole('button', { name: 'Export' });
     fireEvent.click(exportButton);
 
-    await waitFor((): void => {
+    await await waitFor((): void => {
       expect(toast.error).toHaveBeenCalledWith('Failed to export transactions');
       expect(consoleError).toHaveBeenCalled();
-      expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
+      expect(screen.screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
     });
 
     consoleError.mockRestore();
   });
 
 
-    const setRangeButton = screen.getByRole('button', { name: 'Set Jan 2024 Range' });
+    const setRangeButton = screen.screen.getByRole('button', { name: 'Set Jan 2024 Range' });
     fireEvent.click(setRangeButton);
 
     expect(
-      screen.getByText('Exporting transactions from 2024-01-01 to 2024-01-31')
+      screen.screen.getByText('Exporting transactions from 2024-01-01 to 2024-01-31')
     ).toBeInTheDocument();
 
-    const clearButton = screen.getByRole('button', { name: 'Clear Range' });
+    const clearButton = screen.screen.getByRole('button', { name: 'Clear Range' });
     fireEvent.click(clearButton);
 
-    await waitFor((): void => {
+    await await waitFor((): void => {
       expect(
-        screen.getByText('Ready to export all 2 transactions')
+        screen.screen.getByText('Ready to export all 2 transactions')
       ).toBeInTheDocument();
     });
   });
