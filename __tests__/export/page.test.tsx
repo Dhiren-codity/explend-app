@@ -23,7 +23,6 @@ vi.mock("app/lib/actions", () => {
     getCachedAuthSession: vi.fn(),
     getTransactionsForExport: vi.fn(),
   };
-});
 
 // Mock UI components
 vi.mock("app/ui/home/export-transactions", () => {
@@ -61,10 +60,6 @@ import WithSidebar from "app/ui/sidebar/with-sidebar";
 // Import module under test
 import Page, { metadata } from "app/export/page";
 
-describe("Page (app/export/page.tsx)", (): void => {
-  const userEmail = "user@example.com";
-  const transactionsDefault: Array<Record<string, unknown>> = [
-    { id: "t1" },
     { id: "t2" },
   ];
   const exportResults: Array<Record<string, unknown>> = [{ id: "e1" }];
@@ -243,4 +238,3 @@ describe("Page (app/export/page.tsx)", (): void => {
 
     await expect(Page()).rejects.toThrow("transactions error");
   });
-});

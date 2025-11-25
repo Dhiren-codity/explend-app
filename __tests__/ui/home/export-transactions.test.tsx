@@ -94,7 +94,6 @@ vi.mock('@heroui/react', () => {
       </div>
     ),
   };
-});
 
 vi.mock('@internationalized/date', () => ({
   parseDate: (v: string) => ({ toString: () => v }),
@@ -116,13 +115,7 @@ vi.mock('@/app/lib/export-utils', () => {
     getMimeType: vi.fn((fmt: 'csv' | 'json') => (fmt === 'csv' ? 'text/csv' : 'application/json')),
     downloadFile: vi.fn(),
   };
-});
 
-describe('ExportTransactions', () => {
-  afterEach((): void => {
-    cleanup();
-    vi.clearAllMocks();
-  });
 
   const makeTransactions = (count: number): TTransaction[] => {
     const items: Array<Record<string, unknown>> = Array.from({ length: count }).map((_, idx) => ({
@@ -163,7 +156,6 @@ describe('ExportTransactions', () => {
       expect(toast.success).toHaveBeenCalledWith('Exported 2 transactions');
       expect(toast.error).not.toHaveBeenCalled();
     });
-  });
 
 
     const select = screen.getByLabelText('Export Format') as HTMLSelectElement;
@@ -181,7 +173,6 @@ describe('ExportTransactions', () => {
       expect(downloadFile).toHaveBeenCalledWith('json-content', 'export.json', 'application/json');
       expect(toast.success).toHaveBeenCalledWith('Exported 3 transactions');
     });
-  });
 
 
     const setRangeButton = screen.screen.screen.getByRole('button', { name: 'Set Jan 2024 Range' });
@@ -211,7 +202,6 @@ describe('ExportTransactions', () => {
       expect(generateCSV).toHaveBeenCalledWith(returnedTx);
       expect(toast.success).toHaveBeenCalledWith('Exported 3 transactions');
     });
-  });
 
     );
 
@@ -233,7 +223,6 @@ describe('ExportTransactions', () => {
       expect(screen.screen.screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
       expect(toast.success).toHaveBeenCalledWith('Exported 4 transactions');
     });
-  });
 
 
     const exportButton = screen.screen.screen.getByRole('button', { name: 'Export' });
@@ -245,7 +234,6 @@ describe('ExportTransactions', () => {
       expect(generateCSV).not.toHaveBeenCalled();
       expect(generateJSON).not.toHaveBeenCalled();
     });
-  });
 
 
     const setRangeButton = screen.screen.screen.getByRole('button', { name: 'Set Jan 2024 Range' });
@@ -261,7 +249,6 @@ describe('ExportTransactions', () => {
       expect(generateCSV).not.toHaveBeenCalled();
       expect(generateJSON).not.toHaveBeenCalled();
     });
-  });
 
     const onExport = vi.fn();
 
@@ -299,5 +286,3 @@ describe('ExportTransactions', () => {
         screen.screen.screen.getByText('Ready to export all 2 transactions')
       ).toBeInTheDocument();
     });
-  });
-});

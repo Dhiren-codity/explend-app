@@ -9,10 +9,6 @@ vi.mock("fs", () => ({
   readFileSync: vi.fn(),
 }));
 
-describe("config/constants/navigation", () => {
-  beforeEach((): void => {
-    // No setup required for constants
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -34,7 +30,6 @@ describe("config/constants/navigation", () => {
       }).toThrow(TypeError);
       expect(mod.DEFAULT_TRANSACTION_LIMIT).toBe(30);
     });
-  });
 
   describe("NAV_ICON_SIZE", () => {
     test("should be 24", (): void => {
@@ -52,7 +47,6 @@ describe("config/constants/navigation", () => {
       }).toThrow(TypeError);
       expect(mod.NAV_ICON_SIZE).toBe(24);
     });
-  });
 
   describe("DEFAULT_PAGINATION_PAGE_NUMBER", () => {
     test('should be "1" as a string', (): void => {
@@ -70,7 +64,6 @@ describe("config/constants/navigation", () => {
       }).toThrow(TypeError);
       expect(mod.DEFAULT_PAGINATION_PAGE_NUMBER).toBe("1");
     });
-  });
 
   describe("Runtime exports and const enums", () => {
     test("should only export runtime constants and not const enums", async (): Promise<void> => {
@@ -92,5 +85,3 @@ describe("config/constants/navigation", () => {
       expect((mod as Record<string, unknown>)["NAV_TITLE"]).toBeUndefined();
       expect((mod as Record<string, unknown>)["SEARCH_PARAM"]).toBeUndefined();
     });
-  });
-});

@@ -30,25 +30,21 @@ vi.mock('react-icons/pi', (): Record<string, unknown> => {
     PiStack: MockIcon,
     PiStackFill: MockIcon,
   };
-});
 
 vi.mock('react-use', (): Record<string, unknown> => {
   return {
     useMedia: vi.fn((_query: string, _defaultState?: boolean): boolean => mediaQueryMatch),
   };
-});
 
 vi.mock('next/navigation', (): Record<string, unknown> => {
   return {
     usePathname: vi.fn((): string => mockedPathname),
   };
-});
 
 vi.mock('@/app/lib/helpers', (): Record<string, unknown> => {
   return {
     getBreakpointWidth: (bp: string): string => `(min-width: ${bp})`,
   };
-});
 
 vi.mock('@/config/constants/navigation', (): Record<string, unknown> => {
   return {
@@ -66,7 +62,6 @@ vi.mock('@/config/constants/navigation', (): Record<string, unknown> => {
       ISSUE: 'Issue',
     },
   };
-});
 
 vi.mock('@/config/constants/routes', (): Record<string, unknown> => {
   return {
@@ -84,7 +79,6 @@ vi.mock('@/config/constants/routes', (): Record<string, unknown> => {
     },
     DISABLED_ROUTES: disabledRoutes,
   };
-});
 
 vi.mock('../hoverables', (): Record<string, unknown> => {
   const HoverableNavLink = ({
@@ -120,14 +114,6 @@ vi.mock('../logo', (): Record<string, unknown> => {
   return { __esModule: true, default: Logo };
 });
 
-describe('Navbar', (): void => {
-  beforeEach((): void => {
-    vi.clearAllMocks();
-    // Reset dynamic values for each test
-    mediaQueryMatch = true;
-    mockedPathname = '/';
-    disabledRoutes.splice(0, disabledRoutes.length);
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -196,13 +182,11 @@ describe('Navbar', (): void => {
       return {
         useMedia: vi.fn((_query: string, _defaultState?: boolean): boolean => true),
       };
-    });
 
     vi.doMock('next/navigation', (): Record<string, unknown> => {
       return {
         usePathname: vi.fn((): string => '/'),
       };
-    });
 
     vi.doMock('@/config/constants/navigation', (): Record<string, unknown> => {
       return {
@@ -220,7 +204,6 @@ describe('Navbar', (): void => {
           ISSUE: 'Issue',
         },
       };
-    });
 
     vi.doMock('@/config/constants/routes', (): Record<string, unknown> => {
       return {
@@ -238,7 +221,6 @@ describe('Navbar', (): void => {
         },
         DISABLED_ROUTES: [],
       };
-    });
 
     vi.doMock('@/app/lib/helpers', (): Record<string, unknown> => {
       return {
@@ -246,7 +228,6 @@ describe('Navbar', (): void => {
           throw new Error('bad breakpoint');
         },
       };
-    });
 
     vi.doMock('../hoverables', (): Record<string, unknown> => {
       const HoverableNavLink = ({
@@ -290,4 +271,3 @@ describe('Navbar', (): void => {
       render(<Navbar linksGroup="top" withLogo />);
     }).toThrow('bad breakpoint');
   });
-});

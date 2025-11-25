@@ -22,12 +22,6 @@ const allRouteValues: readonly string[] = [
   ROUTE.DISABLED_ROUTE,
 ] as const;
 
-describe("config/constants/routes", () => {
-  beforeEach((): void => {
-    vi.restoreAllMocks();
-    // Ensure a clean slate for mutable exported array
-    DISABLED_ROUTES.length = 0;
-  });
 
   afterEach((): void => {
     // Cleanup and reset any mutations to shared state and mocks
@@ -72,7 +66,6 @@ describe("config/constants/routes", () => {
       expect(() => assertIsRoute(ROUTE.CHART)).not.toThrow();
       expect(() => assertIsRoute("/no-such-route")).toThrow(TypeError);
     });
-  });
 
   describe("DISABLED_ROUTES", () => {
     test("should be an empty array by default", (): void => {
@@ -95,5 +88,3 @@ describe("config/constants/routes", () => {
     test("should be clean after each test", (): void => {
       expect(DISABLED_ROUTES.length).toBe(0);
     });
-  });
-});
