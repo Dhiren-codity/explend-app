@@ -68,11 +68,6 @@ describe("config/constants/navigation", () => {
       expect(unique.size).toBe(values.length);
     });
 
-    test("should be usable as object keys", (): void => {
-      const routes: Record<string, string> = {
-        [NAV_TITLE.HOME]: "/",
-        [NAV_TITLE.SETTINGS]: "/settings",
-      };
       expect(routes[NAV_TITLE.HOME]).toBe("/");
       expect(routes[NAV_TITLE.SETTINGS]).toBe("/settings");
       expect(routes["Unknown"]).toBeUndefined();
@@ -85,11 +80,6 @@ describe("config/constants/navigation", () => {
       expect(SEARCH_PARAM.PAGE).toBe("page");
     });
 
-    test("should be usable in URLSearchParams", (): void => {
-      const params = new URLSearchParams({
-        [SEARCH_PARAM.QUERY]: "books",
-        [SEARCH_PARAM.PAGE]: "2",
-      });
       expect(params.get(SEARCH_PARAM.QUERY)).toBe("books");
       expect(params.get(SEARCH_PARAM.PAGE)).toBe("2");
       expect(params.get("missing")).toBeNull();

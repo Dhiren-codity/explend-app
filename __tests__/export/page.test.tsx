@@ -231,10 +231,6 @@ describe("Page", (): void => {
     expect(exportTxElements.length).toBe(0);
   });
 
-  test("handles undefined userId (no email) and passes it to getTransactionsForExport via onExport", async (): Promise<void> => {
-    (
-      getCachedAuthSession as unknown as ReturnType<typeof vi.fn>
-    ).mockResolvedValueOnce({ user: {} });
 
     // still return a non-empty transactions list so ExportTransactions renders
     (getCachedAllTransactions as unknown as ReturnType<typeof vi.fn>)
@@ -295,9 +291,6 @@ describe("Page", (): void => {
     await expect((Page as () => Promise<unknown>)()).rejects.toThrow("db fail");
   });
 
-  test("onExport propagates error when getTransactionsForExport rejects", async (): Promise<void> => {
-    (getCachedAllTransactions as unknown as ReturnType<typeof vi.fn>)
-      .mockResolvedValueOnce([{ id: "t1" }])
       .mockResolvedValueOnce([{ id: "t1" }]);
     (
       getTransactionsForExport as unknown as ReturnType<typeof vi.fn>

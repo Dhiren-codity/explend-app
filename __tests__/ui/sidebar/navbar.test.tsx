@@ -120,9 +120,6 @@ describe('Navbar', (): void => {
     cleanup();
   });
 
-  test('renders with logo (sm) when media matches md breakpoint', async (): Promise<void> => {
-    mockUseMediaReturn = true;
-    const { default: Navbar } = await import('@/app/ui/sidebar/navbar');
 
     render(<Navbar linksGroup="top" withLogo />);
 
@@ -134,9 +131,6 @@ describe('Navbar', (): void => {
     expect(list).toBeDefined();
   });
 
-  test('renders with logo (xxs) when media does not match md breakpoint', async (): Promise<void> => {
-    mockUseMediaReturn = false;
-    const { default: Navbar } = await import('@/app/ui/sidebar/navbar');
 
     render(<Navbar linksGroup="top" withLogo />);
 
@@ -145,12 +139,6 @@ describe('Navbar', (): void => {
     expect(logo.getAttribute('data-size')).toBe('xxs');
   });
 
-  test('top links: renders all non-disabled links and sets active state correctly', async (): Promise<void> => {
-    // Disable two routes to test filtering
-    mockDisabledRoutes = ['/export', '/limits'];
-    mockPathnameReturn = '/chart';
-
-    const { default: Navbar } = await import('@/app/ui/sidebar/navbar');
 
     render(<Navbar linksGroup="top" />);
 
@@ -169,12 +157,6 @@ describe('Navbar', (): void => {
     });
   });
 
-  test('bottom links: renders non-disabled links', async (): Promise<void> => {
-    // Disable one of the bottom routes
-    mockDisabledRoutes = ['/issue'];
-    mockPathnameReturn = '/feedback';
-
-    const { default: Navbar } = await import('@/app/ui/sidebar/navbar');
 
     render(<Navbar linksGroup="bottom" />);
 
@@ -187,20 +169,6 @@ describe('Navbar', (): void => {
     expect(item.getAttribute('data-active')).toBe('true');
   });
 
-  test('renders no links when all routes in group are disabled', async (): Promise<void> => {
-    // Disable all top routes
-    mockDisabledRoutes = [
-      '/home',
-      '/monthly',
-      '/chart',
-      '/limits',
-      '/subscriptions',
-      '/categories',
-      '/export',
-      '/settings',
-    ];
-
-    const { default: Navbar } = await import('@/app/ui/sidebar/navbar');
 
     render(<Navbar linksGroup="top" />);
 
@@ -208,9 +176,6 @@ describe('Navbar', (): void => {
     expect(items.length).toBe(0);
   });
 
-  test('handles undefined pathname without marking any link active', async (): Promise<void> => {
-    mockPathnameReturn = undefined;
-    const { default: Navbar } = await import('@/app/ui/sidebar/navbar');
 
     render(<Navbar linksGroup="bottom" />);
 

@@ -166,8 +166,6 @@ describe('ExportTransactions', () => {
     vi.clearAllMocks();
   });
 
-  test('renders header, controls, and default info text with transactions count', (): void => {
-    const transactions: unknown[] = [{ id: '1' }, { id: '2' }];
     const onExport = vi.fn<[_start?: Date, _end?: Date], Promise<unknown[]>>().mockResolvedValue([]);
 
     render(<ExportTransactionsLoose transactions={transactions} onExport={onExport} />);
@@ -180,15 +178,13 @@ describe('ExportTransactions', () => {
     ).toBeInTheDocument();
   });
 
-  test('exports CSV by default using provided transactions and shows success toast', async (): Promise<void> => {
-    const transactions: unknown[] = [{ id: '1' }, { id: '2' }];
     const onExport = vi.fn<[_start?: Date, _end?: Date], Promise<unknown[]>>().mockResolvedValue([]);
 
     render(<ExportTransactionsLoose transactions={transactions} onExport={onExport} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Export' }));
 
-    await waitFor(() => {
+    await await waitFor(() => {
       expect(vi.mocked(generateCSV)).toHaveBeenCalledTimes(1);
     });
 
@@ -205,8 +201,6 @@ describe('ExportTransactions', () => {
     expect(onExport).not.toHaveBeenCalled();
   });
 
-  test('switching to JSON uses JSON generator and correct filename/mime', async (): Promise<void> => {
-    const transactions: unknown[] = [{ id: '1' }, { id: '2' }];
     const onExport = vi.fn<[_start?: Date, _end?: Date], Promise<unknown[]>>().mockResolvedValue([]);
 
     render(<ExportTransactionsLoose transactions={transactions} onExport={onExport} />);
@@ -216,7 +210,7 @@ describe('ExportTransactions', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Export' }));
 
-    await waitFor(() => {
+    await await waitFor(() => {
       expect(vi.mocked(generateJSON)).toHaveBeenCalledTimes(1);
     });
 
@@ -232,8 +226,6 @@ describe('ExportTransactions', () => {
     expect(toast.success).toHaveBeenCalledWith('Exported 2 transactions');
   });
 
-  test('setting a date range calls onExport with start and end-of-day, uses returned data', async (): Promise<void> => {
-    const baseTransactions: unknown[] = [{ id: '1' }, { id: '2' }];
     const returnedTransactions: unknown[] = [{ id: 'x' }];
     const onExport = vi
       .fn<[_start?: Date, _end?: Date], Promise<unknown[]>>()
@@ -254,7 +246,7 @@ describe('ExportTransactions', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Export' }));
 
-    await waitFor(() => {
+    await await waitFor(() => {
       expect(onExport).toHaveBeenCalledTimes(1);
     });
 
@@ -278,15 +270,13 @@ describe('ExportTransactions', () => {
     expect(endArg.getSeconds()).toBe(59);
     expect(endArg.getMilliseconds()).toBe(999);
 
-    await waitFor(() => {
+    await await waitFor(() => {
       expect(vi.mocked(generateCSV)).toHaveBeenCalledWith(returnedTransactions);
     });
 
     expect(toast.success).toHaveBeenCalledWith('Exported 1 transaction');
   });
 
-  test('shows error toast and does not download when no transactions to export (filtered empty)', async (): Promise<void> => {
-    const baseTransactions: unknown[] = [{ id: '1' }, { id: '2' }];
     const onExport = vi
       .fn<[_start?: Date, _end?: Date], Promise<unknown[]>>()
       .mockResolvedValue([]);
@@ -301,7 +291,7 @@ describe('ExportTransactions', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Export' }));
 
-    await waitFor(() => {
+    await await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith('No transactions to export');
     });
 
@@ -310,8 +300,6 @@ describe('ExportTransactions', () => {
     expect(vi.mocked(downloadFile)).not.toHaveBeenCalled();
   });
 
-  test('handles errors during export and resets loading state', async (): Promise<void> => {
-    const transactions: unknown[] = [{ id: '1' }];
     const onExport = vi.fn<[_start?: Date, _end?: Date], Promise<unknown[]>>().mockResolvedValue([]);
 
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation((): void => {});
@@ -325,19 +313,17 @@ describe('ExportTransactions', () => {
     const exportButton = screen.getByRole('button', { name: 'Export' });
     fireEvent.click(exportButton);
 
-    await waitFor(() => {
+    await await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith('Failed to export transactions');
     });
 
-    await waitFor(() => {
+    await await waitFor(() => {
       expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
     });
 
     consoleSpy.mockRestore();
   });
 
-  test('shows loading state while awaiting onExport and then returns to idle', async (): Promise<void> => {
-    const baseTransactions: unknown[] = [{ id: '1' }, { id: '2' }];
     let resolveFn: ((value: unknown[]) => void) | null = null;
     const onExport = vi
       .fn<[_start?: Date, _end?: Date], Promise<unknown[]>>()
@@ -366,21 +352,16 @@ describe('ExportTransactions', () => {
     // Resolve the promise
     resolveFn && resolveFn([{ id: 'z' }]);
 
-    await waitFor(() => {
+    await await waitFor(() => {
       expect(vi.mocked(generateCSV)).toHaveBeenCalledWith([{ id: 'z' }]);
     });
 
     // Back to idle
-    await waitFor(() => {
+    await await waitFor(() => {
       expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
     });
   });
 
-  test('renders correctly with zero transactions', (): void => {
-    const transactions: unknown[] = [];
-    const onExport = vi.fn<[_start?: Date, _end?: Date], Promise<unknown[]>>().mockResolvedValue([]);
-
-    render(<ExportTransactionsLoose transactions={transactions} onExport={onExport} />);
 
     expect(screen.getByText('Ready to export all 0 transactions')).toBeInTheDocument();
   });
