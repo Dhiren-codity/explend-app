@@ -19,7 +19,6 @@ vi.mock('react-hot-toast', () => {
       error: vi.fn(),
     },
   };
-});
 
 vi.mock('@/app/lib/export-utils', () => {
   return {
@@ -29,7 +28,6 @@ vi.mock('@/app/lib/export-utils', () => {
     getExportFilename: vi.fn((fmt: string) => `file.${fmt}`),
     getMimeType: vi.fn((fmt: string) => `text/${fmt}`),
   };
-});
 
 vi.mock('@heroui/react', () => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -151,7 +149,6 @@ vi.mock('@heroui/react', () => {
     CardBody,
     CardHeader,
   };
-});
 
 type LooseProps = {
   transactions: unknown[];
@@ -160,11 +157,6 @@ type LooseProps = {
 const ExportTransactionsLoose =
   ExportTransactions as unknown as React.FC<LooseProps>;
 
-describe('ExportTransactions', () => {
-  afterEach((): void => {
-    cleanup();
-    vi.clearAllMocks();
-  });
 
     const onExport = vi.fn<[_start?: Date, _end?: Date], Promise<unknown[]>>().mockResolvedValue([]);
 
@@ -360,9 +352,7 @@ describe('ExportTransactions', () => {
     await await waitFor(() => {
       expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
     });
-  });
 
 
     expect(screen.getByText('Ready to export all 0 transactions')).toBeInTheDocument();
   });
-});

@@ -11,13 +11,11 @@ vi.mock('react-use', () => {
   return {
     useMedia: vi.fn((_query: unknown, _defaultState?: unknown) => mockUseMediaReturn),
   };
-});
 
 vi.mock('next/navigation', () => {
   return {
     usePathname: vi.fn(() => mockPathnameReturn as unknown as string),
   };
-});
 
 vi.mock('@/config/constants/navigation', () => {
   const NAV_ICON_SIZE = 20;
@@ -68,7 +66,6 @@ vi.mock('@/app/lib/helpers', () => {
       return '(min-width: 768px)';
     }),
   };
-});
 
 // Mock internal components relative to navbar.tsx import specifiers
 vi.mock('../hoverables', () => {
@@ -104,16 +101,6 @@ vi.mock('../logo', () => {
   return { default: Logo };
 });
 
-describe('Navbar', (): void => {
-  beforeEach((): void => {
-    vi.resetModules();
-    vi.clearAllMocks();
-    cleanup();
-    mockUseMediaReturn = true;
-    mockPathnameReturn = '/home';
-    mockDisabledRoutes = [];
-    shouldThrowBreakpoint = false;
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -155,7 +142,6 @@ describe('Navbar', (): void => {
       // withScale is always true in component
       expect(item.getAttribute('data-scale')).toBe('true');
     });
-  });
 
 
     render(<Navbar linksGroup="bottom" />);
@@ -185,7 +171,6 @@ describe('Navbar', (): void => {
     items.forEach((item) => {
       expect(item.getAttribute('data-active')).toBe('false');
     });
-  });
 
   test('throws when getBreakpointWidth errors (error case)', async (): Promise<void> => {
     shouldThrowBreakpoint = true;
@@ -194,4 +179,3 @@ describe('Navbar', (): void => {
 
     await expect(importNavbar()).rejects.toThrow('getBreakpointWidth error');
   });
-});

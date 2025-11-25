@@ -9,10 +9,6 @@ import {
 
 vi.mock("node:fs", (): Record<string, unknown> => ({}));
 
-describe("config/constants/navigation", () => {
-  beforeEach((): void => {
-    vi.useFakeTimers();
-  });
 
   afterEach((): void => {
     vi.useRealTimers();
@@ -25,7 +21,6 @@ describe("config/constants/navigation", () => {
       expect(Number.isInteger(DEFAULT_TRANSACTION_LIMIT)).toBe(true);
       expect(DEFAULT_TRANSACTION_LIMIT).toBeGreaterThan(0);
     });
-  });
 
   describe("NAV_ICON_SIZE", () => {
     test("should be 24 and a positive integer", (): void => {
@@ -33,7 +28,6 @@ describe("config/constants/navigation", () => {
       expect(Number.isInteger(NAV_ICON_SIZE)).toBe(true);
       expect(NAV_ICON_SIZE).toBeGreaterThan(0);
     });
-  });
 
   describe("NAV_TITLE", () => {
     test("should have correct string mappings", (): void => {
@@ -72,7 +66,6 @@ describe("config/constants/navigation", () => {
       expect(routes[NAV_TITLE.SETTINGS]).toBe("/settings");
       expect(routes["Unknown"]).toBeUndefined();
     });
-  });
 
   describe("SEARCH_PARAM", () => {
     test("should have correct string mappings", (): void => {
@@ -90,7 +83,6 @@ describe("config/constants/navigation", () => {
       const unique = new Set(values);
       expect(unique.size).toBe(values.length);
     });
-  });
 
   describe("DEFAULT_PAGINATION_PAGE_NUMBER", () => {
     test('should be string "1"', (): void => {
@@ -103,5 +95,3 @@ describe("config/constants/navigation", () => {
       expect(Number.isNaN(parsed)).toBe(false);
       expect(parsed).toBe(1);
     });
-  });
-});

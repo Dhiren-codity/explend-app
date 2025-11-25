@@ -2,12 +2,6 @@ import { describe, test, expect, vi, beforeEach, afterEach } from "vitest";
 import { ROUTE, DISABLED_ROUTES } from "./config/constants/routes";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 
-describe("config/constants/routes", () => {
-  let originalDisabledRoutes: ROUTE[];
-
-  beforeEach((): void => {
-    originalDisabledRoutes = [...DISABLED_ROUTES];
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -77,9 +71,6 @@ describe("config/constants/routes", () => {
         if (value !== "/") {
           expect(value.endsWith("/")).toBe(false);
         }
-      }
-    });
-  });
 
   describe("DISABLED_ROUTES", () => {
     test("should be an array and empty by default", (): void => {
@@ -122,5 +113,3 @@ describe("config/constants/routes", () => {
       }
       expect(DISABLED_ROUTES.length).toBe(0);
     });
-  });
-});

@@ -109,8 +109,6 @@ const flattenElements = (node: unknown): ElementLike[] => {
       for (const child of current) {
         stack.push(child);
       }
-    }
-  }
 
   return results;
 };
@@ -320,4 +318,3 @@ describe("Page", (): void => {
       ),
     ).rejects.toThrow("export fail");
   });
-});
