@@ -11,10 +11,6 @@ vi.mock("fs", () => ({
   readFileSync: vi.fn(),
 }));
 
-describe("config/constants/navigation", (): void => {
-  beforeEach((): void => {
-    // No setup required for constants
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -29,7 +25,6 @@ describe("config/constants/navigation", (): void => {
     test("should not be zero (sanity check)", (): void => {
       expect(DEFAULT_TRANSACTION_LIMIT).not.toBe(0);
     });
-  });
 
   describe("NAV_ICON_SIZE", (): void => {
     test("should be a number equal to 24", (): void => {
@@ -40,7 +35,6 @@ describe("config/constants/navigation", (): void => {
     test("should not be negative (sanity check)", (): void => {
       expect(NAV_ICON_SIZE).toBeGreaterThanOrEqual(0);
     });
-  });
 
   describe("DEFAULT_PAGINATION_PAGE_NUMBER", (): void => {
     test('should be a string equal to "1"', (): void => {
@@ -56,7 +50,6 @@ describe("config/constants/navigation", (): void => {
       const sp: URLSearchParams = new URLSearchParams(params);
       expect(sp.get(SEARCH_PARAM.PAGE)).toBe("1");
     });
-  });
 
   describe("NAV_TITLE const enum values", (): void => {
     test("should inline to the correct literal strings", (): void => {
@@ -118,7 +111,6 @@ describe("config/constants/navigation", (): void => {
       ];
       expect(allowed.includes(unexpected)).toBe(false);
     });
-  });
 
   describe("SEARCH_PARAM const enum values", (): void => {
     test("should inline to correct query keys", (): void => {
@@ -144,5 +136,3 @@ describe("config/constants/navigation", (): void => {
       const validKeys: string[] = [SEARCH_PARAM.QUERY, SEARCH_PARAM.PAGE];
       expect(validKeys.includes(invalidKey)).toBe(false);
     });
-  });
-});

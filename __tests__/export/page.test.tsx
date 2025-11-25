@@ -25,7 +25,6 @@ vi.mock("../lib/actions", (): Record<string, unknown> => {
     getCachedAllTransactions: mockGetCachedAllTransactions,
     getTransactionsForExport: mockGetTransactionsForExport,
   };
-});
 
 vi.mock("../ui/home/export-transactions", (): Record<string, unknown> => {
   return {
@@ -40,7 +39,6 @@ vi.mock("../ui/home/export-transactions", (): Record<string, unknown> => {
       });
     },
   };
-});
 
 vi.mock("../ui/no-transactions-plug", (): Record<string, unknown> => {
   return {
@@ -51,7 +49,6 @@ vi.mock("../ui/no-transactions-plug", (): Record<string, unknown> => {
       });
     },
   };
-});
 
 vi.mock("../ui/sidebar/with-sidebar", (): Record<string, unknown> => {
   return {
@@ -64,11 +61,7 @@ vi.mock("../ui/sidebar/with-sidebar", (): Record<string, unknown> => {
       );
     },
   };
-});
 
-describe("app/export/page", (): void => {
-  let Page: (() => Promise<unknown>) | null = null;
-  let metadata: { title?: unknown } | null = null;
 
   const importSut = async (): Promise<void> => {
     const mod = await import("./page");
@@ -273,4 +266,3 @@ describe("app/export/page", (): void => {
     );
     expect(mockGetCachedAuthSession).toHaveBeenCalledTimes(1);
   });
-});

@@ -114,8 +114,6 @@ vi.mock('@heroui/react', () => {
           start: { toString: () => '2024-01-01' },
           end: { toString: () => '2024-01-31' },
         });
-      }
-    };
     return React.createElement(
       'button',
       { type: 'button', onClick: handleClick },
@@ -132,7 +130,6 @@ vi.mock('@heroui/react', () => {
     Select,
     SelectItem,
   };
-});
 
 vi.mock('@/app/lib/export-utils', () => {
   return {
@@ -142,16 +139,10 @@ vi.mock('@/app/lib/export-utils', () => {
     getMimeType: vi.fn((fmt: string) => (fmt === 'json' ? 'application/json' : 'text/csv')),
     downloadFile: vi.fn(),
   };
-});
 
 const createTransactions = (count: number): unknown[] =>
   Array.from({ length: count }, (_, i) => ({ id: i + 1 }));
 
-describe('ExportTransactions', () => {
-  afterEach((): void => {
-    cleanup();
-    vi.clearAllMocks();
-  });
 
     );
 
@@ -176,7 +167,6 @@ describe('ExportTransactions', () => {
         'Exported 2 transactions',
       );
     });
-  });
 
 
     const select = screen.getByLabelText('Export Format');
@@ -194,7 +184,6 @@ describe('ExportTransactions', () => {
         'Exported 1 transaction',
       );
     });
-  });
 
 
     fireEvent.click(screen.getByRole('button', { name: 'Export' }));
@@ -208,7 +197,6 @@ describe('ExportTransactions', () => {
         'No transactions to export',
       );
     });
-  });
 
 
     fireEvent.click(screen.getByRole('button', { name: 'Date Range (Optional)' }));
@@ -237,7 +225,6 @@ describe('ExportTransactions', () => {
         'Exported 1 transaction',
       );
     });
-  });
 
 
     fireEvent.click(screen.getByRole('button', { name: 'Date Range (Optional)' }));
@@ -250,7 +237,6 @@ describe('ExportTransactions', () => {
         'No transactions to export',
       );
     });
-  });
 
     (generateCSV as unknown as { mockImplementationOnce: (fn: () => string) => void }).mockImplementationOnce(
       () => {
@@ -289,5 +275,3 @@ describe('ExportTransactions', () => {
     await await waitFor((): void => {
       expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
     });
-  });
-});

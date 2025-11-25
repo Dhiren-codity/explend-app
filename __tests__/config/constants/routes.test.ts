@@ -9,10 +9,6 @@ vi.mock(
   }),
 );
 
-describe("config/constants/routes", (): void => {
-  beforeEach((): void => {
-    // No setup required for constants
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -130,7 +126,6 @@ describe("config/constants/routes", (): void => {
       expect(ROUTE.SITEMAP.endsWith(".xml")).toBe(true);
       expect(ROUTE.SITEMAP).toBe("/sitemap.xml");
     });
-  });
 
   describe("DISABLED_ROUTES", (): void => {
     test("should be an empty array by default", (): void => {
@@ -172,5 +167,3 @@ describe("config/constants/routes", (): void => {
       expect(copy.length).toBe(1);
       expect(DISABLED_ROUTES.length).toBe(0);
     });
-  });
-});

@@ -25,19 +25,16 @@ vi.mock('react-icons/pi', () => {
     PiStack: Comp,
     PiStackFill: Comp,
   };
-});
 
 vi.mock('react-use', () => {
   return {
     useMedia: vi.fn(),
   };
-});
 
 vi.mock('next/navigation', () => {
   return {
     usePathname: vi.fn(),
   };
-});
 
 vi.mock('@/config/constants/navigation', () => {
   return {
@@ -55,7 +52,6 @@ vi.mock('@/config/constants/navigation', () => {
       ISSUE: 'Issue',
     },
   };
-});
 
 vi.mock('@/config/constants/routes', () => {
   let disabledRoutes: string[] = [];
@@ -80,13 +76,11 @@ vi.mock('@/config/constants/routes', () => {
       disabledRoutes = routes;
     },
   };
-});
 
 vi.mock('@/app/lib/helpers', () => {
   return {
     getBreakpointWidth: vi.fn(() => '(min-width: 768px)'),
   };
-});
 
 vi.mock('../hoverables', () => {
   // Matches import inside app/ui/sidebar/navbar.tsx
@@ -108,7 +102,6 @@ vi.mock('../hoverables', () => {
       );
     },
   };
-});
 
 vi.mock('../logo', () => {
   // Matches import inside app/ui/sidebar/navbar.tsx
@@ -117,7 +110,6 @@ vi.mock('../logo', () => {
       return <div data-testid="logo" data-size={size} />;
     },
   };
-});
 
 import Navbar from './app/ui/sidebar/navbar';
 import { useMedia } from 'react-use';
@@ -154,16 +146,6 @@ const mockedUseMedia = useMedia as unknown as MockedFn<(query: string, defaultSt
 const mockedUsePathname = usePathname as unknown as MockedFn<() => string>;
 const mockedGetBreakpointWidth = getBreakpointWidth as unknown as MockedFn<(bp: string) => string>;
 
-describe('Navbar', (): void => {
-  beforeEach((): void => {
-    routesMock.__setDisabledRoutes([]);
-    mockedUseMedia.mockReset && mockedUseMedia.mockReset();
-    mockedUsePathname.mockReset && mockedUsePathname.mockReset();
-    mockedGetBreakpointWidth.mockReset && mockedGetBreakpointWidth.mockReset();
-    mockedGetBreakpointWidth.mockReturnValue && mockedGetBreakpointWidth.mockReturnValue('(min-width: 768px)');
-    mockedUseMedia.mockReturnValue && mockedUseMedia.mockReturnValue(true);
-    mockedUsePathname.mockReturnValue && mockedUsePathname.mockReturnValue(routesMock.ROUTE.HOME);
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -247,4 +229,3 @@ describe('Navbar', (): void => {
       render(<Navbar linksGroup="top" withLogo />);
     }).toThrow('boom');
   });
-});
