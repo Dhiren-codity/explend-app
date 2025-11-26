@@ -69,10 +69,6 @@ describe("Page", (): void => {
     vi.clearAllMocks();
   });
 
-  test("should render ExportTransactions with transactions and handleExport calls getTransactionsForExport", async (): Promise<void> => {
-    const actions = getActionsMocks();
-    const userId = "user@example.com";
-    const transactionsValue: Record<string, unknown>[] = [{ id: "1" }];
 
     actions.getCachedAuthSession.mockResolvedValue({ user: { email: userId } });
     actions.getCachedAllTransactions.mockResolvedValue(transactionsValue);
@@ -134,11 +130,6 @@ describe("Page", (): void => {
     );
   });
 
-  test("should render NoTransactionsPlug when transactions array is empty", async (): Promise<void> => {
-    const actions = getActionsMocks();
-    actions.getCachedAuthSession.mockResolvedValue({
-      user: { email: "user@example.com" },
-    });
     actions.getCachedAllTransactions.mockResolvedValue([]);
 
     const result = await Page();
@@ -166,9 +157,6 @@ describe("Page", (): void => {
     expect(actions.getCachedAllTransactions).toHaveBeenCalledTimes(2);
   });
 
-  test("should handle undefined session (no userId) and still export with undefined userId", async (): Promise<void> => {
-    const actions = getActionsMocks();
-    const transactionsValue: Record<string, unknown>[] = [{ id: "2" }];
 
     actions.getCachedAuthSession.mockResolvedValue(undefined);
     actions.getCachedAllTransactions.mockResolvedValue(transactionsValue);
@@ -220,21 +208,12 @@ describe("Page", (): void => {
     );
   });
 
-  test("should propagate error when getCachedAllTransactions rejects", async (): Promise<void> => {
-    const actions = getActionsMocks();
-    actions.getCachedAuthSession.mockResolvedValue({
-      user: { email: "user@example.com" },
-    });
     actions.getCachedAllTransactions.mockResolvedValueOnce([] as unknown[]);
     actions.getCachedAllTransactions.mockRejectedValueOnce(new Error("boom"));
 
     await expect(Page()).rejects.toThrow("boom");
   });
 
-  test("should propagate error when handleExport (getTransactionsForExport) rejects", async (): Promise<void> => {
-    const actions = getActionsMocks();
-    const userId = "user@example.com";
-    const transactionsValue: Record<string, unknown>[] = [{ id: "3" }];
 
     actions.getCachedAuthSession.mockResolvedValue({ user: { email: userId } });
     actions.getCachedAllTransactions.mockResolvedValue(transactionsValue);

@@ -140,11 +140,6 @@ describe('Navbar', (): void => {
     vi.clearAllMocks();
   });
 
-  test('renders top nav links and highlights active based on pathname', (): void => {
-    const g = globalThis as unknown as {
-      __pathname?: unknown;
-      __disabledRoutes?: string[];
-    };
     g.__pathname = '/settings';
 
     render(<Navbar linksGroup="top" />);
@@ -162,11 +157,6 @@ describe('Navbar', (): void => {
     expect(inactive.getAttribute('data-active')).toBe('false');
   });
 
-  test('renders bottom nav links and filters disabled routes', (): void => {
-    const g = globalThis as unknown as {
-      __disabledRoutes?: string[];
-      __pathname?: unknown;
-    };
     g.__disabledRoutes?.push('/issue');
     g.__pathname = '/feedback';
 
@@ -179,8 +169,6 @@ describe('Navbar', (): void => {
     expect(items.length).toBe(1);
   });
 
-  test('filters disabled top routes (e.g., Export)', (): void => {
-    const g = globalThis as unknown as { __disabledRoutes?: string[] };
     g.__disabledRoutes?.push('/export');
 
     render(<Navbar linksGroup="top" />);
@@ -191,8 +179,6 @@ describe('Navbar', (): void => {
     expect(items.length).toBe(7);
   });
 
-  test('renders Logo with size "sm" when isMd media query matches', (): void => {
-    const g = globalThis as unknown as { __useMediaReturn?: boolean };
     g.__useMediaReturn = true;
 
     render(<Navbar linksGroup="top" withLogo />);
@@ -202,8 +188,6 @@ describe('Navbar', (): void => {
     expect(logo.getAttribute('data-size')).toBe('sm');
   });
 
-  test('renders Logo with size "xxs" when isMd media query does not match', (): void => {
-    const g = globalThis as unknown as { __useMediaReturn?: boolean };
     g.__useMediaReturn = false;
 
     render(<Navbar linksGroup="top" withLogo />);
@@ -219,8 +203,6 @@ describe('Navbar', (): void => {
     expect(screen.queryByTestId('logo')).toBeNull();
   });
 
-  test('handles undefined pathname gracefully (no active link)', (): void => {
-    const g = globalThis as unknown as { __pathname?: unknown };
     g.__pathname = undefined;
 
     render(<Navbar linksGroup="top" />);

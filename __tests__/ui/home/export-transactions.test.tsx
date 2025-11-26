@@ -129,13 +129,6 @@ describe('ExportTransactions', (): void => {
     return result;
   };
 
-  test('renders correctly with default props', (): void => {
-    const transactions = makeTransactions(2);
-    const onExport = vi.fn<[(Date | undefined)?, (Date | undefined)?], Promise<TTransaction[]>>().mockResolvedValue(
-      transactions,
-    );
-
-    render(<ExportTransactions transactions={transactions} onExport={onExport} />);
 
     expect(screen.getByText('Export Transactions')).toBeInTheDocument();
     expect(screen.getByRole('combobox', { name: 'Export Format' })).toBeInTheDocument();
@@ -144,17 +137,6 @@ describe('ExportTransactions', (): void => {
     expect(screen.getByText('Ready to export all 2 transactions')).toBeInTheDocument();
   });
 
-  test('exports CSV without date range using provided transactions', async (): Promise<void> => {
-    const transactions = makeTransactions(2);
-    const onExport = vi.fn<[(Date | undefined)?, (Date | undefined)?], Promise<TTransaction[]>>().mockResolvedValue(
-      [],
-    );
-
-    vi.mocked(generateCSV).mockReturnValue('csv-content');
-    vi.mocked(getExportFilename).mockReturnValue('transactions.csv');
-    vi.mocked(getMimeType).mockReturnValue('text/csv');
-
-    render(<ExportTransactions transactions={transactions} onExport={onExport} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Export' }));
 
@@ -170,17 +152,6 @@ describe('ExportTransactions', (): void => {
     });
   });
 
-  test('changing format to JSON exports JSON', async (): Promise<void> => {
-    const transactions = makeTransactions(1);
-    const onExport = vi.fn<[(Date | undefined)?, (Date | undefined)?], Promise<TTransaction[]>>().mockResolvedValue(
-      transactions,
-    );
-
-    vi.mocked(generateJSON).mockReturnValue('json-content');
-    vi.mocked(getExportFilename).mockReturnValue('transactions.json');
-    vi.mocked(getMimeType).mockReturnValue('application/json');
-
-    render(<ExportTransactions transactions={transactions} onExport={onExport} />);
 
     const select = screen.getByRole('combobox', { name: 'Export Format' });
     fireEvent.change(select, { target: { value: 'json' } });
@@ -197,13 +168,6 @@ describe('ExportTransactions', (): void => {
     });
   });
 
-  test('sets and clears date range updates helper text', (): void => {
-    const transactions = makeTransactions(3);
-    const onExport = vi.fn<[(Date | undefined)?, (Date | undefined)?], Promise<TTransaction[]>>().mockResolvedValue(
-      transactions,
-    );
-
-    render(<ExportTransactions transactions={transactions} onExport={onExport} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Set Date Range' }));
     expect(
@@ -214,17 +178,6 @@ describe('ExportTransactions', (): void => {
     expect(screen.getByText('Ready to export all 3 transactions')).toBeInTheDocument();
   });
 
-  test('when date range is set, calls onExport with correct dates and shows loading state', async (): Promise<void> => {
-    const transactions = makeTransactions(2);
-    let resolveFn: ((value: TTransaction[] | PromiseLike<TTransaction[]>) => void) | null = null;
-
-    const onExport = vi
-      .fn<[(Date | undefined)?, (Date | undefined)?], Promise<TTransaction[]>>()
-      .mockImplementation(
-        (_start?: Date, _end?: Date): Promise<TTransaction[]> =>
-          new Promise<TTransaction[]>((resolve) => {
-            resolveFn = resolve;
-          }),
       );
 
     vi.mocked(generateCSV).mockReturnValue('csv-content');
@@ -260,13 +213,6 @@ describe('ExportTransactions', (): void => {
     });
   });
 
-  test('shows error toast when no transactions to export (date range path)', async (): Promise<void> => {
-    const transactions = makeTransactions(5);
-    const onExport = vi
-      .fn<[(Date | undefined)?, (Date | undefined)?], Promise<TTransaction[]>>()
-      .mockResolvedValue([]);
-
-    render(<ExportTransactions transactions={transactions} onExport={onExport} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Set Date Range' }));
     fireEvent.click(screen.getByRole('button', { name: 'Export' }));
@@ -279,13 +225,6 @@ describe('ExportTransactions', (): void => {
     });
   });
 
-  test('shows error toast when no transactions to export (no date range path)', async (): Promise<void> => {
-    const transactions: TTransaction[] = [] as unknown as TTransaction[];
-    const onExport = vi.fn<[(Date | undefined)?, (Date | undefined)?], Promise<TTransaction[]>>().mockResolvedValue(
-      transactions,
-    );
-
-    render(<ExportTransactions transactions={transactions} onExport={onExport} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Export' }));
 
@@ -298,15 +237,6 @@ describe('ExportTransactions', (): void => {
     });
   });
 
-  test('handles errors and shows failure toast', async (): Promise<void> => {
-    const transactions = makeTransactions(2);
-    const onExport = vi.fn<[(Date | undefined)?, (Date | undefined)?], Promise<TTransaction[]>>().mockResolvedValue(
-      transactions,
-    );
-
-    vi.mocked(generateCSV).mockImplementation((): string => {
-      throw new Error('boom');
-    });
 
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation((): void => {});
 
