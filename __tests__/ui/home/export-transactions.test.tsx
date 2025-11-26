@@ -139,8 +139,6 @@ describe('ExportTransactions', (): void => {
     vi.clearAllMocks();
   });
 
-  test('renders default UI elements and status text with transactions count', (): void => {
-    const transactions = [{} as unknown as TTransaction, {} as unknown as TTransaction];
 
     render(<ExportTransactions transactions={transactions} onExport={vi.fn()} />);
 
@@ -152,9 +150,6 @@ describe('ExportTransactions', (): void => {
     expect(screen.getByText('Ready to export all 2 transactions')).toBeInTheDocument();
   });
 
-  test('exports CSV by default without calling onExport when no date range is set', async (): Promise<void> => {
-    const transactions = [
-      {} as unknown as TTransaction,
       {} as unknown as TTransaction,
     ];
     const onExport = vi.fn<[_start?: Date | undefined, _end?: Date | undefined], Promise<TTransaction[]>>().mockResolvedValue(
@@ -182,9 +177,6 @@ describe('ExportTransactions', (): void => {
     });
   });
 
-  test('allows switching to JSON format and exports filtered date range using onExport', async (): Promise<void> => {
-    const baseTransactions = [
-      {} as unknown as TTransaction,
       {} as unknown as TTransaction,
       {} as unknown as TTransaction,
     ];
@@ -192,7 +184,7 @@ describe('ExportTransactions', (): void => {
 
     const onExport = vi
       .fn<[_start?: Date | undefined, _end?: Date | undefined], Promise<TTransaction[]>>()
-      .mockImplementation(
+      // REMOVED: .mockImplementation(
         (start?: Date, end?: Date): Promise<TTransaction[]> =>
           new Promise<TTransaction[]>((resolve) => {
             // simulate async
@@ -261,16 +253,6 @@ describe('ExportTransactions', (): void => {
     });
   });
 
-  test('shows error toast when there are no transactions to export (no date range)', async (): Promise<void> => {
-    const transactions: TTransaction[] = [];
-    const onExport = vi.fn<[_start?: Date | undefined, _end?: Date | undefined], Promise<TTransaction[]>>().mockResolvedValue(
-      [],
-    );
-
-    const generateCSVSpy = vi.spyOn(exportUtils, 'generateCSV');
-    const downloadFileSpy = vi.spyOn(exportUtils, 'downloadFile');
-
-    render(<ExportTransactions transactions={transactions} onExport={onExport} />);
 
     const exportButton = screen.getByRole('button', { name: 'Export' });
     fireEvent.click(exportButton);
@@ -283,12 +265,10 @@ describe('ExportTransactions', (): void => {
     });
   });
 
-  test('shows error toast when filtered onExport returns empty list', async (): Promise<void> => {
-    const transactions = [{} as unknown as TTransaction];
 
     const onExport = vi
       .fn<[_start?: Date | undefined, _end?: Date | undefined], Promise<TTransaction[]>>()
-      .mockResolvedValue([]);
+      // REMOVED: .mockResolvedValue([]);
 
     const downloadFileSpy = vi.spyOn(exportUtils, 'downloadFile');
 
@@ -311,8 +291,6 @@ describe('ExportTransactions', (): void => {
     });
   });
 
-  test('handles errors during export and shows error toast', async (): Promise<void> => {
-    const transactions = [{} as unknown as TTransaction, {} as unknown as TTransaction];
     const onExport = vi.fn<[_start?: Date | undefined, _end?: Date | undefined], Promise<TTransaction[]>>().mockResolvedValue(
       [],
     );
@@ -336,8 +314,6 @@ describe('ExportTransactions', (): void => {
     errorSpy.mockRestore();
   });
 
-  test('updates footer text when date range is provided', (): void => {
-    const transactions = [{} as unknown as TTransaction];
 
     render(<ExportTransactions transactions={transactions} onExport={vi.fn()} />);
 

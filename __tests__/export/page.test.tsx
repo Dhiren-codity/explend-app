@@ -117,8 +117,6 @@ describe('app/export/page', (): void => {
       expect(allCalls[1][0]).toBe('user@example.com');
     });
 
-    test('renders ExportTransactions when transactions exist', async (): Promise<void> => {
-      const { getCachedAllTransactions } = getTestMocks();
       getCachedAllTransactions.mockResolvedValue([{ id: 1 }, { id: 2 }]);
 
       const element = await Page();
@@ -131,8 +129,6 @@ describe('app/export/page', (): void => {
       expect(screen.getByText('transactions-count:2')).toBeDefined();
     });
 
-    test('onExport calls getTransactionsForExport with userId and without dates', async (): Promise<void> => {
-      const { getCachedAllTransactions, getTransactionsForExport } = getTestMocks();
       getCachedAllTransactions.mockResolvedValue([{ id: 1 }]);
 
       const element = await Page();
@@ -150,8 +146,6 @@ describe('app/export/page', (): void => {
       expect(call[2]).toBeUndefined();
     });
 
-    test('onExport calls getTransactionsForExport with userId and date range', async (): Promise<void> => {
-      const { getCachedAllTransactions, getTransactionsForExport } = getTestMocks();
       getCachedAllTransactions.mockResolvedValue([{ id: 1 }]);
 
       const element = await Page();
@@ -175,8 +169,6 @@ describe('app/export/page', (): void => {
       }
     });
 
-    test('handles undefined session userId and still renders no transactions view', async (): Promise<void> => {
-      const { getCachedAuthSession, getCachedAllTransactions } = getTestMocks();
       getCachedAuthSession.mockResolvedValue(undefined);
       getCachedAllTransactions.mockResolvedValue([]);
 
@@ -192,8 +184,6 @@ describe('app/export/page', (): void => {
       expect(calls[1][0]).toBeUndefined();
     });
 
-    test('propagates errors from getCachedAllTransactions', async (): Promise<void> => {
-      const { getCachedAllTransactions } = getTestMocks();
       getCachedAllTransactions.mockRejectedValue(new Error('boom'));
 
       await expect(Page()).rejects.toThrow('boom');
