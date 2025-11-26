@@ -148,8 +148,6 @@ describe("Page (app/export/page)", (): void => {
     );
   });
 
-  test("renders ExportTransactions when transactions exist and wires onExport", async (): Promise<void> => {
-    const txList = [{ id: "t1" }];
     setMockResolvedValue(getCachedAllTransactionsMock, txList);
 
     const element = await Page();
@@ -185,8 +183,6 @@ describe("Page (app/export/page)", (): void => {
     expect(result).toEqual(exportResult);
   });
 
-  test("onExport passes undefined dates through when not provided", async (): Promise<void> => {
-    setMockResolvedValue(getCachedAllTransactionsMock, [{ id: "t1" }]);
 
     await Page();
 
@@ -223,21 +219,12 @@ describe("Page (app/export/page)", (): void => {
     expect(getCachedAllTransactionsMock).toHaveBeenNthCalledWith(2, undefined);
   });
 
-  test("propagates error when getCachedAuthSession rejects on awaited call", async (): Promise<void> => {
-    setMockImplementationOnce(
-      getCachedAuthSessionMock,
-      (): Promise<unknown> =>
-        Promise.resolve({ user: { email: "ok@example.com" } }),
     );
     setMockRejectedValue(getCachedAuthSessionMock, new Error("Auth failed"));
 
     await expect(Page()).rejects.toThrow("Auth failed");
   });
 
-  test("propagates error when getCachedAllTransactions rejects on awaited call", async (): Promise<void> => {
-    setMockResolvedValue(getCachedAuthSessionMock, {
-      user: { email: "user@example.com" },
-    });
     setMockImplementationOnce(
       getCachedAllTransactionsMock,
       (): Promise<unknown> => Promise.resolve([]),

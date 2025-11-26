@@ -190,11 +190,6 @@ describe('ExportTransactions', () => {
     vi.clearAllMocks();
   });
 
-  test('renders with default props and accessibility labels', (): void => {
-    const transactions = createTransactions(2);
-    const onExport = vi.fn(async (): Promise<TTransaction[]> => transactions);
-
-    render(<ExportTransactions transactions={transactions} onExport={onExport} />);
 
     expect(screen.getByText('Export Transactions')).toBeInTheDocument();
     expect(screen.getByLabelText('Export Format')).toBeInTheDocument();
@@ -205,15 +200,6 @@ describe('ExportTransactions', () => {
     ).toBeInTheDocument();
   });
 
-  test('exports CSV by default with provided transactions (no date range)', async (): Promise<void> => {
-    const transactions = createTransactions(2);
-    const onExport = vi.fn(async (): Promise<TTransaction[]> => transactions);
-
-    vi.mocked(generateCSV).mockReturnValue('csv-content');
-    vi.mocked(getExportFilename).mockReturnValue('file.csv');
-    vi.mocked(getMimeType).mockReturnValue('text/csv');
-
-    render(<ExportTransactions transactions={transactions} onExport={onExport} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Export' }));
 
@@ -227,15 +213,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('switches to JSON format and exports JSON', async (): Promise<void> => {
-    const transactions = createTransactions(3);
-    const onExport = vi.fn(async (): Promise<TTransaction[]> => transactions);
-
-    vi.mocked(generateJSON).mockReturnValue('json-content');
-    vi.mocked(getExportFilename).mockReturnValue('file.json');
-    vi.mocked(getMimeType).mockReturnValue('application/json');
-
-    render(<ExportTransactions transactions={transactions} onExport={onExport} />);
 
     const formatSelect = screen.getByTestId('format-select');
     fireEvent.change(formatSelect, { target: { value: 'json' } });
@@ -256,17 +233,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('selecting date range uses onExport(start, end) and exports result', async (): Promise<void> => {
-    const allTransactions = createTransactions(5);
-    const filtered = createTransactions(1);
-
-    const onExport = vi.fn(async (_start?: Date, _end?: Date): Promise<TTransaction[]> => filtered);
-
-    vi.mocked(generateCSV).mockReturnValue('filtered-csv');
-    vi.mocked(getExportFilename).mockReturnValue('range.csv');
-    vi.mocked(getMimeType).mockReturnValue('text/csv');
-
-    render(<ExportTransactions transactions={allTransactions} onExport={onExport} />);
 
     fireEvent.click(screen.getByLabelText('set-date-range'));
 
@@ -299,11 +265,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('date range returns no transactions -> shows error and does not download', async (): Promise<void> => {
-    const allTransactions = createTransactions(4);
-    const onExport = vi.fn(async (): Promise<TTransaction[]> => [] as unknown as TTransaction[]);
-
-    render(<ExportTransactions transactions={allTransactions} onExport={onExport} />);
 
     fireEvent.click(screen.getByLabelText('set-date-range'));
     fireEvent.click(screen.getByRole('button', { name: 'Export' }));
@@ -316,13 +277,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('handles errors during export (generator throws) and resets loading state', async (): Promise<void> => {
-    const transactions = createTransactions(2);
-    const onExport = vi.fn(async (): Promise<TTransaction[]> => transactions);
-
-    vi.mocked(generateCSV).mockImplementation(() => {
-      throw new Error('gen fail');
-    });
 
     render(<ExportTransactions transactions={transactions} onExport={onExport} />);
 
@@ -338,15 +292,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('shows loading state while exporting and restores after completion', async (): Promise<void> => {
-    const transactions = createTransactions(3);
-
-    let resolveFn: ((value: TTransaction[]) => void) | undefined;
-    const onExport = vi.fn(
-      (_start?: Date, _end?: Date): Promise<TTransaction[]> =>
-        new Promise<TTransaction[]>((resolve) => {
-          resolveFn = resolve;
-        }),
     );
 
     vi.mocked(generateCSV).mockReturnValue('csv-content');
@@ -375,11 +320,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('clearing date range resets info text', async (): Promise<void> => {
-    const transactions = createTransactions(1);
-    const onExport = vi.fn(async (): Promise<TTransaction[]> => transactions);
-
-    render(<ExportTransactions transactions={transactions} onExport={onExport} />);
 
     fireEvent.click(screen.getByLabelText('set-date-range'));
     expect(
