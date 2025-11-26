@@ -17,7 +17,7 @@ describe("config/constants/navigation", () => {
   });
 
   describe("DEFAULT_TRANSACTION_LIMIT", () => {
-    test("should be a number with expected value", () => {
+    test(async () => {
       expect(typeof DEFAULT_TRANSACTION_LIMIT).toBe("number");
       expect(DEFAULT_TRANSACTION_LIMIT).toBe(30);
       expect(Number.isFinite(DEFAULT_TRANSACTION_LIMIT)).toBe(true);
@@ -26,7 +26,7 @@ describe("config/constants/navigation", () => {
   });
 
   describe("NAV_ICON_SIZE", () => {
-    test("should be a number with expected value", () => {
+    test(async () => {
       expect(typeof NAV_ICON_SIZE).toBe("number");
       expect(NAV_ICON_SIZE).toBe(24);
       expect(Number.isFinite(NAV_ICON_SIZE)).toBe(true);
@@ -42,7 +42,7 @@ describe("config/constants/navigation", () => {
   });
 
   describe("NAV_TITLE enum", () => {
-    test("should have expected string values", () => {
+    test(async () => {
       expect(NAV_TITLE.HOME).toBe("Home");
       expect(NAV_TITLE.MONTHLY_REPORT).toBe("Monthly Report");
       expect(NAV_TITLE.CHART).toBe("Chart");
@@ -56,7 +56,7 @@ describe("config/constants/navigation", () => {
       expect(NAV_TITLE.SIGNIN).toBe("Sign In");
     });
 
-    test("should have unique values", () => {
+    test(async () => {
       const values: string[] = [
         NAV_TITLE.HOME,
         NAV_TITLE.MONTHLY_REPORT,
@@ -76,12 +76,12 @@ describe("config/constants/navigation", () => {
   });
 
   describe("SEARCH_PARAM enum", () => {
-    test("should have expected string values", () => {
+    test(async () => {
       expect(SEARCH_PARAM.QUERY).toBe("query");
       expect(SEARCH_PARAM.PAGE).toBe("page");
     });
 
-    test("values should be lowercase strings", () => {
+    test(async () => {
       const values: string[] = [SEARCH_PARAM.QUERY, SEARCH_PARAM.PAGE];
       for (const value of values) {
         expect(value).toBe(value.toLowerCase());

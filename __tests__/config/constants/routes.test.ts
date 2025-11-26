@@ -16,7 +16,7 @@ describe("config/constants/routes", () => {
   });
 
   describe("ROUTE enum", () => {
-    test("should have correct path strings for each route", () => {
+    test(async () => {
       expect(ROUTE.HOME).toBe("/");
       expect(ROUTE.SIGNIN).toBe("/sign-in");
       expect(ROUTE.MONTHLY_REPORT).toBe("/monthly-report");
@@ -32,7 +32,7 @@ describe("config/constants/routes", () => {
       expect(ROUTE.DISABLED_ROUTE).toBe("/disabled-route");
     });
 
-    test("should contain unique values and follow formatting conventions", () => {
+    test(async () => {
       const values = [
         ROUTE.HOME,
         ROUTE.SIGNIN,
@@ -63,7 +63,7 @@ describe("config/constants/routes", () => {
   });
 
   describe("DISABLED_ROUTES", () => {
-    test("should be an array and initially empty", () => {
+    test(async () => {
       expect(Array.isArray(DISABLED_ROUTES)).toBe(true);
       expect(DISABLED_ROUTES.length).toBe(0);
     });
