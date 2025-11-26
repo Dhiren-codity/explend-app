@@ -8,7 +8,6 @@ vi.mock('react-hot-toast', () => {
       error: vi.fn(),
     },
   };
-});
 
 vi.mock('@heroui/react', () => {
   const React = require('react');
@@ -75,9 +74,6 @@ vi.mock('@heroui/react', () => {
             start: { toString: (): string => start },
             end: { toString: (): string => end },
           });
-        }
-      }
-    };
 
     return React.createElement(
       'div',
@@ -118,7 +114,6 @@ vi.mock('@heroui/react', () => {
     CardHeader,
     CardBody,
   };
-});
 
 vi.mock('react-icons/pi', () => ({
   PiDownloadSimpleFill: (): null => null,
@@ -129,10 +124,6 @@ import * as exportUtils from '@/app/lib/export-utils';
 import toast from 'react-hot-toast';
 import type { TTransaction } from '@/app/lib/types';
 
-describe('ExportTransactions', (): void => {
-  beforeEach((): void => {
-    vi.clearAllMocks();
-  });
 
   afterEach((): void => {
     cleanup();
@@ -175,7 +166,6 @@ describe('ExportTransactions', (): void => {
       expect(downloadFileSpy).toHaveBeenCalledWith('csv-data', 'export.csv', 'text/csv');
       expect(toast.success).toHaveBeenCalledWith('Exported 2 transactions');
     });
-  });
 
       {} as unknown as TTransaction,
       {} as unknown as TTransaction,
@@ -251,7 +241,6 @@ describe('ExportTransactions', (): void => {
       expect(toast.success).toHaveBeenCalledWith('Exported 1 transaction');
       expect(screen.getByRole('button')).toHaveTextContent('Export');
     });
-  });
 
 
     const exportButton = screen.getByRole('button', { name: 'Export' });
@@ -263,7 +252,6 @@ describe('ExportTransactions', (): void => {
       expect(downloadFileSpy).not.toHaveBeenCalled();
       expect(onExport).not.toHaveBeenCalled();
     });
-  });
 
 
     const onExport = vi
@@ -289,7 +277,6 @@ describe('ExportTransactions', (): void => {
       expect(toast.error).toHaveBeenCalledWith('No transactions to export');
       expect(downloadFileSpy).not.toHaveBeenCalled();
     });
-  });
 
     const onExport = vi.fn<[_start?: Date | undefined, _end?: Date | undefined], Promise<TTransaction[]>>().mockResolvedValue(
       [],
@@ -327,4 +314,3 @@ describe('ExportTransactions', (): void => {
       screen.getByText('Exporting transactions from 2024-03-01 to 2024-03-15'),
     ).toBeInTheDocument();
   });
-});

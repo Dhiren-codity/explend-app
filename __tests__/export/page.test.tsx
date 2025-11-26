@@ -6,7 +6,6 @@ vi.mock('@/config/constants/navigation', (): Record<string, unknown> => {
   return {
     NAV_TITLE: { EXPORT: 'Export Title' },
   };
-});
 
 vi.mock('../lib/actions', (): Record<string, unknown> => {
   const getCachedAuthSession = vi.fn();
@@ -21,7 +20,6 @@ vi.mock('../lib/actions', (): Record<string, unknown> => {
     getCachedAllTransactions,
     getTransactionsForExport,
   };
-});
 
 vi.mock('../ui/home/export-transactions', (): Record<string, unknown> => {
   type ExportTransactionsProps = {
@@ -77,17 +75,6 @@ const getTestMocks = (): TestMocks => {
   return globalObj.testMocks as TestMocks;
 };
 
-describe('app/export/page', (): void => {
-  beforeEach((): void => {
-    const { getCachedAuthSession, getCachedAllTransactions, getTransactionsForExport } = getTestMocks();
-    getCachedAuthSession.mockReset();
-    getCachedAllTransactions.mockReset();
-    getTransactionsForExport.mockReset();
-
-    getCachedAuthSession.mockResolvedValue({ user: { email: 'user@example.com' } });
-    getCachedAllTransactions.mockResolvedValue([]);
-    getTransactionsForExport.mockResolvedValue([]);
-  });
 
   afterEach((): void => {
     cleanup();
@@ -98,7 +85,6 @@ describe('app/export/page', (): void => {
     test('should expose correct title', (): void => {
       expect(metadata.title).toBe('Export Title');
     });
-  });
 
   describe('Page component', (): void => {
     test('renders NoTransactionsPlug when there are no transactions', async (): Promise<void> => {
@@ -167,7 +153,6 @@ describe('app/export/page', (): void => {
         expect(startDate.toISOString()).toBe('2020-01-01T00:00:00.000Z');
         expect(endDate.toISOString()).toBe('2020-12-31T00:00:00.000Z');
       }
-    });
 
       getCachedAuthSession.mockResolvedValue(undefined);
       getCachedAllTransactions.mockResolvedValue([]);
@@ -188,5 +173,3 @@ describe('app/export/page', (): void => {
 
       await expect(Page()).rejects.toThrow('boom');
     });
-  });
-});

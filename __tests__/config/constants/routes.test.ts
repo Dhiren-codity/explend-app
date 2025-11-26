@@ -6,10 +6,6 @@ vi.mock("node:fs", () => ({
   readFileSync: vi.fn(),
 }));
 
-describe("config/constants/routes", () => {
-  beforeEach((): void => {
-    // Setup if needed
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -58,9 +54,6 @@ describe("config/constants/routes", () => {
         } else {
           expect(routeValue).toBe("/");
         }
-      });
-    });
-  });
 
   describe("DISABLED_ROUTES", () => {
     test(async () => {
@@ -107,5 +100,3 @@ describe("config/constants/routes", () => {
       const mod2 = await import("./config/constants/routes");
       expect(mod2.DISABLED_ROUTES.length).toBe(0);
     });
-  });
-});

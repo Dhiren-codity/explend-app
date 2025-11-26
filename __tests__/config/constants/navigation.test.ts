@@ -7,10 +7,6 @@ import {
   DEFAULT_PAGINATION_PAGE_NUMBER,
 } from "./navigation";
 
-describe("config/constants/navigation", () => {
-  beforeEach((): void => {
-    // No setup needed for constants
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -23,7 +19,6 @@ describe("config/constants/navigation", () => {
       expect(Number.isFinite(DEFAULT_TRANSACTION_LIMIT)).toBe(true);
       expect(DEFAULT_TRANSACTION_LIMIT).toBeGreaterThan(0);
     });
-  });
 
   describe("NAV_ICON_SIZE", () => {
     test(async () => {
@@ -32,14 +27,12 @@ describe("config/constants/navigation", () => {
       expect(Number.isFinite(NAV_ICON_SIZE)).toBe(true);
       expect(NAV_ICON_SIZE).toBeGreaterThan(0);
     });
-  });
 
   describe("DEFAULT_PAGINATION_PAGE_NUMBER", () => {
     test('should be a string "1"', () => {
       expect(typeof DEFAULT_PAGINATION_PAGE_NUMBER).toBe("string");
       expect(DEFAULT_PAGINATION_PAGE_NUMBER).toBe("1");
     });
-  });
 
   describe("NAV_TITLE enum", () => {
     test(async () => {
@@ -73,7 +66,6 @@ describe("config/constants/navigation", () => {
       const uniqueValues = new Set(values);
       expect(uniqueValues.size).toBe(values.length);
     });
-  });
 
   describe("SEARCH_PARAM enum", () => {
     test(async () => {
@@ -87,6 +79,3 @@ describe("config/constants/navigation", () => {
         expect(value).toBe(value.toLowerCase());
         expect(typeof value).toBe("string");
       }
-    });
-  });
-});
