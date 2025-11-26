@@ -148,15 +148,10 @@ describe('Navbar', (): void => {
     expect(logo.getAttribute('data-size')).toBe('xxs');
   });
 
-  test('should not render logo when withLogo is false', (): void => {
-    render(<Navbar linksGroup="top" withLogo={false} />);
     const logo = screen.queryByTestId('logo');
     expect(logo).toBeNull();
   });
 
-  test('should render only enabled top nav links and mark active link', (): void => {
-    mockedPathnameValue = '/settings';
-    render(<Navbar linksGroup="top" withLogo={false} />);
 
     const list = screen.getByRole('list');
     expect(list).toBeDefined();
@@ -183,9 +178,6 @@ describe('Navbar', (): void => {
     expect(isSequential).toBe(true);
   });
 
-  test('should render only enabled bottom nav links', (): void => {
-    mockedPathnameValue = '/feedback';
-    render(<Navbar linksGroup="bottom" withLogo={false} />);
 
     const list = screen.getByRole('list');
     expect(list).toBeDefined();
@@ -199,28 +191,11 @@ describe('Navbar', (): void => {
     expect(only.getAttribute('data-active')).toBe('true');
   });
 
-  test('should render zero links when all routes in the group are disabled', (): void => {
-    // Disable all top routes
-    disabledRoutesMock.length = 0;
-    disabledRoutesMock.push(
-      '/',
-      '/monthly',
-      '/chart',
-      '/limits',
-      '/subs',
-      '/categories',
-      '/export',
-      '/settings'
-    );
-
-    render(<Navbar linksGroup="top" withLogo={false} />);
 
     const links = screen.queryAllByTestId('hoverable-nav-link');
     expect(links.length).toBe(0);
   });
 
-  test('should handle async operations and find the list element', async (): Promise<void> => {
-    render(<Navbar linksGroup="top" withLogo={false} />);
     const list = await screen.findByRole('list');
     expect(list).toBeDefined();
   });

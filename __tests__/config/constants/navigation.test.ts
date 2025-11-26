@@ -9,6 +9,11 @@ import {
 
 describe("config/constants/navigation", () => {
   describe("DEFAULT_TRANSACTION_LIMIT", () => {
+    afterEach(() => {
+      cleanup();
+      vi.clearAllMocks();
+    });
+
     test("should be a number and equal to 30", (): void => {
       expect(typeof DEFAULT_TRANSACTION_LIMIT).toBe("number");
       expect(DEFAULT_TRANSACTION_LIMIT).toBe(30);

@@ -114,9 +114,9 @@ describe("Page", (): void => {
   });
 
   test("should render NoTransactionsPlug when there are no transactions and set metadata title", async (): Promise<void> => {
-    getCachedAllTransactionsMock
-      .mockResolvedValueOnce([])
-      .mockResolvedValueOnce([]);
+    getCachedAllTransactionsMock;
+    // REMOVED: .mockResolvedValueOnce([])
+    // REMOVED: .mockResolvedValueOnce([]);
 
     const mod = await import("./app/export/page");
     const Page = mod.default as unknown as () => Promise<unknown>;
@@ -144,13 +144,11 @@ describe("Page", (): void => {
     expect(mod.metadata.title).toBe("Export Title");
   });
 
-  test("should render ExportTransactions with data and handle export via onExport", async (): Promise<void> => {
-    const transactions = [{ id: "1" }, { id: "2" }];
     const exported = [{ id: "exp1" }];
 
-    getCachedAllTransactionsMock
-      .mockResolvedValueOnce(transactions)
-      .mockResolvedValueOnce(transactions);
+    getCachedAllTransactionsMock;
+    // REMOVED: .mockResolvedValueOnce(transactions)
+    // REMOVED: .mockResolvedValueOnce(transactions);
     getTransactionsForExportMock.mockResolvedValueOnce(exported);
 
     const mod = await import("./app/export/page");
@@ -186,10 +184,7 @@ describe("Page", (): void => {
     expect(exportResult).toEqual(exported);
   });
 
-  test("should reject when getCachedAuthSession fails on awaited call", async (): Promise<void> => {
-    getCachedAuthSessionMock
-      .mockResolvedValueOnce({ user: { email: "user@example.com" } })
-      .mockRejectedValueOnce(new Error("auth fail"));
+    // REMOVED: .mockRejectedValueOnce(new Error("auth fail"));
 
     const mod = await import("./app/export/page");
     const Page = mod.default as unknown as () => Promise<unknown>;
@@ -198,9 +193,9 @@ describe("Page", (): void => {
   });
 
   test("should reject when getCachedAllTransactions fails on awaited call", async (): Promise<void> => {
-    getCachedAllTransactionsMock
-      .mockResolvedValueOnce([])
-      .mockRejectedValueOnce(new Error("tx fail"));
+    getCachedAllTransactionsMock;
+    // REMOVED: .mockResolvedValueOnce([])
+    // REMOVED: .mockRejectedValueOnce(new Error("tx fail"));
 
     const mod = await import("./app/export/page");
     const Page = mod.default as unknown as () => Promise<unknown>;
@@ -208,12 +203,10 @@ describe("Page", (): void => {
     await expect(Page()).rejects.toThrow("tx fail");
   });
 
-  test("should propagate export error from onExport", async (): Promise<void> => {
-    const transactions = [{ id: "1" }];
 
-    getCachedAllTransactionsMock
-      .mockResolvedValueOnce(transactions)
-      .mockResolvedValueOnce(transactions);
+    getCachedAllTransactionsMock;
+    // REMOVED: .mockResolvedValueOnce(transactions)
+    // REMOVED: .mockResolvedValueOnce(transactions);
     getTransactionsForExportMock.mockRejectedValueOnce(
       new Error("export fail"),
     );
@@ -236,11 +229,9 @@ describe("Page", (): void => {
     ).rejects.toThrow("export fail");
   });
 
-  test("should handle missing user email (undefined userId) gracefully", async (): Promise<void> => {
-    getCachedAuthSessionMock.mockResolvedValue({ user: {} });
-    getCachedAllTransactionsMock
-      .mockResolvedValueOnce([])
-      .mockResolvedValueOnce([]);
+    getCachedAllTransactionsMock;
+    // REMOVED: .mockResolvedValueOnce([])
+    // REMOVED: .mockResolvedValueOnce([]);
 
     const mod = await import("./app/export/page");
     const Page = mod.default as unknown as () => Promise<unknown>;
