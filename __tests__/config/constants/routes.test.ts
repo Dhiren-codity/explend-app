@@ -11,17 +11,11 @@ vi.mock(
   }),
 );
 
-describe("config/constants/routes", () => {
-  beforeEach((): void => {
-    // No setup required for constants
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
   });
 
-  describe("ROUTE enum values", () => {
-    const routeCases: Array<{ name: string; value: string; expected: string }> =
       [
         { name: "HOME", value: ROUTE.HOME, expected: "/" },
         { name: "SIGNIN", value: ROUTE.SIGNIN, expected: "/sign-in" },
@@ -60,13 +54,11 @@ describe("config/constants/routes", () => {
         expect(typeof value).toBe("string");
         expect(value.length).toBeGreaterThan(0);
       }
-    });
 
     test("every route should start with a forward slash", (): void => {
       for (const { value } of routeCases) {
         expect(value.startsWith("/")).toBe(true);
       }
-    });
 
     test("routes should be unique", (): void => {
       const values: string[] = routeCases.map((c) => c.value);
@@ -81,12 +73,10 @@ describe("config/constants/routes", () => {
       for (const route of nonRootRoutes) {
         expect(route.endsWith("/")).toBe(false);
       }
-    });
 
     test("sitemap route should end with .xml", (): void => {
       expect(ROUTE.SITEMAP.endsWith(".xml")).toBe(true);
     });
-  });
 
   describe("DISABLED_ROUTES constant", () => {
     test("should be an array and default to empty", (): void => {
@@ -99,7 +89,6 @@ describe("config/constants/routes", () => {
       for (const value of DISABLED_ROUTES) {
         expect(typeof value).toBe("string");
       }
-    });
 
     test("setting an invalid length should throw and leave array unchanged", (): void => {
       expect((): void => {
@@ -109,5 +98,3 @@ describe("config/constants/routes", () => {
       }).toThrow(RangeError);
       expect(DISABLED_ROUTES.length).toBe(0);
     });
-  });
-});

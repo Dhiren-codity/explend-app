@@ -173,7 +173,6 @@ vi.mock('@heroui/react', async () => {
     CardBody,
     CardHeader,
   };
-});
 
 const createTransactions = (count: number): TTransaction[] => {
   const rows = Array.from({ length: count }, (_v, i) => ({
@@ -184,11 +183,6 @@ const createTransactions = (count: number): TTransaction[] => {
   return rows as unknown as TTransaction[];
 };
 
-describe('ExportTransactions', () => {
-  afterEach((): void => {
-    cleanup();
-    vi.clearAllMocks();
-  });
 
 
     expect(screen.getByText('Export Transactions')).toBeInTheDocument();
@@ -211,7 +205,6 @@ describe('ExportTransactions', () => {
       expect(downloadFile).toHaveBeenCalledWith('csv-content', 'file.csv', 'text/csv');
       expect(toast.success).toHaveBeenCalledWith('Exported 2 transactions');
     });
-  });
 
 
     const formatSelect = screen.getByTestId('format-select');
@@ -231,7 +224,6 @@ describe('ExportTransactions', () => {
       );
       expect(toast.success).toHaveBeenCalledWith('Exported 3 transactions');
     });
-  });
 
 
     fireEvent.click(screen.getByLabelText('set-date-range'));
@@ -263,7 +255,6 @@ describe('ExportTransactions', () => {
       expect(downloadFile).toHaveBeenCalledWith('filtered-csv', 'range.csv', 'text/csv');
       expect(toast.success).toHaveBeenCalledWith('Exported 1 transaction');
     });
-  });
 
 
     fireEvent.click(screen.getByLabelText('set-date-range'));
@@ -275,7 +266,6 @@ describe('ExportTransactions', () => {
       expect(generateCSV).not.toHaveBeenCalled();
       expect(generateJSON).not.toHaveBeenCalled();
     });
-  });
 
 
     render(<ExportTransactions transactions={transactions} onExport={onExport} />);
@@ -290,7 +280,6 @@ describe('ExportTransactions', () => {
     await waitFor(() => {
       expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
     });
-  });
 
     );
 
@@ -318,7 +307,6 @@ describe('ExportTransactions', () => {
       expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
       expect(toast.success).toHaveBeenCalledWith('Exported 3 transactions');
     });
-  });
 
 
     fireEvent.click(screen.getByLabelText('set-date-range'));
@@ -333,5 +321,3 @@ describe('ExportTransactions', () => {
         screen.getByText('Ready to export all 1 transaction'),
       ).toBeInTheDocument();
     });
-  });
-});

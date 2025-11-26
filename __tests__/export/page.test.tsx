@@ -15,7 +15,6 @@ vi.mock("@/config/constants/navigation", () => {
   return {
     NAV_TITLE: { EXPORT: "Export Page" },
   };
-});
 
 vi.mock("../lib/actions", () => {
   getCachedAuthSessionMock = vi.fn();
@@ -26,7 +25,6 @@ vi.mock("../lib/actions", () => {
     getCachedAllTransactions: getCachedAllTransactionsMock,
     getTransactionsForExport: getTransactionsForExportMock,
   };
-});
 
 vi.mock("../ui/home/export-transactions", () => {
   const MockExportTransactions = (props: {
@@ -101,19 +99,6 @@ const setMockImplementationOnce = (
   ).mockImplementationOnce(impl);
 };
 
-describe("Page (app/export/page)", (): void => {
-  beforeEach((): void => {
-    lastExportTransactionsProps = null;
-    resetMock(getCachedAuthSessionMock);
-    resetMock(getCachedAllTransactionsMock);
-    resetMock(getTransactionsForExportMock);
-
-    setMockResolvedValue(getCachedAuthSessionMock, {
-      user: { email: "user@example.com" },
-    });
-    setMockResolvedValue(getCachedAllTransactionsMock, []);
-    setMockResolvedValue(getTransactionsForExportMock, []);
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -243,4 +228,3 @@ describe("Page (app/export/page)", (): void => {
 
     expect(markup).toContain("Export Page");
   });
-});

@@ -65,7 +65,6 @@ vi.mock('@/config/constants/routes', (): Record<string, unknown> => {
     // helper export for tests
     __setDisabledRoutes: setDisabledRoutes,
   };
-});
 
 vi.mock('react-icons/pi', (): Record<string, unknown> => {
   const makeIcon = (_name: string) =>
@@ -94,7 +93,6 @@ vi.mock('react-icons/pi', (): Record<string, unknown> => {
     PiStack: makeIcon('PiStack'),
     PiStackFill: makeIcon('PiStackFill'),
   };
-});
 
 // Mock HoverableNavLink and Logo with relative paths matching the SUT
 vi.mock('../hoverables', (): Record<string, unknown> => {
@@ -134,15 +132,6 @@ import { NAV_TITLE } from '@/config/constants/navigation';
 // Import the component under test (path relative to this test file)
 import Navbar from './navbar';
 
-describe('Navbar', (): void => {
-  beforeEach((): void => {
-    pathnameValue = '/';
-    useMediaReturn = true;
-    setDisabledRoutes([]);
-    usePathnameMock.mockClear();
-    useMediaMock.mockClear();
-    getBreakpointWidthMock.mockClear();
-  });
 
   afterEach((): void => {
     cleanup();
@@ -261,4 +250,3 @@ describe('Navbar', (): void => {
     const logo = screen.queryByTestId('logo');
     expect(logo).toBeNull();
   });
-});
