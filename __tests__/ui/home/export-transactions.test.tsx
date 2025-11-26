@@ -83,7 +83,6 @@ vi.mock('@heroui/react', async () => {
       } else if (!nextStart && !nextEnd) {
         onChange(null);
       }
-    };
 
     return (
       <div>
@@ -127,7 +126,6 @@ vi.mock('@heroui/react', async () => {
     Select: MockSelect,
     SelectItem: MockSelectItem,
   };
-});
 
 vi.mock('react-hot-toast', () => {
   return {
@@ -136,7 +134,6 @@ vi.mock('react-hot-toast', () => {
       error: vi.fn(),
     },
   };
-});
 
 vi.mock('react-icons/pi', () => ({
   PiDownloadSimpleFill: (): JSX.Element => <svg aria-hidden="true" />,
@@ -150,14 +147,7 @@ vi.mock('@/app/lib/export-utils', () => {
     getExportFilename: vi.fn((fmt: string): string => (fmt === 'csv' ? 'export.csv' : 'export.json')),
     getMimeType: vi.fn((fmt: string): string => (fmt === 'csv' ? 'text/csv' : 'application/json')),
   };
-});
 
-describe('ExportTransactions', (): void => {
-  afterEach((): void => {
-    cleanup();
-    vi.clearAllMocks();
-    vi.restoreAllMocks();
-  });
 
     const onExport = vi.fn(async (): Promise<TTransaction[]> => transactions);
 
@@ -193,7 +183,6 @@ describe('ExportTransactions', (): void => {
 
       expect(toast.success).toHaveBeenCalledWith('Exported 2 transactions');
     });
-  });
 
     const onExport = vi.fn(async (): Promise<TTransaction[]> => transactions);
 
@@ -216,7 +205,6 @@ describe('ExportTransactions', (): void => {
 
       expect(toast.success).toHaveBeenCalledWith('Exported 1 transaction');
     });
-  });
 
     const filtered = [{ id: 2 }] as unknown as TTransaction[];
     const onExport = vi.fn(async (_start?: Date, _end?: Date): Promise<TTransaction[]> => filtered);
@@ -253,7 +241,6 @@ describe('ExportTransactions', (): void => {
       expect(downloadFile).toHaveBeenCalled();
       expect(toast.success).toHaveBeenCalledWith('Exported 1 transaction');
     });
-  });
 
 
     fireEvent.click(screen.getByRole('button', { name: 'Export' }));
@@ -264,7 +251,6 @@ describe('ExportTransactions', (): void => {
       expect(generateCSV).not.toHaveBeenCalled();
       expect(generateJSON).not.toHaveBeenCalled();
     });
-  });
 
     const onExport = vi.fn(async (): Promise<TTransaction[]> => [] as unknown as TTransaction[]);
 
@@ -283,7 +269,6 @@ describe('ExportTransactions', (): void => {
       expect(toast.error).toHaveBeenCalledWith('No transactions to export');
       expect(downloadFile).not.toHaveBeenCalled();
     });
-  });
 
     const onExport = vi.fn(async (): Promise<TTransaction[]> => transactions);
 
@@ -301,5 +286,3 @@ describe('ExportTransactions', (): void => {
       expect(toast.error).toHaveBeenCalledWith('Failed to export transactions');
       expect(consoleSpy).toHaveBeenCalled();
     });
-  });
-});

@@ -8,7 +8,6 @@ vi.mock("@/config/constants/navigation", (): Record<string, unknown> => {
     __esModule: true,
     NAV_TITLE: { EXPORT: "Export" },
   };
-});
 
 vi.mock("../lib/actions", (): Record<string, unknown> => {
   const getCachedAuthSession = vi.fn();
@@ -25,7 +24,6 @@ vi.mock("../lib/actions", (): Record<string, unknown> => {
     getCachedAllTransactions,
     getTransactionsForExport,
   };
-});
 
 vi.mock("../ui/no-transactions-plug", (): Record<string, unknown> => {
   const NoTransactionsPlug = (): JSX.Element =>
@@ -34,7 +32,6 @@ vi.mock("../ui/no-transactions-plug", (): Record<string, unknown> => {
     __esModule: true,
     default: NoTransactionsPlug,
   };
-});
 
 vi.mock("../ui/sidebar/with-sidebar", (): Record<string, unknown> => {
   const WithSidebar = ({
@@ -53,7 +50,6 @@ vi.mock("../ui/sidebar/with-sidebar", (): Record<string, unknown> => {
     __esModule: true,
     default: WithSidebar,
   };
-});
 
 vi.mock("../ui/home/export-transactions", (): Record<string, unknown> => {
   const ExportTransactions = (props: {
@@ -68,7 +64,6 @@ vi.mock("../ui/home/export-transactions", (): Record<string, unknown> => {
     __esModule: true,
     default: ExportTransactions,
   };
-});
 
 type MockActions = {
   getCachedAuthSession: ReturnType<typeof vi.fn>;
@@ -91,16 +86,6 @@ function getLastOnExport():
     | undefined;
 }
 
-describe("app/export/page.tsx - Page", (): void => {
-  beforeEach((): void => {
-    const actions = getActions();
-    actions.getCachedAuthSession.mockReset().mockResolvedValue({
-      user: { email: "user@example.com" },
-    });
-    actions.getCachedAllTransactions.mockReset().mockResolvedValue([]);
-    actions.getTransactionsForExport.mockReset().mockResolvedValue([]);
-    (globalThis as unknown as Record<string, unknown>).lastOnExport = undefined;
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -232,4 +217,3 @@ describe("app/export/page.tsx - Page", (): void => {
     expect(calls[0]?.[0]).toBeUndefined();
     expect(calls[1]?.[0]).toBeUndefined();
   });
-});

@@ -27,7 +27,6 @@ vi.mock('react-icons/pi', (): Record<string, unknown> => {
     PiStack: Comp,
     PiStackFill: Comp,
   };
-});
 
 vi.mock('react-use', (): Record<string, unknown> => {
   return {
@@ -40,7 +39,6 @@ vi.mock('react-use', (): Record<string, unknown> => {
       return typeof result === 'boolean' ? result : true;
     },
   };
-});
 
 vi.mock('next/navigation', (): Record<string, unknown> => {
   return {
@@ -50,7 +48,6 @@ vi.mock('next/navigation', (): Record<string, unknown> => {
       return (value as string) ?? '/';
     },
   };
-});
 
 vi.mock('@/config/constants/navigation', (): Record<string, unknown> => {
   return {
@@ -68,7 +65,6 @@ vi.mock('@/config/constants/navigation', (): Record<string, unknown> => {
       ISSUE: 'Issue',
     },
   };
-});
 
 vi.mock('@/config/constants/routes', (): Record<string, unknown> => {
   const ROUTE = {
@@ -103,7 +99,6 @@ vi.mock('@/app/lib/helpers', (): Record<string, unknown> => {
       return ret;
     },
   };
-});
 
 vi.mock('@/app/ui/hoverables', (): Record<string, unknown> => {
   const HoverableNavLink = ({
@@ -125,7 +120,6 @@ vi.mock('@/app/ui/hoverables', (): Record<string, unknown> => {
       'data-active': isActiveLink ? 'true' : 'false',
       'data-scale': withScale ? 'true' : 'false',
     });
-  };
   return { HoverableNavLink };
 });
 
@@ -136,15 +130,6 @@ vi.mock('@/app/ui/logo', (): Record<string, unknown> => {
   return { default: Logo };
 });
 
-describe('Navbar', (): void => {
-  beforeEach((): void => {
-    const g = globalThis as unknown as Record<string, unknown>;
-    g.__USE_MEDIA_RESULT__ = true;
-    g.__USE_MEDIA_CALLS__ = [];
-    g.__PATHNAME__ = '/';
-    g.__BREAKPOINT_MD__ = '(min-width: 900px)';
-    g.__BREAKPOINT_CALLS__ = [];
-  });
 
   afterEach((): void => {
     cleanup();
@@ -241,5 +226,3 @@ describe('Navbar', (): void => {
     items.forEach((el, index) => {
       expect(el.getAttribute('data-idx')).toBe(String(index));
     });
-  });
-});

@@ -5,10 +5,6 @@ vi.mock("fs", () => ({
   readFileSync: vi.fn(),
 }));
 
-describe("config/constants/navigation", () => {
-  beforeEach((): void => {
-    // No setup required for constants
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -29,7 +25,6 @@ describe("config/constants/navigation", () => {
       expect("NAV_TITLE" in navigation).toBe(false);
       expect("SEARCH_PARAM" in navigation).toBe(false);
     });
-  });
 
   describe("DEFAULT_TRANSACTION_LIMIT", () => {
     test("should be a number with value 30", (): void => {
@@ -50,7 +45,6 @@ describe("config/constants/navigation", () => {
       }).toThrow(TypeError);
       expect(navigation.DEFAULT_TRANSACTION_LIMIT).toBe(30);
     });
-  });
 
   describe("NAV_ICON_SIZE", () => {
     test("should be a number with value 24", (): void => {
@@ -71,7 +65,6 @@ describe("config/constants/navigation", () => {
       }).toThrow(TypeError);
       expect(navigation.NAV_ICON_SIZE).toBe(24);
     });
-  });
 
   describe("DEFAULT_PAGINATION_PAGE_NUMBER", () => {
     test('should be a string with value "1"', (): void => {
@@ -92,5 +85,3 @@ describe("config/constants/navigation", () => {
       }).toThrow(TypeError);
       expect(navigation.DEFAULT_PAGINATION_PAGE_NUMBER).toBe("1");
     });
-  });
-});

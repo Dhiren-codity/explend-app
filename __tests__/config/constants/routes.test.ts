@@ -1,28 +1,6 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from "vitest";
 import { ROUTE, DISABLED_ROUTES } from "./config/constants/routes";
 
-describe("config/constants/routes", () => {
-  let originalDisabledRoutesSnapshot: readonly ROUTE[];
-
-  const getAllRouteValues = (): string[] => [
-    ROUTE.HOME,
-    ROUTE.SIGNIN,
-    ROUTE.MONTHLY_REPORT,
-    ROUTE.CHART,
-    ROUTE.LIMITS,
-    ROUTE.SUBSCRIPTIONS,
-    ROUTE.CATEGORIES,
-    ROUTE.EXPORT,
-    ROUTE.SETTINGS,
-    ROUTE.FEEDBACK,
-    ROUTE.ISSUE,
-    ROUTE.SITEMAP,
-    ROUTE.DISABLED_ROUTE,
-  ];
-
-  beforeEach((): void => {
-    originalDisabledRoutesSnapshot = [...DISABLED_ROUTES];
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -53,7 +31,6 @@ describe("config/constants/routes", () => {
       values.forEach((value) => {
         expect(value.startsWith("/")).toBe(true);
       });
-    });
 
     test("no duplicate route values exist", (): void => {
       const values = getAllRouteValues();
@@ -64,7 +41,6 @@ describe("config/constants/routes", () => {
     test("SITEMAP route ends with .xml", (): void => {
       expect(ROUTE.SITEMAP.endsWith(".xml")).toBe(true);
     });
-  });
 
   describe("DISABLED_ROUTES constant", () => {
     test("is an array and initially empty", (): void => {
@@ -93,5 +69,3 @@ describe("config/constants/routes", () => {
       const allValid = DISABLED_ROUTES.every((r) => allowed.has(r));
       expect(allValid).toBe(false);
     });
-  });
-});
