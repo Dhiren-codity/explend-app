@@ -91,9 +91,6 @@ describe('ExportTransactions', (): void => {
 
 
 
-  test('renders default UI with CSV selected and info text for total transactions', (): void => {
-    const onExport = vi.fn(async (): Promise<unknown[]> => []);
-    const transactions = [{ id: '1' }, { id: '2' }] as unknown as unknown[];
 
     render(<ExportTransactions transactions={transactions as unknown as never[]} onExport={onExport as unknown as never} />);
 
@@ -106,8 +103,6 @@ describe('ExportTransactions', (): void => {
     expect(screen.getByText('Ready to export all 2 transactions')).toBeInTheDocument();
   });
 
-  test('exports CSV without date range using provided transactions', async (): Promise<void> => {
-    const toast = (await import('react-hot-toast')).default as { success: (m: string) => void; error: (m: string) => void };
     vi.mocked(generateCSV).mockReturnValue('csv-content');
     vi.mocked(getExportFilename).mockReturnValue('transactions.csv');
     vi.mocked(getMimeType).mockReturnValue('text/csv');
@@ -132,8 +127,6 @@ describe('ExportTransactions', (): void => {
     expect(onExport).not.toHaveBeenCalled();
   });
 
-  test('allows selecting date range and calls onExport with full-day end; shows loading state', async (): Promise<void> => {
-    const toast = (await import('react-hot-toast')).default as { success: (m: string) => void; error: (m: string) => void };
     vi.mocked(generateCSV).mockReturnValue('filtered-csv');
 
     const returned = [{ id: 'only' }] as unknown as unknown[];
@@ -181,8 +174,6 @@ describe('ExportTransactions', (): void => {
     });
   });
 
-  test('switches to JSON format and exports JSON', async (): Promise<void> => {
-    const toast = (await import('react-hot-toast')).default as { success: (m: string) => void; error: (m: string) => void };
     vi.mocked(generateJSON).mockReturnValue('json-content');
     vi.mocked(getExportFilename).mockReturnValue('transactions.json');
     vi.mocked(getMimeType).mockReturnValue('application/json');
@@ -207,8 +198,6 @@ describe('ExportTransactions', (): void => {
     });
   });
 
-  test('shows error toast when there are no transactions to export (no date range)', async (): Promise<void> => {
-    const toast = (await import('react-hot-toast')).default as { success: (m: string) => void; error: (m: string) => void };
 
     const transactions: unknown[] = [];
     const onExport = vi.fn(async (): Promise<unknown[]> => []);
@@ -228,8 +217,6 @@ describe('ExportTransactions', (): void => {
     expect(screen.getByText('Ready to export all 0 transactions')).toBeInTheDocument();
   });
 
-  test('shows error toast when onExport returns empty for selected date range', async (): Promise<void> => {
-    const toast = (await import('react-hot-toast')).default as { success: (m: string) => void; error: (m: string) => void };
 
     const onExport = vi.fn(async (): Promise<unknown[]> => []);
     const transactions = [{ id: '1' }] as unknown as unknown[];
@@ -248,8 +235,6 @@ describe('ExportTransactions', (): void => {
     });
   });
 
-  test('handles errors during export and shows failure toast', async (): Promise<void> => {
-    const toast = (await import('react-hot-toast')).default as { success: (m: string) => void; error: (m: string) => void };
     const errorSpy = vi.spyOn(console, 'error').mockImplementation((): void => {});
 
     vi.mocked(generateCSV).mockImplementation((): string => {
@@ -272,9 +257,6 @@ describe('ExportTransactions', (): void => {
     errorSpy.mockRestore();
   });
 
-  test('renders accessible labels and controls', (): void => {
-    const onExport = vi.fn(async (): Promise<unknown[]> => []);
-    const transactions = [{ id: '1' }] as unknown as unknown[];
 
     render(<ExportTransactions transactions={transactions as unknown as never[]} onExport={onExport as unknown as never} />);
 

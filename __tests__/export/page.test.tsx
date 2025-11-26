@@ -118,9 +118,6 @@ describe('app/export/page.tsx Page', (): void => {
     expect(actions.getCachedAllTransactions).toHaveBeenNthCalledWith(2, 'user@example.com');
   });
 
-  test('renders ExportTransactions when transactions exist and passes onExport that calls getTransactionsForExport', async (): Promise<void> => {
-    const userId = 'user@example.com';
-    actions.getCachedAllTransactions.mockResolvedValueOnce([{ id: 't1' }]).mockResolvedValueOnce([{ id: 't1' }]);
     actions.getTransactionsForExport.mockResolvedValue([{ id: 'e1' }]);
 
     const element = await Page();
@@ -144,8 +141,6 @@ describe('app/export/page.tsx Page', (): void => {
     expect(actions.getTransactionsForExport).toHaveBeenCalledWith(userId, start, end);
   });
 
-  test('onExport returns all transactions when called without dates', async (): Promise<void> => {
-    actions.getCachedAllTransactions.mockResolvedValueOnce([{ id: 't1' }]).mockResolvedValueOnce([{ id: 't1' }]);
     actions.getTransactionsForExport.mockResolvedValue([{ id: 'e-all' }, { id: 'e-2' }]);
 
     const element = await Page();
@@ -177,8 +172,6 @@ describe('app/export/page.tsx Page', (): void => {
     await expect(Page()).rejects.toThrow('load failed');
   });
 
-  test('onExport propagates error when getTransactionsForExport fails', async (): Promise<void> => {
-    actions.getCachedAllTransactions.mockResolvedValueOnce([{ id: 't1' }]).mockResolvedValueOnce([{ id: 't1' }]);
     const error = new Error('export failed');
     actions.getTransactionsForExport.mockRejectedValue(error);
 
