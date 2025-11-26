@@ -18,21 +18,18 @@ describe("config/constants/navigation", () => {
       expect(typeof DEFAULT_TRANSACTION_LIMIT).toBe("number");
       expect(DEFAULT_TRANSACTION_LIMIT).toBe(30);
     });
-  });
 
   describe("NAV_ICON_SIZE", () => {
     test("should be a number and equal to 24", (): void => {
       expect(typeof NAV_ICON_SIZE).toBe("number");
       expect(NAV_ICON_SIZE).toBe(24);
     });
-  });
 
   describe("DEFAULT_PAGINATION_PAGE_NUMBER", () => {
     test('should be a string and equal to "1"', (): void => {
       expect(typeof DEFAULT_PAGINATION_PAGE_NUMBER).toBe("string");
       expect(DEFAULT_PAGINATION_PAGE_NUMBER).toBe("1");
     });
-  });
 
   describe("NAV_TITLE enum", () => {
     test("should have correct string literal values", (): void => {
@@ -69,7 +66,6 @@ describe("config/constants/navigation", () => {
       expect(NAV_TITLE.SIGNIN).toBe("Sign In");
       expect(typeof NAV_TITLE.SIGNIN).toBe("string");
     });
-  });
 
   describe("SEARCH_PARAM enum", () => {
     test("should have correct string literal values", (): void => {
@@ -79,5 +75,3 @@ describe("config/constants/navigation", () => {
       expect(SEARCH_PARAM.PAGE).toBe("page");
       expect(typeof SEARCH_PARAM.PAGE).toBe("string");
     });
-  });
-});

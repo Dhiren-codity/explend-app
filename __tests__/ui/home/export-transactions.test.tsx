@@ -120,7 +120,6 @@ vi.mock('@heroui/react', () => {
     Select,
     SelectItem,
   };
-});
 
 vi.mock('@/app/lib/export-utils', () => ({
   generateCSV: vi.fn(() => 'csv-content'),
@@ -130,11 +129,6 @@ vi.mock('@/app/lib/export-utils', () => ({
   downloadFile: vi.fn(),
 }));
 
-describe('ExportTransactions', (): void => {
-  afterEach((): void => {
-    cleanup();
-    vi.clearAllMocks();
-  });
 
     const onExport = vi.fn();
 
@@ -163,7 +157,6 @@ describe('ExportTransactions', (): void => {
       expect(downloadFile).toHaveBeenCalledWith('csv-content', 'export.csv', 'text/csv');
       expect(toast.success).toHaveBeenCalledWith('Exported 2 transactions');
     });
-  });
 
     const onExport = vi.fn();
 
@@ -184,7 +177,6 @@ describe('ExportTransactions', (): void => {
       expect(downloadFile).toHaveBeenCalledWith('json-content', 'export.json', 'application/json');
       expect(toast.success).toHaveBeenCalledWith('Exported 1 transaction');
     });
-  });
 
     const filteredTransactions = [{ id: 'only-one' }];
     const onExport = vi.fn(async (_start?: Date, _end?: Date): Promise<Record<string, unknown>[]> => {
@@ -220,7 +212,6 @@ describe('ExportTransactions', (): void => {
       expect(downloadFile).toHaveBeenCalledWith('csv-content', 'export.csv', 'text/csv');
       expect(toast.success).toHaveBeenCalledWith('Exported 1 transaction');
     });
-  });
 
     const onExport = vi.fn(async (): Promise<Record<string, unknown>[]> => {
       return [];
@@ -240,7 +231,6 @@ describe('ExportTransactions', (): void => {
       expect(downloadFile).not.toHaveBeenCalled();
       expect(toast.error).toHaveBeenCalledWith('No transactions to export');
     });
-  });
 
     const onExport = vi.fn(async (): Promise<Record<string, unknown>[]> => {
       throw new Error('Boom');
@@ -258,7 +248,6 @@ describe('ExportTransactions', (): void => {
       expect(downloadFile).not.toHaveBeenCalled();
       expect(toast.error).toHaveBeenCalledWith('Failed to export transactions');
     });
-  });
 
     const onExport = vi.fn();
 
@@ -270,4 +259,3 @@ describe('ExportTransactions', (): void => {
     fireEvent.click(screen.getByRole('button', { name: 'clear-date-range' }));
     expect(screen.getByText('Ready to export all 3 transactions')).toBeInTheDocument();
   });
-});

@@ -23,7 +23,6 @@ describe("config/constants/routes", () => {
       pairs.forEach(([value, expected]) => {
         expect(value).toBe(expected);
       });
-    });
 
     test("all route values start with a single leading slash", (): void => {
       const values: string[] = [
@@ -92,13 +91,7 @@ describe("config/constants/routes", () => {
       // SITEMAP is a special case
       expect(ROUTE.SITEMAP.endsWith("/")).toBe(false);
     });
-  });
 
-  describe("DISABLED_ROUTES", () => {
-    beforeEach((): void => {
-      // Reset shared mutable state
-      DISABLED_ROUTES.length = 0;
-    });
 
     afterEach((): void => {
       vi.clearAllMocks();
@@ -132,5 +125,3 @@ describe("config/constants/routes", () => {
       expect(DISABLED_ROUTES).not.toContain(ROUTE.SIGNIN);
       expect(DISABLED_ROUTES).not.toContain(ROUTE.SITEMAP);
     });
-  });
-});

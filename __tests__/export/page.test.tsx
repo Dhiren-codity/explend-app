@@ -5,7 +5,6 @@ vi.mock("@/config/constants/navigation", (): Record<string, unknown> => {
   return {
     NAV_TITLE: { EXPORT: "Export Title" },
   };
-});
 
 let getCachedAuthSessionMock: ReturnType<typeof vi.fn> = vi.fn();
 let getCachedAllTransactionsMock: ReturnType<typeof vi.fn> = vi.fn();
@@ -22,7 +21,6 @@ vi.mock("../lib/actions", (): Record<string, unknown> => {
     getCachedAllTransactions: getCachedAllTransactionsMock,
     getTransactionsForExport: getTransactionsForExportMock,
   };
-});
 
 vi.mock("../ui/home/export-transactions", (): Record<string, unknown> => {
   return {
@@ -36,7 +34,6 @@ vi.mock("../ui/home/export-transactions", (): Record<string, unknown> => {
       });
     },
   };
-});
 
 vi.mock("../ui/no-transactions-plug", (): Record<string, unknown> => {
   return {
@@ -46,7 +43,6 @@ vi.mock("../ui/no-transactions-plug", (): Record<string, unknown> => {
       });
     },
   };
-});
 
 vi.mock("../ui/sidebar/with-sidebar", (): Record<string, unknown> => {
   return {
@@ -57,7 +53,6 @@ vi.mock("../ui/sidebar/with-sidebar", (): Record<string, unknown> => {
       });
     },
   };
-});
 
 function findByTestIdInTree(node: unknown, testId: string): boolean {
   if (node == null) {
@@ -68,7 +63,6 @@ function findByTestIdInTree(node: unknown, testId: string): boolean {
       if (findByTestIdInTree(child, testId)) {
         return true;
       }
-    }
     return false;
   }
   if (React.isValidElement(node)) {
@@ -86,7 +80,6 @@ function findByTestIdInTree(node: unknown, testId: string): boolean {
         if (findByTestIdInTree(child, testId)) {
           return true;
         }
-      }
       return false;
     }
     return findByTestIdInTree(children, testId);
@@ -94,20 +87,6 @@ function findByTestIdInTree(node: unknown, testId: string): boolean {
   return false;
 }
 
-describe("Page", (): void => {
-  beforeEach((): void => {
-    capturedExportProps = null;
-
-    getCachedAuthSessionMock.mockReset();
-    getCachedAllTransactionsMock.mockReset();
-    getTransactionsForExportMock.mockReset();
-
-    getCachedAuthSessionMock.mockResolvedValue({
-      user: { email: "user@example.com" },
-    });
-    getCachedAllTransactionsMock.mockResolvedValue([]);
-    getTransactionsForExportMock.mockResolvedValue([]);
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -248,4 +227,3 @@ describe("Page", (): void => {
     const contentTree = props["data-content"];
     expect(findByTestIdInTree(contentTree, "no-transactions-plug")).toBe(true);
   });
-});
