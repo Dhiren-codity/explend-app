@@ -102,9 +102,6 @@ describe('Page', (): void => {
     expect(metadata.title).toBe('Export Test');
   });
 
-  test('should render NoTransactionsPlug when no transactions', async (): Promise<void> => {
-    const actions = getActions();
-    actions.getCachedAuthSession.mockResolvedValue({ user: { email: 'user@example.com' } });
     actions.getCachedAllTransactions.mockResolvedValue([]);
 
     const element = await Page();
@@ -126,9 +123,6 @@ describe('Page', (): void => {
     expect(secondArgs[0]).toBe('user@example.com');
   });
 
-  test('should render ExportTransactions and pass handleExport when transactions exist', async (): Promise<void> => {
-    const actions = getActions();
-    actions.getCachedAuthSession.mockResolvedValue({ user: { email: 'user@example.com' } });
     const seededTransactions = [{ id: 't1' }];
     actions.getCachedAllTransactions.mockResolvedValue(seededTransactions);
     const exportedTransactions = [{ id: 'e1' }];
@@ -181,18 +175,12 @@ describe('Page', (): void => {
     expect(secondArgs[0]).toBeUndefined();
   });
 
-  test('should propagate error when transactions fetching fails', async (): Promise<void> => {
-    const actions = getActions();
-    actions.getCachedAuthSession.mockResolvedValue({ user: { email: 'user@example.com' } });
     actions.getCachedAllTransactions.mockResolvedValueOnce([]);
     actions.getCachedAllTransactions.mockRejectedValueOnce(new Error('load failed'));
 
     await expect(Page()).rejects.toThrow('load failed');
   });
 
-  test('handleExport should propagate error when export fails', async (): Promise<void> => {
-    const actions = getActions();
-    actions.getCachedAuthSession.mockResolvedValue({ user: { email: 'user@example.com' } });
     actions.getCachedAllTransactions.mockResolvedValue([{ id: 't1' }]);
     actions.getTransactionsForExport.mockRejectedValue(new Error('export failed'));
 
