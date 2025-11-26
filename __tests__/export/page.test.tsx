@@ -7,7 +7,6 @@ vi.mock('@/config/constants/navigation', () => {
   return {
     NAV_TITLE: { EXPORT: 'Export Test' },
   };
-});
 
 vi.mock('../lib/actions', () => {
   const getCachedAuthSession = vi.fn(async (): Promise<unknown> => ({ user: { email: 'user@example.com' } }));
@@ -41,47 +40,6 @@ vi.mock('../ui/sidebar/with-sidebar', () => {
   return { default: WithSidebar };
 });
 
-describe('Page', (): void => {
-  const getActions = (): {
-    getCachedAuthSession: ((..._args: unknown[]) => Promise<unknown>) & {
-      mockResolvedValue: (_value: unknown) => unknown;
-      mockRejectedValue: (_error: unknown) => unknown;
-      mock: { calls: unknown[][] };
-    };
-    getCachedAllTransactions: ((..._args: unknown[]) => Promise<unknown>) & {
-      mockResolvedValue: (_value: unknown) => unknown;
-      mockResolvedValueOnce: (_value: unknown) => unknown;
-      mockRejectedValue: (_error: unknown) => unknown;
-      mockRejectedValueOnce: (_error: unknown) => unknown;
-      mock: { calls: unknown[][] };
-    };
-    getTransactionsForExport: ((..._args: unknown[]) => Promise<unknown>) & {
-      mockResolvedValue: (_value: unknown) => unknown;
-      mockRejectedValue: (_error: unknown) => unknown;
-      mock: { calls: unknown[][] };
-    };
-  } => {
-    const actions = (globalThis as unknown as Record<string, unknown>).__actionsMock as Record<string, unknown>;
-    return actions as unknown as {
-      getCachedAuthSession: ((..._args: unknown[]) => Promise<unknown>) & {
-        mockResolvedValue: (_value: unknown) => unknown;
-        mockRejectedValue: (_error: unknown) => unknown;
-        mock: { calls: unknown[][] };
-      };
-      getCachedAllTransactions: ((..._args: unknown[]) => Promise<unknown>) & {
-        mockResolvedValue: (_value: unknown) => unknown;
-        mockResolvedValueOnce: (_value: unknown) => unknown;
-        mockRejectedValue: (_error: unknown) => unknown;
-        mockRejectedValueOnce: (_error: unknown) => unknown;
-        mock: { calls: unknown[][] };
-      };
-      getTransactionsForExport: ((..._args: unknown[]) => Promise<unknown>) & {
-        mockResolvedValue: (_value: unknown) => unknown;
-        mockRejectedValue: (_error: unknown) => unknown;
-        mock: { calls: unknown[][] };
-      };
-    };
-  };
 
   const getLastExportProps = (): Record<string, unknown> | undefined => {
     const store = (globalThis as unknown as Record<string, unknown>).__lastExportProps as Record<string, unknown> | undefined;
@@ -193,4 +151,3 @@ describe('Page', (): void => {
     const onExport = (lastProps as Record<string, unknown>).onExport as (..._args: unknown[]) => Promise<unknown>;
     await expect(onExport(new Date('2020-01-01T00:00:00.000Z'), new Date('2020-01-31T00:00:00.000Z'))).rejects.toThrow('export failed');
   });
-});

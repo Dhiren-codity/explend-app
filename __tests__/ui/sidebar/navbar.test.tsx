@@ -10,7 +10,6 @@ vi.mock('next/navigation', () => {
   return {
     usePathname: mockUsePathname,
   };
-});
 
 vi.mock('react-use', () => {
   const mockUseMedia = vi.fn((_query?: unknown, _defaultState?: unknown): boolean => {
@@ -20,7 +19,6 @@ vi.mock('react-use', () => {
   return {
     useMedia: mockUseMedia,
   };
-});
 
 vi.mock('react-icons/pi', () => {
   const StubIcon = (_props: unknown): JSX.Element => {
@@ -48,7 +46,6 @@ vi.mock('react-icons/pi', () => {
     PiStack: StubIcon,
     PiStackFill: StubIcon,
   };
-});
 
 vi.mock('@/config/constants/navigation', () => {
   return {
@@ -66,7 +63,6 @@ vi.mock('@/config/constants/navigation', () => {
       ISSUE: 'Issue',
     },
   };
-});
 
 vi.mock('@/config/constants/routes', () => {
   const disabledRoutes = (globalThis as Record<string, unknown>).__disabledRoutes as string[] | undefined;
@@ -87,7 +83,6 @@ vi.mock('@/config/constants/routes', () => {
       ISSUE: '/issue',
     },
   };
-});
 
 vi.mock('@/app/lib/helpers', () => {
   const calls: unknown[][] = [];
@@ -99,7 +94,6 @@ vi.mock('@/app/lib/helpers', () => {
   return {
     getBreakpointWidth: mockGetBreakpointWidth,
   };
-});
 
 vi.mock('../hoverables', () => {
   type Link = { title: string; url: string };
@@ -125,7 +119,6 @@ vi.mock('../hoverables', () => {
   return {
     HoverableNavLink,
   };
-});
 
 vi.mock('../logo', () => {
   type LogoProps = { size?: 'sm' | 'xxs' | string };
@@ -135,14 +128,6 @@ vi.mock('../logo', () => {
   return { default: Logo };
 });
 
-describe('Navbar', (): void => {
-  beforeEach((): void => {
-    (globalThis as Record<string, unknown>).__useMediaReturn = true;
-    (globalThis as Record<string, unknown>).__pathname = '/';
-    (globalThis as Record<string, unknown>).__hoverableThrow = false;
-    (globalThis as Record<string, unknown>).__bpCalls = [];
-    (globalThis as Record<string, unknown>).__disabledRoutes = [];
-  });
 
   afterEach((): void => {
     cleanup();
@@ -229,5 +214,3 @@ describe('Navbar', (): void => {
       const navItems = screen.getAllByTestId(/^navlink-/);
       expect(navItems.length).toBe(8);
     });
-  });
-});

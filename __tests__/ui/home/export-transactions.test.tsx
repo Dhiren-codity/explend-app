@@ -55,8 +55,6 @@ vi.mock('@heroui/react', () => {
           start: { toString: (): string => nextStart },
           end: { toString: (): string => nextEnd },
         });
-      }
-    };
 
     return (
       <div>
@@ -154,13 +152,7 @@ vi.mock('@heroui/react', () => {
     CardBody,
     CardHeader,
   };
-});
 
-describe('ExportTransactions', (): void => {
-  const toastMock = toast as unknown as {
-    success: ReturnType<typeof vi.fn>;
-    error: ReturnType<typeof vi.fn>;
-  };
 
   afterEach((): void => {
     cleanup();
@@ -277,7 +269,6 @@ describe('ExportTransactions', (): void => {
       expect(downloadFile).toHaveBeenCalledWith('filtered-csv', 'export.csv', 'text/csv');
       expect(toastMock.success).toHaveBeenCalledWith('Exported 2 transactions');
     });
-  });
 
 
     fireEvent.click(screen.getByRole('button', { name: 'Export' }));
@@ -340,4 +331,3 @@ describe('ExportTransactions', (): void => {
     expect(onExport).toHaveBeenCalledTimes(1);
     expect(toastMock.success).toHaveBeenCalledWith('Exported 1 transaction');
   });
-});

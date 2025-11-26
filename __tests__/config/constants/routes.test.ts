@@ -17,10 +17,6 @@ const allRoutes: string[] = [
   ROUTE.DISABLED_ROUTE,
 ];
 
-describe("config/constants/routes", (): void => {
-  beforeEach((): void => {
-    // No specific setup required for this module
-  });
 
   afterEach((): void => {
     // Cleanup any mutations to the exported array
@@ -57,7 +53,6 @@ describe("config/constants/routes", (): void => {
       allRoutes.forEach((path: string): void => {
         expect(path.startsWith("/")).toBe(true);
       });
-    });
 
     test('should not end with "/" except the root path', (): void => {
       const withoutRoot: string[] = allRoutes.filter(
@@ -77,8 +72,6 @@ describe("config/constants/routes", (): void => {
       allRoutes.forEach((path: string): void => {
         expect(path.includes(" ")).toBe(false);
       });
-    });
-  });
 
   describe("DISABLED_ROUTES", (): void => {
     test("should be an array and initially empty", (): void => {
@@ -116,5 +109,3 @@ describe("config/constants/routes", (): void => {
       );
       expect(allValid).toBe(false);
     });
-  });
-});
