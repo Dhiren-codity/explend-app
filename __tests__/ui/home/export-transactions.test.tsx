@@ -73,7 +73,6 @@ vi.mock('@heroui/react', () => {
     );
   return { Button, Card, CardBody, CardHeader, DateRangePicker, Select, SelectItem };
 });
-});
 vi.mock('@/app/lib/export-utils', () => ({
   generateCSV: vi.fn(() => 'csv-content'),
   generateJSON: vi.fn(() => 'json-content'),
@@ -82,11 +81,6 @@ vi.mock('@/app/lib/export-utils', () => ({
   getMimeType: vi.fn((format: string) => (format === 'json' ? 'application/json' : 'text/csv')),
 }));
 
-describe('ExportTransactions', (): void => {
-  afterEach((): void => {
-    cleanup();
-    vi.clearAllMocks();
-  });
 
 
 
@@ -172,7 +166,6 @@ describe('ExportTransactions', (): void => {
     await waitFor((): void => {
       expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
     });
-  });
 
     vi.mocked(generateJSON).mockReturnValue('json-content');
     vi.mocked(getExportFilename).mockReturnValue('transactions.json');
@@ -196,7 +189,6 @@ describe('ExportTransactions', (): void => {
       expect(downloadFile).toHaveBeenCalledWith('json-content', 'transactions.json', 'application/json');
       expect(toast.success).toHaveBeenCalledWith('Exported 2 transactions');
     });
-  });
 
 
     const transactions: unknown[] = [];
@@ -233,7 +225,6 @@ describe('ExportTransactions', (): void => {
       expect(generateCSV).not.toHaveBeenCalled();
       expect(generateJSON).not.toHaveBeenCalled();
     });
-  });
 
     const errorSpy = vi.spyOn(console, 'error').mockImplementation((): void => {});
 
@@ -265,4 +256,3 @@ describe('ExportTransactions', (): void => {
     expect(screen.getByRole('button', { name: 'Set Range' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Clear Range' })).toBeInTheDocument();
   });
-});

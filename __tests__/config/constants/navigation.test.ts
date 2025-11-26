@@ -6,10 +6,6 @@ import {
 } from "./navigation";
 import type { NAV_TITLE, SEARCH_PARAM } from "./navigation";
 
-describe("config/constants/navigation", () => {
-  beforeEach((): void => {
-    // No setup required for constants
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -24,7 +20,6 @@ describe("config/constants/navigation", () => {
       expect(Number.isInteger(DEFAULT_TRANSACTION_LIMIT)).toBe(true);
       expect(DEFAULT_TRANSACTION_LIMIT).toBeGreaterThan(0);
     });
-  });
 
   describe("NAV_ICON_SIZE", () => {
     test("should be 24", (): void => {
@@ -35,7 +30,6 @@ describe("config/constants/navigation", () => {
       expect(Number.isInteger(NAV_ICON_SIZE)).toBe(true);
       expect(NAV_ICON_SIZE).toBeGreaterThan(0);
     });
-  });
 
   describe("DEFAULT_PAGINATION_PAGE_NUMBER", () => {
     test('should be "1"', (): void => {
@@ -47,7 +41,6 @@ describe("config/constants/navigation", () => {
       expect(Number.isInteger(parsed)).toBe(true);
       expect(parsed).toBe(1);
     });
-  });
 
   describe("NAV_TITLE (const enum, compile-time checked)", () => {
     test("members have expected string values", (): void => {
@@ -77,7 +70,6 @@ describe("config/constants/navigation", () => {
 
       expect(home).not.toBe("home");
     });
-  });
 
   describe("SEARCH_PARAM (const enum, compile-time checked)", () => {
     test("members have expected string keys", (): void => {
@@ -90,5 +82,3 @@ describe("config/constants/navigation", () => {
       expect(query).not.toBe("QUERY");
       expect(page).not.toBe("PAGE");
     });
-  });
-});

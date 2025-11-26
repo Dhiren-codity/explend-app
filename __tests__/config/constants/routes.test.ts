@@ -1,10 +1,6 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from "vitest";
 import * as routesModule from "./routes";
 
-describe("config/constants/routes", () => {
-  beforeEach((): void => {
-    // no-op setup
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -22,8 +18,6 @@ describe("config/constants/routes", () => {
       } else {
         expect(keys).toEqual(["DISABLED_ROUTES"]);
       }
-    });
-  });
 
   describe("DISABLED_ROUTES", () => {
     test("should be an array and initially empty", () => {
@@ -44,7 +38,6 @@ describe("config/constants/routes", () => {
       expect(removed).toBe(valueToInsert);
       expect(listRef.length).toBe(initialLength);
     });
-  });
 
   describe("ROUTE (runtime presence is env-dependent for const enum)", () => {
     test("should either be absent at runtime (const enum erasure) or match expected values when present", () => {
@@ -92,7 +85,6 @@ describe("config/constants/routes", () => {
         if (typeof v === "string") {
           expect(v.startsWith("/")).toBe(true);
         }
-      }
 
       // Ensure all values are unique
       const values = Object.values(routeObj).filter(
@@ -101,5 +93,3 @@ describe("config/constants/routes", () => {
       const uniqueValues = new Set(values);
       expect(uniqueValues.size).toBe(values.length);
     });
-  });
-});

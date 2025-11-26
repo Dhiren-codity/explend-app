@@ -12,13 +12,6 @@ vi.mock('@/app/ui/sidebar/logo', () => {
 });
 }, { virtual: true });
 
-describe('Navbar', (): void => {
-  beforeEach((): void => {
-    const g = globalThis as unknown as Record<string, unknown>;
-    g.__pathname = '/';
-    g.__useMedia = true;
-    g.__disabledRoutes = [];
-  });
 
 
 
@@ -107,4 +100,3 @@ describe('Navbar', (): void => {
     const items = screen.queryAllByTestId('nav-item');
     expect(items.length).toBe(0);
   });
-});

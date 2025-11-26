@@ -10,7 +10,6 @@ vi.mock('@/config/constants/navigation', (): Record<string, unknown> => {
       EXPORT: 'Export',
     },
   };
-});
 vi.mock('../lib/actions', (): Record<string, unknown> => {
   const getCachedAuthSession = vi.fn();
   const getCachedAllTransactions = vi.fn();
@@ -25,7 +24,6 @@ vi.mock('../lib/actions', (): Record<string, unknown> => {
     getCachedAllTransactions,
     getTransactionsForExport,
   };
-});
 vi.mock('../ui/home/export-transactions', (): Record<string, unknown> => {
   let lastOnExport: unknown;
   const ExportTransactions = (props: { transactions: unknown[]; onExport: unknown }): JSX.Element => {
@@ -39,20 +37,17 @@ vi.mock('../ui/home/export-transactions', (): Record<string, unknown> => {
   return {
     default: ExportTransactions,
   };
-});
 vi.mock('../ui/no-transactions-plug', (): Record<string, unknown> => {
   const NoTransactionsPlug = (): JSX.Element => {
     return React.createElement('div', { 'data-testid': 'no-transactions-plug' });
   };
   return { default: NoTransactionsPlug };
 });
-});
 vi.mock('../ui/sidebar/with-sidebar', (): Record<string, unknown> => {
   const WithSidebar = ({ contentNearby }: { contentNearby: React.ReactNode }): JSX.Element => {
     return React.createElement('div', { 'data-testid': 'with-sidebar' }, contentNearby);
   };
   return { default: WithSidebar };
-});
 });
 
 
@@ -72,25 +67,6 @@ type ExportTransactionsHelper = {
   getLastOnExport: () => unknown;
 };
 
-describe('app/export/page.tsx Page', (): void => {
-  let actions: ActionsMocks;
-  let exportHelper: ExportTransactionsHelper;
-
-  beforeEach((): void => {
-    const globalActions = (globalThis as unknown as { __actionsMocks: ActionsMocks }).__actionsMocks;
-    actions = globalActions;
-
-    const globalExportHelper = (globalThis as unknown as { __exportTransactions: ExportTransactionsHelper }).__exportTransactions;
-    exportHelper = globalExportHelper;
-
-    actions.getCachedAuthSession.mockReset();
-    actions.getCachedAllTransactions.mockReset();
-    actions.getTransactionsForExport.mockReset();
-
-    actions.getCachedAuthSession.mockResolvedValue({ user: { email: 'user@example.com' } });
-    actions.getCachedAllTransactions.mockResolvedValue([]);
-    actions.getTransactionsForExport.mockResolvedValue([]);
-  });
 
   afterEach((): void => {
     cleanup();
@@ -193,4 +169,3 @@ describe('app/export/page.tsx Page', (): void => {
     expect(actions.getCachedAuthSession).toHaveBeenCalledTimes(2);
     expect(actions.getCachedAllTransactions).toHaveBeenCalledTimes(2);
   });
-});
