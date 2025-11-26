@@ -159,8 +159,6 @@ describe('ExportTransactions', (): void => {
     vi.restoreAllMocks();
   });
 
-  test('renders with default CSV format and shows total count message', (): void => {
-    const transactions = [{ id: 1 }, { id: 2 }] as unknown as TTransaction[];
     const onExport = vi.fn(async (): Promise<TTransaction[]> => transactions);
 
     render(<ExportTransactions transactions={transactions} onExport={onExport} />);
@@ -176,8 +174,6 @@ describe('ExportTransactions', (): void => {
     ).toBeInTheDocument();
   });
 
-  test('exports as CSV by default without calling onExport when no date range', async (): Promise<void> => {
-    const transactions = [{ id: 'a' }, { id: 'b' }] as unknown as TTransaction[];
     const onExport = vi.fn(async (): Promise<TTransaction[]> => transactions);
 
     render(<ExportTransactions transactions={transactions} onExport={onExport} />);
@@ -199,8 +195,6 @@ describe('ExportTransactions', (): void => {
     });
   });
 
-  test('switches to JSON format and exports correctly', async (): Promise<void> => {
-    const transactions = [{ id: 1 }] as unknown as TTransaction[];
     const onExport = vi.fn(async (): Promise<TTransaction[]> => transactions);
 
     render(<ExportTransactions transactions={transactions} onExport={onExport} />);
@@ -224,8 +218,6 @@ describe('ExportTransactions', (): void => {
     });
   });
 
-  test('sets date range and calls onExport with correct dates and end-of-day handling', async (): Promise<void> => {
-    const initialTransactions = [{ id: 1 }, { id: 2 }] as unknown as TTransaction[];
     const filtered = [{ id: 2 }] as unknown as TTransaction[];
     const onExport = vi.fn(async (_start?: Date, _end?: Date): Promise<TTransaction[]> => filtered);
 
@@ -263,11 +255,6 @@ describe('ExportTransactions', (): void => {
     });
   });
 
-  test('shows error toast when no transactions to export (no date range)', async (): Promise<void> => {
-    const transactions = [] as unknown as TTransaction[];
-    const onExport = vi.fn(async (): Promise<TTransaction[]> => transactions);
-
-    render(<ExportTransactions transactions={transactions} onExport={onExport} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Export' }));
 
@@ -279,8 +266,6 @@ describe('ExportTransactions', (): void => {
     });
   });
 
-  test('shows error toast when no transactions to export (date range yields empty)', async (): Promise<void> => {
-    const initialTransactions = [{ id: 1 }] as unknown as TTransaction[];
     const onExport = vi.fn(async (): Promise<TTransaction[]> => [] as unknown as TTransaction[]);
 
     render(<ExportTransactions transactions={initialTransactions} onExport={onExport} />);
@@ -300,8 +285,6 @@ describe('ExportTransactions', (): void => {
     });
   });
 
-  test('handles export failure and shows error toast', async (): Promise<void> => {
-    const transactions = [{ id: 1 }] as unknown as TTransaction[];
     const onExport = vi.fn(async (): Promise<TTransaction[]> => transactions);
 
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation((): void => {});

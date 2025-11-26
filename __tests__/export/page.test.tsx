@@ -124,9 +124,6 @@ describe("app/export/page.tsx - Page", (): void => {
     expect(exportTx).toBeNull();
   });
 
-  test("renders ExportTransactions when transactions exist", async (): Promise<void> => {
-    const actions = getActions();
-    actions.getCachedAllTransactions.mockResolvedValueOnce([{ id: "t1" }]);
 
     const element = await Page();
     render(element as React.ReactElement);
@@ -207,9 +204,6 @@ describe("app/export/page.tsx - Page", (): void => {
     await expect(Page()).rejects.toThrow("tx error");
   });
 
-  test("handleExport propagates error from getTransactionsForExport", async (): Promise<void> => {
-    const actions = getActions();
-    actions.getCachedAllTransactions.mockResolvedValueOnce([{ id: "t1" }]);
     actions.getTransactionsForExport.mockRejectedValueOnce(
       new Error("export error"),
     );
@@ -225,9 +219,6 @@ describe("app/export/page.tsx - Page", (): void => {
     ).rejects.toThrow("export error");
   });
 
-  test("handles missing user email (undefined userId) and still renders plug", async (): Promise<void> => {
-    const actions = getActions();
-    actions.getCachedAuthSession.mockResolvedValueOnce({});
     actions.getCachedAllTransactions.mockResolvedValueOnce([]);
 
     const element = await Page();
