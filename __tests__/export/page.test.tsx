@@ -5,7 +5,6 @@ vi.mock("@/config/constants/navigation", (): Record<string, unknown> => {
   return {
     NAV_TITLE: { EXPORT: "Export" },
   };
-});
 
 vi.mock("../lib/actions", (): Record<string, unknown> => {
   const getCachedAuthSession = vi.fn();
@@ -23,7 +22,6 @@ vi.mock("../lib/actions", (): Record<string, unknown> => {
     getCachedAllTransactions,
     getTransactionsForExport,
   };
-});
 
 vi.mock("../ui/home/export-transactions", (): Record<string, unknown> => {
   function ExportTransactions(_props: Record<string, unknown>): null {
@@ -46,12 +44,6 @@ vi.mock("../ui/sidebar/with-sidebar", (): Record<string, unknown> => {
   return { default: WithSidebar };
 });
 
-describe("Page", (): void => {
-  type ActionsMocks = {
-    getCachedAuthSession: ReturnType<typeof vi.fn>;
-    getCachedAllTransactions: ReturnType<typeof vi.fn>;
-    getTransactionsForExport: ReturnType<typeof vi.fn>;
-  };
 
   const getActionsMocks = (): ActionsMocks => {
     return (globalThis as unknown as { __actionsMocks: ActionsMocks })
@@ -251,4 +243,3 @@ describe("Page", (): void => {
       undefined,
     );
   });
-});

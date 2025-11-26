@@ -26,7 +26,6 @@ vi.mock('react-icons/pi', () => {
     PiStack: NullComp,
     PiStackFill: NullComp,
   };
-});
 
 vi.mock('react-use', () => {
   const g = globalThis as unknown as { __useMediaReturn?: boolean };
@@ -36,7 +35,6 @@ vi.mock('react-use', () => {
       return Boolean(g.__useMediaReturn);
     },
   };
-});
 
 vi.mock('next/navigation', () => {
   const g = globalThis as unknown as { __pathname?: unknown };
@@ -44,13 +42,11 @@ vi.mock('next/navigation', () => {
   return {
     usePathname: (): string | undefined => g.__pathname as string | undefined,
   };
-});
 
 vi.mock('@/app/lib/helpers', () => {
   return {
     getBreakpointWidth: (_name: unknown): string => '(min-width: 768px)',
   };
-});
 
 vi.mock('@/config/constants/navigation', () => {
   return {
@@ -68,7 +64,6 @@ vi.mock('@/config/constants/navigation', () => {
       ISSUE: 'Issue',
     },
   };
-});
 
 vi.mock('@/config/constants/routes', () => {
   const g = globalThis as unknown as { __disabledRoutes?: string[] };
@@ -88,7 +83,6 @@ vi.mock('@/config/constants/routes', () => {
     },
     DISABLED_ROUTES: g.__disabledRoutes,
   };
-});
 
 vi.mock('../hoverables', () => {
   return {
@@ -108,7 +102,6 @@ vi.mock('../hoverables', () => {
       );
     },
   };
-});
 
 vi.mock('../logo', () => {
   return {
@@ -116,25 +109,9 @@ vi.mock('../logo', () => {
       return <div data-testid="logo" data-size={size ?? ''} />;
     },
   };
-});
 
 import Navbar from './navbar';
 
-describe('Navbar', (): void => {
-  beforeEach((): void => {
-    const g = globalThis as unknown as {
-      __useMediaReturn?: boolean;
-      __pathname?: unknown;
-      __disabledRoutes?: string[];
-    };
-    g.__useMediaReturn = true;
-    g.__pathname = '/home';
-    if (!g.__disabledRoutes) {
-      g.__disabledRoutes = [];
-    } else {
-      g.__disabledRoutes.length = 0;
-    }
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -211,7 +188,6 @@ describe('Navbar', (): void => {
     for (const el of items) {
       expect(el.getAttribute('data-active')).toBe('false');
     }
-  });
 
   test('supports async queries for nav links', async (): Promise<void> => {
     render(<Navbar linksGroup="top" />);
@@ -219,4 +195,3 @@ describe('Navbar', (): void => {
     const items = await screen.findAllByTestId('nav-link');
     expect(items.length).toBe(8);
   });
-});

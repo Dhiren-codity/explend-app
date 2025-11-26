@@ -57,7 +57,6 @@ vi.mock('@heroui/react', () => {
                 start: { toString: (): string => '2023-01-01' },
                 end: { toString: (): string => '2023-01-31' },
               });
-            }
           }}
         >
           Set Date Range
@@ -104,7 +103,6 @@ vi.mock('@heroui/react', () => {
     CardHeader,
     CardBody,
   };
-});
 
 vi.mock('@/app/lib/export-utils', () => ({
   downloadFile: vi.fn(),
@@ -114,11 +112,6 @@ vi.mock('@/app/lib/export-utils', () => ({
   getMimeType: vi.fn(),
 }));
 
-describe('ExportTransactions', (): void => {
-  afterEach((): void => {
-    cleanup();
-    vi.clearAllMocks();
-  });
 
   const makeTransactions = (count: number): TTransaction[] => {
     const result = Array.from({ length: count }).map((_, idx) => ({
@@ -150,7 +143,6 @@ describe('ExportTransactions', (): void => {
       expect(downloadFile).toHaveBeenCalledWith('csv-content', 'transactions.csv', 'text/csv');
       expect(vi.mocked(toast).success).toHaveBeenCalledWith('Exported 2 transactions');
     });
-  });
 
 
     const select = screen.getByRole('combobox', { name: 'Export Format' });
@@ -166,7 +158,6 @@ describe('ExportTransactions', (): void => {
       expect(downloadFile).toHaveBeenCalledWith('json-content', 'transactions.json', 'application/json');
       expect(vi.mocked(toast).success).toHaveBeenCalledWith('Exported 1 transaction');
     });
-  });
 
 
     fireEvent.click(screen.getByRole('button', { name: 'Set Date Range' }));
@@ -211,7 +202,6 @@ describe('ExportTransactions', (): void => {
       expect(downloadFile).toHaveBeenCalledWith('csv-content', 'transactions.csv', 'text/csv');
       expect(vi.mocked(toast).success).toHaveBeenCalledWith('Exported 2 transactions');
     });
-  });
 
 
     fireEvent.click(screen.getByRole('button', { name: 'Set Date Range' }));
@@ -223,7 +213,6 @@ describe('ExportTransactions', (): void => {
       expect(generateCSV).not.toHaveBeenCalled();
       expect(generateJSON).not.toHaveBeenCalled();
     });
-  });
 
 
     fireEvent.click(screen.getByRole('button', { name: 'Export' }));
@@ -235,7 +224,6 @@ describe('ExportTransactions', (): void => {
       expect(generateJSON).not.toHaveBeenCalled();
       expect(onExport).not.toHaveBeenCalled();
     });
-  });
 
 
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation((): void => {});
@@ -252,4 +240,3 @@ describe('ExportTransactions', (): void => {
 
     consoleErrorSpy.mockRestore();
   });
-});

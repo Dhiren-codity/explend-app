@@ -1,10 +1,6 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from "vitest";
 import { ROUTE, DISABLED_ROUTES } from "./routes";
 
-describe("config/constants/routes", () => {
-  beforeEach((): void => {
-    // no-op setup
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -47,7 +43,6 @@ describe("config/constants/routes", () => {
       for (const value of routeValues) {
         expect(value.startsWith("/")).toBe(true);
       }
-    });
 
     test("routes should be unique (no duplicates)", (): void => {
       const unique = new Set(routeValues);
@@ -61,7 +56,6 @@ describe("config/constants/routes", () => {
     test("non-existent route should not be included", (): void => {
       expect(routeValues.includes("/non-existent")).toBe(false);
     });
-  });
 
   describe("DISABLED_ROUTES", () => {
     test("should be an empty array by default", (): void => {
@@ -93,6 +87,3 @@ describe("config/constants/routes", () => {
       for (const value of DISABLED_ROUTES) {
         expect(validRoutes.has(value)).toBe(true);
       }
-    });
-  });
-});
