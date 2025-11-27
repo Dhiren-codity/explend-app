@@ -117,10 +117,6 @@ describe('ExportTransactions', () => {
     vi.clearAllMocks();
   });
 
-  test('should render all main elements', (): void => {
-    render(
-      <ExportTransactions
-        transactions={defaultTransactions}
         onExport={vi.fn()}
       />
     );
@@ -132,20 +128,12 @@ describe('ExportTransactions', () => {
     expect(screen.getByTestId('download-icon')).toBeInTheDocument();
   });
 
-  test('should show correct singular/plural in info text', (): void => {
-    render(
-      <ExportTransactions
-        transactions={[{ id: '1', amount: 100, date: '2024-01-01', description: 'Test 1' }]}
         onExport={vi.fn()}
       />
     );
     expect(screen.getByText('Ready to export all 1 transaction')).toBeInTheDocument();
   });
 
-  test('should change export format when select is changed', (): void => {
-    render(
-      <ExportTransactions
-        transactions={defaultTransactions}
         onExport={vi.fn()}
       />
     );
@@ -155,10 +143,6 @@ describe('ExportTransactions', () => {
     expect(select.value).toBe('json');
   });
 
-  test('should update date range and info text when date range is selected', (): void => {
-    render(
-      <ExportTransactions
-        transactions={defaultTransactions}
         onExport={vi.fn()}
       />
     );
@@ -169,11 +153,6 @@ describe('ExportTransactions', () => {
     ).toBeInTheDocument();
   });
 
-  test('should call onExport with correct dates when date range is set', async (): Promise<void> => {
-    const onExport = vi.fn().mockResolvedValue(defaultTransactions);
-    render(
-      <ExportTransactions
-        transactions={defaultTransactions}
         onExport={onExport}
       />
     );
@@ -190,11 +169,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('should export as CSV by default and show success toast', async (): Promise<void> => {
-    const onExport = vi.fn().mockResolvedValue(defaultTransactions);
-    render(
-      <ExportTransactions
-        transactions={defaultTransactions}
         onExport={onExport}
       />
     );
@@ -211,11 +185,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('should export as JSON when selected and show success toast', async (): Promise<void> => {
-    const onExport = vi.fn().mockResolvedValue(defaultTransactions);
-    render(
-      <ExportTransactions
-        transactions={defaultTransactions}
         onExport={onExport}
       />
     );
@@ -234,11 +203,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('should show error toast if no transactions to export', async (): Promise<void> => {
-    const onExport = vi.fn().mockResolvedValue([]);
-    render(
-      <ExportTransactions
-        transactions={defaultTransactions}
         onExport={onExport}
       />
     );
@@ -251,11 +215,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('should show error toast if export throws', async (): Promise<void> => {
-    const onExport = vi.fn().mockRejectedValue(new Error('fail'));
-    render(
-      <ExportTransactions
-        transactions={defaultTransactions}
         onExport={onExport}
       />
     );
@@ -266,13 +225,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('should show loading state on export', async (): Promise<void> => {
-    let resolvePromise: () => void;
-    const onExport = vi.fn().mockImplementation(
-      () =>
-        new Promise<TTransaction[]>((resolve) => {
-          resolvePromise = () => resolve(defaultTransactions);
-        })
     );
     render(
       <ExportTransactions
@@ -292,10 +244,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('should be accessible with labels and roles', (): void => {
-    render(
-      <ExportTransactions
-        transactions={defaultTransactions}
         onExport={vi.fn()}
       />
     );

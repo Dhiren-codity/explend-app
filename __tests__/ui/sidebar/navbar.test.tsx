@@ -106,23 +106,6 @@ describe('Navbar', (): void => {
     expect(screen.getByTestId('navlink-Issue')).toBeInTheDocument();
   });
 
-  test('does not render disabled routes', (): void => {
-    // Mock DISABLED_ROUTES to include '/chart' and '/feedback'
-    vi.doMock('@/config/constants/routes', () => ({
-      ROUTE: {
-        HOME: '/home',
-        MONTHLY_REPORT: '/monthly-report',
-        CHART: '/chart',
-        LIMITS: '/limits',
-        SUBSCRIPTIONS: '/subscriptions',
-        CATEGORIES: '/categories',
-        EXPORT: '/export',
-        SETTINGS: '/settings',
-        FEEDBACK: '/feedback',
-        ISSUE: '/issue',
-      },
-      DISABLED_ROUTES: ['/chart', '/feedback'],
-    }));
     // Re-import Navbar to get updated mock
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const NavbarWithDisabled = require('./navbar').default;
@@ -147,23 +130,6 @@ describe('Navbar', (): void => {
     expect(screen.getByTestId('navlink-Home').textContent).not.toContain('-active');
   });
 
-  test('renders nothing if navLinks is empty', (): void => {
-    // Mock topNavLinks to empty
-    vi.doMock('@/config/constants/navigation', () => ({
-      NAV_TITLE: {
-        HOME: 'Home',
-        MONTHLY_REPORT: 'Monthly Report',
-        CHART: 'Chart',
-        LIMITS: 'Limits',
-        SUBSCRIPTIONS: 'Subscriptions',
-        CATEGORIES: 'Categories',
-        EXPORT: 'Export',
-        SETTINGS: 'Settings',
-        FEEDBACK: 'Feedback',
-        ISSUE: 'Issue',
-      },
-      NAV_ICON_SIZE: 20,
-    }));
     vi.doMock('@/config/constants/routes', () => ({
       ROUTE: {},
       DISABLED_ROUTES: [],

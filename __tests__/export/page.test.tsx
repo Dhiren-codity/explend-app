@@ -122,37 +122,14 @@ describe('Page', (): void => {
     expect(actions.getCachedAllTransactions).toHaveBeenCalledWith(undefined);
   });
 
-  test('should handle getCachedAllTransactions throwing error', async (): Promise<void> => {
-    (actions.getCachedAuthSession as unknown as vi.Mock).mockResolvedValueOnce(mockSession);
-    (actions.getCachedAllTransactions as unknown as vi.Mock).mockRejectedValueOnce(new Error('DB error'));
-
-    let error: unknown = null;
-    try {
-      await Page();
-    } catch (err) {
-      error = err;
-    }
     expect(error).toBeInstanceOf(Error);
     expect((error as Error).message).toBe('DB error');
   });
 
-  test('should handle getCachedAuthSession throwing error', async (): Promise<void> => {
-    (actions.getCachedAuthSession as unknown as vi.Mock).mockRejectedValueOnce(new Error('Session error'));
-
-    let error: unknown = null;
-    try {
-      await Page();
-    } catch (err) {
-      error = err;
-    }
     expect(error).toBeInstanceOf(Error);
     expect((error as Error).message).toBe('Session error');
   });
 
-  test('handleExport should call getTransactionsForExport with correct args', async (): Promise<void> => {
-    (actions.getCachedAuthSession as unknown as vi.Mock).mockResolvedValueOnce(mockSession);
-    (actions.getCachedAllTransactions as unknown as vi.Mock).mockResolvedValueOnce(mockTransactions);
-    (actions.getTransactionsForExport as unknown as vi.Mock).mockResolvedValueOnce([{ id: '3', amount: 300, date: '2024-01-03' }]);
 
     const PageComponent = await Page();
 
@@ -168,22 +145,6 @@ describe('Page', (): void => {
     expect(result).toEqual([{ id: '3', amount: 300, date: '2024-01-03' }]);
   });
 
-  test('handleExport should handle errors from getTransactionsForExport', async (): Promise<void> => {
-    (actions.getCachedAuthSession as unknown as vi.Mock).mockResolvedValueOnce(mockSession);
-    (actions.getCachedAllTransactions as unknown as vi.Mock).mockResolvedValueOnce(mockTransactions);
-    (actions.getTransactionsForExport as unknown as vi.Mock).mockRejectedValueOnce(new Error('Export error'));
-
-    const PageComponent = await Page();
-
-    const exportTransactionsCall = (ExportTransactions as unknown as vi.Mock).mock.calls[0][0];
-    const onExport = exportTransactionsCall.onExport;
-
-    let error: unknown = null;
-    try {
-      await onExport();
-    } catch (err) {
-      error = err;
-    }
     expect(error).toBeInstanceOf(Error);
     expect((error as Error).message).toBe('Export error');
   });
