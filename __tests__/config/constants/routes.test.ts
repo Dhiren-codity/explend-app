@@ -1,10 +1,6 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { ROUTE, DISABLED_ROUTES } from './routes';
 
-describe('config/constants/routes', () => {
-  beforeEach((): void => {
-    // No setup required for constants
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -81,7 +77,6 @@ describe('config/constants/routes', () => {
         'DISABLED_ROUTE'
       ].sort());
     });
-  });
 
   describe('DISABLED_ROUTES', () => {
     test('should be an array', (): void => {
@@ -101,5 +96,3 @@ describe('config/constants/routes', () => {
       expect(testArray).toContain(ROUTE.DISABLED_ROUTE);
       expect(testArray).toContain(ROUTE.SIGNIN);
     });
-  });
-});

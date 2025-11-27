@@ -7,22 +7,16 @@ import {
   DEFAULT_PAGINATION_PAGE_NUMBER,
 } from './navigation';
 
-describe('config/constants/navigation', () => {
-  afterEach((): void => {
-    vi.clearAllMocks();
-  });
 
   describe('DEFAULT_TRANSACTION_LIMIT', () => {
     test('should be 30', (): void => {
       expect(DEFAULT_TRANSACTION_LIMIT).toBe(30);
     });
-  });
 
   describe('NAV_ICON_SIZE', () => {
     test('should be 24', (): void => {
       expect(NAV_ICON_SIZE).toBe(24);
     });
-  });
 
   describe('NAV_TITLE enum', () => {
     test('should have correct values for all keys', (): void => {
@@ -55,7 +49,6 @@ describe('config/constants/navigation', () => {
         'SIGNIN',
       ]);
     });
-  });
 
   describe('SEARCH_PARAM enum', () => {
     test('should have correct values for all keys', (): void => {
@@ -67,11 +60,8 @@ describe('config/constants/navigation', () => {
       const keys = Object.keys(SEARCH_PARAM);
       expect(keys).toEqual(['QUERY', 'PAGE']);
     });
-  });
 
   describe('DEFAULT_PAGINATION_PAGE_NUMBER', () => {
     test('should be "1"', (): void => {
       expect(DEFAULT_PAGINATION_PAGE_NUMBER).toBe('1');
     });
-  });
-});

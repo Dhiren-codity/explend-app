@@ -44,7 +44,6 @@ vi.mock('@heroui/react', () => ({
               start: { toString: () => '2024-01-01' },
               end: { toString: () => '2024-01-31' },
             });
-          }
         }}
       />
     </div>
@@ -111,11 +110,6 @@ const defaultTransactions: TTransaction[] = [
   { id: '2', amount: 200, date: '2024-01-02', description: 'Test 2' },
 ];
 
-describe('ExportTransactions', () => {
-  afterEach((): void => {
-    cleanup();
-    vi.clearAllMocks();
-  });
 
         onExport={vi.fn()}
       />
@@ -167,7 +161,6 @@ describe('ExportTransactions', () => {
         expect.any(Date)
       );
     });
-  });
 
         onExport={onExport}
       />
@@ -183,7 +176,6 @@ describe('ExportTransactions', () => {
       );
       expect(mockToast.success).toHaveBeenCalledWith('Exported 2 transactions');
     });
-  });
 
         onExport={onExport}
       />
@@ -201,7 +193,6 @@ describe('ExportTransactions', () => {
       );
       expect(mockToast.success).toHaveBeenCalledWith('Exported 2 transactions');
     });
-  });
 
         onExport={onExport}
       />
@@ -213,7 +204,6 @@ describe('ExportTransactions', () => {
     await waitFor(() => {
       expect(mockToast.error).toHaveBeenCalledWith('No transactions to export');
     });
-  });
 
         onExport={onExport}
       />
@@ -223,7 +213,6 @@ describe('ExportTransactions', () => {
     await waitFor(() => {
       expect(mockToast.error).toHaveBeenCalledWith('Failed to export transactions');
     });
-  });
 
     );
     render(
@@ -242,7 +231,6 @@ describe('ExportTransactions', () => {
       expect(button).toHaveAttribute('aria-busy', 'false');
       expect(button).toHaveTextContent('Export');
     });
-  });
 
         onExport={vi.fn()}
       />
@@ -251,4 +239,3 @@ describe('ExportTransactions', () => {
     expect(screen.getByLabelText('Date Range (Optional)')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
   });
-});

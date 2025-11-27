@@ -59,26 +59,6 @@ vi.mock('@/config/constants/routes', () => ({
   DISABLED_ROUTES: [],
 }));
 
-describe('Navbar', (): void => {
-  let useMediaMock: ReturnType<typeof vi.fn>;
-  let usePathnameMock: ReturnType<typeof vi.fn>;
-  let getBreakpointWidthMock: ReturnType<typeof vi.fn>;
-  let HoverableNavLinkMock: ReturnType<typeof vi.fn>;
-  let LogoMock: ReturnType<typeof vi.fn>;
-
-  beforeEach((): void => {
-    useMediaMock = vi.spyOn(reactUse, 'useMedia').mockReturnValue(true);
-    usePathnameMock = vi.spyOn(nextNavigation, 'usePathname').mockReturnValue('/home');
-    getBreakpointWidthMock = vi.spyOn(helpers, 'getBreakpointWidth').mockImplementation((bp: string): string => bp);
-    HoverableNavLinkMock = vi.spyOn(hoverables, 'HoverableNavLink').mockImplementation(
-      ({ link, isActiveLink }: Record<string, unknown>): React.ReactElement => (
-        <li data-testid={`navlink-${String(link?.title)}`}>{String(link?.title)}{isActiveLink ? '-active' : ''}</li>
-      )
-    );
-    LogoMock = vi.spyOn(logoModule, 'default').mockImplementation(
-      (props: Record<string, unknown>): React.ReactElement => <div data-testid="logo">{String(props.size)}</div>
-    );
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -167,4 +147,3 @@ describe('Navbar', (): void => {
     render(<Navbar linksGroup="top" withLogo />);
     expect(getBreakpointWidthMock).toHaveBeenCalledWith('md');
   });
-});

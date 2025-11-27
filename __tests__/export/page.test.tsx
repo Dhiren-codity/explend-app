@@ -38,8 +38,6 @@ vi.mock('../ui/sidebar/with-sidebar', () => ({
   )),
 }));
 
-describe('Page', (): void => {
-  const mockSession = { user: { email: 'user@example.com' } };
   const mockTransactions = [
     { id: '1', amount: 100, date: '2024-01-01' },
     { id: '2', amount: 200, date: '2024-01-02' },
@@ -159,4 +157,3 @@ describe('Page', (): void => {
 
     expect(screen.getByText('Export Transactions')).toBeInTheDocument();
   });
-});
