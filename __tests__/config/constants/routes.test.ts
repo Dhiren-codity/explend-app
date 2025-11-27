@@ -1,10 +1,6 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from "vitest";
 import { ROUTE, DISABLED_ROUTES } from "./routes";
 
-describe("Tests", (): void => {
-  describe("config/constants/routes", () => {
-    // No setup required for constants
-  });
 
   describe("ROUTE enum", () => {
     test("should map route constants to correct paths", (): void => {
@@ -27,5 +23,3 @@ describe("Tests", (): void => {
       expect(DISABLED_ROUTES).toEqual([]);
       expect(DISABLED_ROUTES.length).toBe(0);
     });
-  });
-});

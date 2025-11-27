@@ -1,17 +1,7 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
 
-describe('Tests', (): void => {
-    DEFAULT_TRANSACTION_LIMIT,
-    NAV_ICON_SIZE,
-    NAV_TITLE,
-    SEARCH_PARAM,
-    DEFAULT_PAGINATION_PAGE_NUMBER,
-  } from '../config/constants/navigation';
 
-  describe('config/constants/navigation', () => {
-      // No setup needed for constants
-    });
 
 
     describe('DEFAULT_TRANSACTION_LIMIT', () => {
@@ -42,5 +32,3 @@ describe('Tests', (): void => {
         expect(DEFAULT_PAGINATION_PAGE_NUMBER).toBe('1');
         expect(typeof DEFAULT_PAGINATION_PAGE_NUMBER).toBe('string');
       });
-});
-});

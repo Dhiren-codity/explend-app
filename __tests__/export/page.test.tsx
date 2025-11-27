@@ -7,7 +7,6 @@ vi.mock("@/config/constants/navigation", (): Record<string, unknown> => {
   return {
     NAV_TITLE: { EXPORT: "Export" },
   };
-});
 
 vi.mock("./app/export/lib/actions", (): Record<string, unknown> => {
   return {
@@ -27,7 +26,6 @@ vi.mock("./app/export/lib/actions", (): Record<string, unknown> => {
       ).__mocks.getTransactionsForExport(...args);
     },
   };
-});
 
 vi.mock("./app/export/ui/sidebar/with-sidebar", (): Record<string, unknown> => {
   const WithSidebar = ({
@@ -63,33 +61,15 @@ vi.mock(
         "data-testid": "export-transactions",
         "data-count": count,
       });
-    };
     return { __esModule: true, default: ExportTransactions };
   },
 );
 
-describe("Tests", (): void => {
-  type MockFns = {
-    getCachedAuthSession: ReturnType<typeof vi.fn>;
-    getCachedAllTransactions: ReturnType<typeof vi.fn>;
-    getTransactionsForExport: ReturnType<typeof vi.fn>;
-    lastExportProps?: unknown;
-  };
 
   const getMocks = (): MockFns => {
     return (globalThis as unknown as { __mocks: MockFns }).__mocks;
   };
 
-  describe("Page", (): void => {
-    (globalThis as unknown as { __mocks: MockFns }).__mocks = {
-      getCachedAuthSession: vi
-        .fn()
-        .mockResolvedValue({ user: { email: "user@example.com" } }),
-      getCachedAllTransactions: vi.fn().mockResolvedValue([]),
-      getTransactionsForExport: vi.fn().mockResolvedValue([]),
-      lastExportProps: undefined,
-    };
-  });
 
   delete (globalThis as unknown as { __mocks?: MockFns }).__mocks;
 
@@ -164,9 +144,3 @@ describe("Tests", (): void => {
 
               await expect(Page()).rejects.toThrow();
             });
-          });
-        });
-      });
-    });
-  });
-});

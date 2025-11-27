@@ -134,7 +134,6 @@ vi.mock('@heroui/react', () => {
     Select,
     SelectItem,
   };
-});
 
 vi.mock('@/app/lib/export-utils', () => ({
   generateCSV: vi.fn((): string => 'csv-content'),
@@ -144,12 +143,6 @@ vi.mock('@/app/lib/export-utils', () => ({
   downloadFile: vi.fn(),
 }));
 
-describe('Tests', (): void => {
-
-  describe('ExportTransactions', (): void => {
-      cleanup();
-      vi.clearAllMocks();
-    });
 
     const createTransactions = (count: number): Array<Record<string, unknown>> => {
       return Array.from({ length: count }, (_: unknown, i: number) => ({
@@ -204,18 +197,3 @@ describe('Tests', (): void => {
 
       await await waitFor((): void => {
 
-});
-});
-});
-});
-});
-});
-});
-});
-});
-});
-});
-});
-});
-});
-});
