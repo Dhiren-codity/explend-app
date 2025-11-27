@@ -81,8 +81,6 @@ vi.mock('@heroui/react', () => {
           start: { toString: () => startVal },
           end: { toString: () => endVal },
         });
-      }
-    };
 
     return (
       <div>
@@ -128,7 +126,6 @@ vi.mock('@heroui/react', () => {
     Select,
     SelectItem,
   };
-});
 
 vi.mock('@/app/lib/export-utils', () => {
   return {
@@ -138,7 +135,6 @@ vi.mock('@/app/lib/export-utils', () => {
     getExportFilename: vi.fn(),
     getMimeType: vi.fn(),
   };
-});
 
 import toast from 'react-hot-toast';
 import {
@@ -149,11 +145,6 @@ import {
   getMimeType,
 } from '@/app/lib/export-utils';
 
-describe('ExportTransactions', () => {
-  afterEach((): void => {
-    cleanup();
-    vi.clearAllMocks();
-  });
 
   const makeTx = (id: string): TTransaction => ({ id } as unknown as TTransaction);
 
@@ -318,5 +309,3 @@ describe('ExportTransactions', () => {
     await waitFor(() => {
       expect(screen.getByText('Ready to export all 3 transactions')).toBeInTheDocument();
     });
-  });
-});

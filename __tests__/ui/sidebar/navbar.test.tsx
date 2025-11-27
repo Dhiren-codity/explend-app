@@ -12,13 +12,11 @@ vi.mock('react-use', () => {
   return {
     useMedia: vi.fn(),
   };
-});
 
 vi.mock('next/navigation', () => {
   return {
     usePathname: vi.fn(),
   };
-});
 
 vi.mock('@/config/constants/navigation', () => {
   return {
@@ -36,7 +34,6 @@ vi.mock('@/config/constants/navigation', () => {
       ISSUE: 'Issue',
     },
   };
-});
 
 vi.mock('@/config/constants/routes', () => {
   const disabled: string[] = [];
@@ -58,13 +55,11 @@ vi.mock('@/config/constants/routes', () => {
       disabled.splice(0, disabled.length, ...xs);
     },
   };
-});
 
 vi.mock('@/app/lib/helpers', () => {
   return {
     getBreakpointWidth: vi.fn(() => '(min-width: 768px)'),
   };
-});
 
 vi.mock('../hoverables', () => {
   return {
@@ -88,7 +83,6 @@ vi.mock('../hoverables', () => {
       )
     ),
   };
-});
 
 vi.mock('../logo', () => {
   return {
@@ -96,7 +90,6 @@ vi.mock('../logo', () => {
       <div data-testid="logo" data-size={props.size} />
     )),
   };
-});
 
 vi.mock('react-icons/pi', () => {
   const makeIcon = (name: string) =>
@@ -125,20 +118,7 @@ vi.mock('react-icons/pi', () => {
     PiStack: makeIcon('PiStack'),
     PiStackFill: makeIcon('PiStackFill'),
   };
-});
 
-describe('Navbar', (): void => {
-  const mockedUseMedia = useMedia as unknown as ReturnType<typeof vi.fn>;
-  const mockedUsePathname = usePathname as unknown as ReturnType<typeof vi.fn>;
-  const mockedGetBreakpointWidth = getBreakpointWidth as unknown as ReturnType<typeof vi.fn>;
-
-  beforeEach((): void => {
-    vi.clearAllMocks();
-    setDisabledRoutes([]);
-    mockedUseMedia.mockReturnValue(true);
-    mockedUsePathname.mockReturnValue(ROUTE.HOME);
-    mockedGetBreakpointWidth.mockReturnValue('(min-width: 768px)');
-  });
 
   afterEach((): void => {
     cleanup();
@@ -179,7 +159,6 @@ describe('Navbar', (): void => {
     for (const el of items) {
       expect(el.getAttribute('data-with-scale')).toBe('true');
     }
-  });
 
   test('renders bottom links and respects disabled routes', (): void => {
     setDisabledRoutes([ROUTE.ISSUE]);
@@ -202,7 +181,6 @@ describe('Navbar', (): void => {
     for (const el of items) {
       expect(el.getAttribute('data-active')).toBe('false');
     }
-  });
 
   test('renders an empty list when all bottom routes are disabled', (): void => {
     setDisabledRoutes([ROUTE.FEEDBACK, ROUTE.ISSUE]);
@@ -217,4 +195,3 @@ describe('Navbar', (): void => {
       render(<Navbar linksGroup="top" />);
     }).toThrow('boom');
   });
-});

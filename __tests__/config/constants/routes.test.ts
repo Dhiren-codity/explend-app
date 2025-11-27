@@ -6,8 +6,6 @@ vi.mock('node:path', () => ({
   resolve: vi.fn((_p: unknown): string => '/resolved'),
 }));
 
-describe('config/constants/routes', () => {
-  beforeEach((): void => {});
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -52,14 +50,12 @@ describe('config/constants/routes', () => {
       values.forEach((v: string) => {
         expect(v.startsWith('/')).toBe(true);
       });
-    });
 
     test('type-safety: does not allow arbitrary strings to be assigned to ROUTE (compile-time)', (): void => {
       // @ts-expect-error - invalid assignment should be rejected by TS
       const invalid: ROUTE = '/not-a-valid-route';
       expect(typeof invalid).toBe('string');
     });
-  });
 
   describe('DISABLED_ROUTES', () => {
     test('should be an array and be empty by default', (): void => {
@@ -87,7 +83,6 @@ describe('config/constants/routes', () => {
       DISABLED_ROUTES.forEach((r: ROUTE) => {
         expect(allowedSet.has(r)).toBe(true);
       });
-    });
 
     test('type-safety: array should only accept ROUTE values (compile-time)', (): void => {
       const copy: ROUTE[] = [];
@@ -96,5 +91,3 @@ describe('config/constants/routes', () => {
       copy.push('/invalid');
       expect(copy.includes(ROUTE.HOME)).toBe(true);
     });
-  });
-});

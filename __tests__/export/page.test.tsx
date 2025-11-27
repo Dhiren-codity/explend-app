@@ -14,7 +14,6 @@ vi.mock('@/config/constants/navigation', () => {
   return {
     NAV_TITLE: { EXPORT: 'Export' },
   };
-});
 
 vi.mock('../lib/actions', () => {
   return {
@@ -22,7 +21,6 @@ vi.mock('../lib/actions', () => {
     getCachedAuthSession: getCachedAuthSessionMock,
     getTransactionsForExport: getTransactionsForExportMock,
   };
-});
 
 vi.mock('../ui/home/export-transactions', () => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -57,13 +55,6 @@ vi.mock('../ui/sidebar/with-sidebar', () => {
   return { __esModule: true, default: WithSidebar };
 });
 
-describe('Page', (): void => {
-  beforeEach((): void => {
-    vi.clearAllMocks();
-    getCachedAuthSessionMock.mockResolvedValue({ user: { email: 'user@example.com' } });
-    getCachedAllTransactionsMock.mockResolvedValue([]);
-    getTransactionsForExportMock.mockResolvedValue([]);
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -172,4 +163,3 @@ describe('Page', (): void => {
 
     await expect(props.onExport()).rejects.toThrow('Export error');
   });
-});
