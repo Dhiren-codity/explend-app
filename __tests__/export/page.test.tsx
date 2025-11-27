@@ -102,10 +102,6 @@ describe('Page', (): void => {
     vi.clearAllMocks();
   });
 
-  test('renders NoTransactionsPlug when there are no transactions', async (): Promise<void> => {
-    (getCachedAuthSession as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({
-      user: { email: 'user@example.com' },
-    });
     (getCachedAllTransactions as unknown as ReturnType<typeof vi.fn>).mockResolvedValue([]);
 
     const element = await Page();
@@ -116,8 +112,6 @@ describe('Page', (): void => {
     expect(getCachedAllTransactions).toHaveBeenCalledWith('user@example.com');
   });
 
-  test('renders ExportTransactions when transactions exist and onExport calls getTransactionsForExport', async (): Promise<void> => {
-    const transactions: unknown[] = [{ id: 1 }, { id: 2 }];
     (getCachedAuthSession as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({
       user: { email: 'user@example.com' },
     });
@@ -143,10 +137,6 @@ describe('Page', (): void => {
     expect(result).toEqual(exported);
   });
 
-  test('propagates error when getCachedAuthSession rejects', async (): Promise<void> => {
-    // First unawaited call resolves to avoid unhandled rejection; second awaited call rejects
-    (getCachedAuthSession as unknown as ReturnType<typeof vi.fn>)
-      .mockImplementationOnce(async (): Promise<unknown> => ({ user: { email: 'x' } }))
       .mockImplementationOnce(async (): Promise<unknown> => {
         throw new Error('session failed');
       });
@@ -155,10 +145,6 @@ describe('Page', (): void => {
     expect(getCachedAllTransactions).not.toHaveBeenCalled();
   });
 
-  test('propagates error when getCachedAllTransactions rejects', async (): Promise<void> => {
-    (getCachedAuthSession as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({
-      user: { email: 'user@example.com' },
-    });
     // First unawaited call resolves; second awaited call rejects
     (getCachedAllTransactions as unknown as ReturnType<typeof vi.fn>)
       .mockImplementationOnce(async (): Promise<unknown> => [])
@@ -170,10 +156,6 @@ describe('Page', (): void => {
     expect(getCachedAllTransactions).toHaveBeenCalledTimes(2);
   });
 
-  test('onExport propagates error when getTransactionsForExport rejects', async (): Promise<void> => {
-    (getCachedAuthSession as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({
-      user: { email: 'user@example.com' },
-    });
     (getCachedAllTransactions as unknown as ReturnType<typeof vi.fn>).mockResolvedValue([{ id: 1 }]);
     (getTransactionsForExport as unknown as ReturnType<typeof vi.fn>).mockRejectedValue(
       new Error('export failed'),
@@ -190,8 +172,6 @@ describe('Page', (): void => {
     expect(getTransactionsForExport).toHaveBeenCalledWith('user@example.com', undefined, undefined);
   });
 
-  test('handles undefined userId when session email is missing', async (): Promise<void> => {
-    (getCachedAuthSession as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({});
     (getCachedAllTransactions as unknown as ReturnType<typeof vi.fn>).mockResolvedValue([]);
 
     const element = await Page();

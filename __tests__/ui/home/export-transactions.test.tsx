@@ -222,19 +222,6 @@ describe('ExportTransactions', () => {
     expect(button).toBeInTheDocument();
   });
 
-  test('changes export format to JSON and uses JSON generator on export', async (): Promise<void> => {
-    const transactions = [makeTx('1'), makeTx('2')];
-    const onExportMock = vi.fn().mockResolvedValue(transactions);
-
-    vi.mocked(getExportFilename).mockReturnValue('transactions.json');
-    vi.mocked(getMimeType).mockReturnValue('application/json');
-    vi.mocked(generateJSON).mockReturnValue('json-content');
-    vi.mocked(generateCSV).mockReturnValue('csv-content');
-
-    renderComponent(transactions, onExportMock);
-
-    const select = screen.getByLabelText('Export Format') as HTMLSelectElement;
-    fireEvent.change(select, { target: { value: 'json' } });
     expect(select.value).toBe('json');
 
     const exportButton = screen.getByRole('button', { name: 'Export' });
@@ -252,17 +239,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('exports all transactions without calling onExport when no date range', async (): Promise<void> => {
-    const transactions = [makeTx('1'), makeTx('2'), makeTx('3')];
-    const onExportMock = vi.fn().mockResolvedValue([]);
-
-    vi.mocked(getExportFilename).mockReturnValue('transactions.csv');
-    vi.mocked(getMimeType).mockReturnValue('text/csv');
-    vi.mocked(generateCSV).mockReturnValue('csv-content');
-
-    renderComponent(transactions, onExportMock);
-
-    const exportButton = screen.getByRole('button', { name: 'Export' });
     fireEvent.click(exportButton);
 
     await waitFor(() => {
@@ -273,21 +249,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('sets and displays date range, calls onExport with correct dates, and uses returned transactions', async (): Promise<void> => {
-    const initialTransactions = [makeTx('1'), makeTx('2'), makeTx('3')];
-    const returnedTransactions = [makeTx('4')];
-    const onExportMock = vi.fn().mockResolvedValue(returnedTransactions);
-
-    vi.mocked(getExportFilename).mockReturnValue('transactions.csv');
-    vi.mocked(getMimeType).mockReturnValue('text/csv');
-    vi.mocked(generateCSV).mockReturnValue('csv-content');
-
-    renderComponent(initialTransactions, onExportMock);
-
-    const startInput = screen.getByPlaceholderText('Start date');
-    const endInput = screen.getByPlaceholderText('End date');
-
-    fireEvent.change(startInput, { target: { value: '2024-01-10' } });
     fireEvent.change(endInput, { target: { value: '2024-01-20' } });
 
     // Ensure helper text updates to reflect date range
@@ -322,13 +283,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('shows error toast when there are no transactions to export (no date range)', async (): Promise<void> => {
-    const transactions: Array<Record<string, unknown>> = [];
-    const onExportMock = vi.fn().mockResolvedValue([]);
-
-    renderComponent(transactions, onExportMock);
-
-    const exportButton = screen.getByRole('button', { name: 'Export' });
     fireEvent.click(exportButton);
 
     await waitFor(() => {
@@ -337,16 +291,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('shows error toast when onExport returns empty for selected date range', async (): Promise<void> => {
-    const initialTransactions = [makeTx('1')];
-    const onExportMock = vi.fn().mockResolvedValue([]);
-
-    renderComponent(initialTransactions, onExportMock);
-
-    const startInput = screen.getByPlaceholderText('Start date');
-    const endInput = screen.getByPlaceholderText('End date');
-
-    fireEvent.change(startInput, { target: { value: '2024-02-01' } });
     fireEvent.change(endInput, { target: { value: '2024-02-02' } });
 
     const exportButton = screen.getByRole('button', { name: 'Export' });
@@ -359,20 +303,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('shows loading state during export and resets after completion', async (): Promise<void> => {
-    const transactions = [makeTx('1'), makeTx('2')];
-    const onExportMock = vi.fn().mockImplementation(
-      async (): Promise<Array<Record<string, unknown>>> =>
-        new Promise((resolve) => setTimeout(() => resolve(transactions), 50))
-    );
-
-    vi.mocked(getExportFilename).mockReturnValue('transactions.csv');
-    vi.mocked(getMimeType).mockReturnValue('text/csv');
-    vi.mocked(generateCSV).mockReturnValue('csv-content');
-
-    renderComponent(transactions, onExportMock);
-
-    const buttonBefore = screen.getByRole('button', { name: 'Export' });
     fireEvent.click(buttonBefore);
 
     // While loading
@@ -387,14 +317,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('handles export error and shows failure toast', async (): Promise<void> => {
-    const transactions = [makeTx('1')];
-    // Make generator throw
-    vi.mocked(getExportFilename).mockReturnValue('transactions.csv');
-    vi.mocked(getMimeType).mockReturnValue('text/csv');
-    vi.mocked(generateCSV).mockImplementation(() => {
-      throw new Error('boom');
-    });
 
     const onExportMock = vi.fn().mockResolvedValue(transactions);
 

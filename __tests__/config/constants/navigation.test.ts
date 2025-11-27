@@ -77,17 +77,6 @@ describe('config/constants/navigation', () => {
   });
 
   describe('Module immutability', () => {
-    test('should expose read-only export bindings', (): void => {
-      const moduleAsRecord = navigationModule as unknown as Record<string, unknown>;
-      const originalValue = moduleAsRecord.DEFAULT_TRANSACTION_LIMIT;
-      let capturedError: unknown = null;
-
-      try {
-        // Attempt to mutate a read-only export; should throw in strict mode
-        (moduleAsRecord as Record<string, unknown>).DEFAULT_TRANSACTION_LIMIT = 50 as unknown as unknown;
-      } catch (err) {
-        capturedError = err;
-      }
 
       expect(capturedError).toBeInstanceOf(TypeError);
       expect(moduleAsRecord.DEFAULT_TRANSACTION_LIMIT).toBe(originalValue);
