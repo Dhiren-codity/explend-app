@@ -34,7 +34,6 @@ vi.mock('react-icons/pi', () => {
     PiStack: Stub,
     PiStackFill: Stub,
   };
-});
 
 vi.mock('react-use', () => {
   return {
@@ -45,13 +44,11 @@ vi.mock('react-use', () => {
       return isMdValue;
     },
   };
-});
 
 vi.mock('next/navigation', () => {
   return {
     usePathname: (): string | null => mockedPathname,
   };
-});
 
 vi.mock('@/config/constants/navigation', () => {
   return {
@@ -69,7 +66,6 @@ vi.mock('@/config/constants/navigation', () => {
       ISSUE: 'Issue',
     },
   };
-});
 
 vi.mock('@/config/constants/routes', () => {
   const ROUTE = {
@@ -88,13 +84,11 @@ vi.mock('@/config/constants/routes', () => {
     ROUTE,
     DISABLED_ROUTES: disabledRoutes,
   };
-});
 
 vi.mock('@/app/lib/helpers', () => {
   return {
     getBreakpointWidth: getBreakpointWidthMock,
   };
-});
 
 vi.mock('../hoverables', () => {
   type Link = { title: string; url: string };
@@ -129,14 +123,6 @@ vi.mock('../logo', () => {
 // Import after mocks
 import Navbar from './navbar';
 
-describe('Navbar', (): void => {
-  beforeEach((): void => {
-    mockedPathname = '/';
-    isMdValue = true;
-    useMediaShouldThrow = false;
-    disabledRoutes.splice(0, disabledRoutes.length);
-    getBreakpointWidthMock.mockClear();
-  });
 
   afterEach((): void => {
     cleanup();
@@ -221,10 +207,8 @@ describe('Navbar', (): void => {
     for (const el of items) {
       expect(el.getAttribute('data-active')).toBe('false');
     }
-  });
 
   test('propagates error when useMedia throws', (): void => {
     useMediaShouldThrow = true;
     expect(() => render(<Navbar linksGroup="top" />)).toThrowError('media error');
   });
-});

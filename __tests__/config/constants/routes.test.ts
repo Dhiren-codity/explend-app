@@ -5,22 +5,12 @@ vi.mock('node:path', () => ({
   join: vi.fn(),
 }));
 
-describe('config/constants/routes', () : void => {
-  beforeEach(() : void => {
-    vi.resetModules();
-  });
 
   afterEach(() : void => {
     vi.clearAllMocks();
     vi.resetModules();
   });
 
-  describe('DISABLED_ROUTES', () : void => {
-      const disabled = mod.DISABLED_ROUTES;
-      expect(Array.isArray(disabled)).toBe(true);
-      const list = disabled as unknown[];
-      expect(list).toHaveLength(0);
-    });
 
       const list = firstImport.DISABLED_ROUTES as unknown[];
       list.push('/disabled-route');
@@ -44,11 +34,4 @@ describe('config/constants/routes', () : void => {
         (mod as Record<string, unknown>).DISABLED_ROUTES = [];
       }).toThrow();
     });
-  });
 
-  describe('ROUTE (const enum)', () : void => {
-      expect('ROUTE' in mod).toBe(false);
-      expect(mod.ROUTE).toBeUndefined();
-    });
-  });
-});

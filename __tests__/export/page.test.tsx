@@ -65,10 +65,6 @@ function findElementByType(root: unknown, targetType: unknown): ReactElementLike
   return undefined;
 }
 
-describe('Page', (): void => {
-  beforeEach((): void => {
-    vi.clearAllMocks();
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -200,4 +196,3 @@ describe('Page', (): void => {
     await expect(Page()).rejects.toThrow('transactions-fail');
     expect(getCachedAllTransactions).toHaveBeenCalledTimes(2);
   });
-});

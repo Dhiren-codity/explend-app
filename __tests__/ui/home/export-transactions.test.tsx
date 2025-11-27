@@ -127,7 +127,6 @@ vi.mock('@heroui/react', () => {
     Button,
     DateRangePicker,
   };
-});
 
 vi.mock('@/app/lib/export-utils', () => ({
   generateCSV: vi.fn().mockReturnValue('csv-content'),
@@ -158,11 +157,6 @@ const createDeferred = <T,>(): {
   return { promise, resolve, reject };
 };
 
-describe('ExportTransactions', () => {
-  afterEach((): void => {
-    cleanup();
-    vi.clearAllMocks();
-  });
 
 
     expect(screen.getByText('Export Transactions')).toBeInTheDocument();
@@ -191,7 +185,6 @@ describe('ExportTransactions', () => {
       expect(downloadFile).toHaveBeenCalledWith('csv-content', 'export.csv', 'text/csv');
       expect(toast.success).toHaveBeenCalledWith('Exported 2 transactions');
     });
-  });
 
 
     const select = screen.getByLabelText('Export Format') as HTMLSelectElement;
@@ -206,7 +199,6 @@ describe('ExportTransactions', () => {
       expect(downloadFile).toHaveBeenCalledWith('json-content', 'export.json', 'application/json');
       expect(toast.success).toHaveBeenCalledWith('Exported 1 transaction');
     });
-  });
 
 
     fireEvent.click(screen.getByRole('button', { name: 'Apply date range' }));
@@ -227,7 +219,6 @@ describe('ExportTransactions', () => {
       expect(downloadFile).not.toHaveBeenCalled();
       expect(toast.error).toHaveBeenCalledWith('No transactions to export');
     });
-  });
 
     const onExport = vi.fn<OnExportFn>().mockResolvedValue(returned);
     render(<ExportTransactionsComponent transactions={[]} onExport={onExport} />);
@@ -241,7 +232,6 @@ describe('ExportTransactions', () => {
       expect(downloadFile).toHaveBeenCalledWith('csv-content', 'export.csv', 'text/csv');
       expect(toast.success).toHaveBeenCalledWith('Exported 3 transactions');
     });
-  });
 
 
     fireEvent.click(screen.getByRole('button', { name: 'Apply date range' }));
@@ -253,7 +243,6 @@ describe('ExportTransactions', () => {
     await await waitFor((): void => {
       expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
     });
-  });
 
 
     fireEvent.click(screen.getByRole('button', { name: 'Apply date range' }));
@@ -269,7 +258,6 @@ describe('ExportTransactions', () => {
     await await waitFor((): void => {
       expect(screen.getByText('Ready to export all 1 transaction')).toBeInTheDocument();
     });
-  });
 
 
     fireEvent.click(screen.getByRole('button', { name: 'Apply date range' }));
@@ -279,7 +267,6 @@ describe('ExportTransactions', () => {
       expect(toast.error).toHaveBeenCalledWith('Failed to export transactions');
       expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
     });
-  });
 
 
     expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
@@ -293,5 +280,3 @@ describe('ExportTransactions', () => {
       expect(downloadFile).toHaveBeenCalledWith('csv-content', 'custom.csv', 'text/csv; charset=utf-8');
       expect(toast.success).toHaveBeenCalledWith('Exported 1 transaction');
     });
-  });
-});
