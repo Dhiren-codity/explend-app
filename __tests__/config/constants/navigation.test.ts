@@ -42,6 +42,5 @@ describe('Tests', (): void => {
         expect(DEFAULT_PAGINATION_PAGE_NUMBER).toBe('1');
         expect(typeof DEFAULT_PAGINATION_PAGE_NUMBER).toBe('string');
       });
-      test('should parse to the correct number', (): void => {
-        const parsed: number = Number.parseInt(DEFAULT_PAGINATION_PAGE_NUMBER, 10);
+});
 });

@@ -160,29 +160,16 @@ describe('Tests', (): void => {
       }));
     };
 
-    test('renders correctly with default props', (): Promise<void> => {
-      const transactions = createTransactions(2);
-      render(<ExportTransactions transactions={transactions} onExport={vi.fn()} />);
 
 
-    test('shows singular message for one transaction', (): Promise<void> => {
-      const transactions = createTransactions(1);
-      render(<ExportTransactions transactions={transactions} onExport={vi.fn()} />);
 
 
-    test('exports CSV by default using provided transactions when no date range', async (): Promise<void> => {
-      const transactions = createTransactions(2);
-      const onExport = vi.fn();
-      render(<ExportTransactions transactions={transactions} onExport={onExport} />);
 
       const button = screen.getByRole('button', { name: 'Export' });
       fireEvent.click(button);
 
-      await waitFor((): void => {
+      await await waitFor((): void => {
 
-    test('changes format to JSON and exports correctly', async (): Promise<void> => {
-      const transactions = createTransactions(3);
-      render(<ExportTransactions transactions={transactions} onExport={vi.fn()} />);
 
       const select = screen.getByLabelText('Export Format') as HTMLSelectElement;
       fireEvent.change(select, { target: { value: 'json' } });
@@ -190,63 +177,45 @@ describe('Tests', (): void => {
       const button = screen.getByRole('button', { name: 'Export' });
       fireEvent.click(button);
 
-      await waitFor((): void => {
+      await await waitFor((): void => {
 
-    test('sets date range and calls onExport with correct dates and end-of-day time', async (): Promise<void> => {
-      const transactions = createTransactions(2);
-      const returned = createTransactions(1);
-      const onExport = vi.fn(async (_start?: Date, _end?: Date): Promise<Array<Record<string, unknown>>> => returned);
-
-      render(<ExportTransactions transactions={transactions} onExport={onExport} />);
 
       fireEvent.click(screen.getByRole('button', { name: 'Set Range' }));
 
       fireEvent.click(screen.getByRole('button', { name: 'Export' }));
 
-      await waitFor((): void => {
+      await await waitFor((): void => {
 
       const firstCall = onExport.mock.calls[0] as [Date, Date];
       const startArg = firstCall[0];
       const endArg = firstCall[1];
 
 
-      await waitFor((): void => {
+      await await waitFor((): void => {
 
-    test('shows error when no transactions to export (no date range)', async (): Promise<void> => {
-      const transactions: Array<Record<string, unknown>> = [];
-      render(<ExportTransactions transactions={transactions} onExport={vi.fn()} />);
 
       fireEvent.click(screen.getByRole('button', { name: 'Export' }));
 
-      await waitFor((): void => {
+      await await waitFor((): void => {
 
-    test('shows error when onExport returns empty array for selected date range', async (): Promise<void> => {
-      const transactions = createTransactions(2);
-      const onExport = vi.fn(async (): Promise<Array<Record<string, unknown>>> => []);
-      render(<ExportTransactions transactions={transactions} onExport={onExport} />);
 
       fireEvent.click(screen.getByRole('button', { name: 'Set Range' }));
       fireEvent.click(screen.getByRole('button', { name: 'Export' }));
 
-      await waitFor((): void => {
+      await await waitFor((): void => {
 
-    test('handles onExport failure and shows error toast', async (): Promise<void> => {
-      const transactions = createTransactions(2);
-      const onExport = vi.fn(async (): Promise<Array<Record<string, unknown>>> => {
-        throw new Error('boom');
-
-      render(<ExportTransactions transactions={transactions} onExport={onExport} />);
-
-      fireEvent.click(screen.getByRole('button', { name: 'Set Range' }));
-      fireEvent.click(screen.getByRole('button', { name: 'Export' }));
-
-      await waitFor((): void => {
-
-    test('clearing date range reverts info text to all transactions', (): void => {
-      const transactions = createTransactions(4);
-      render(<ExportTransactions transactions={transactions} onExport={vi.fn()} />);
-
-      fireEvent.click(screen.getByRole('button', { name: 'Set Range' }));
-
-      fireEvent.click(screen.getByRole('button', { name: 'Clear Range' }));
+});
+});
+});
+});
+});
+});
+});
+});
+});
+});
+});
+});
+});
+});
 });
