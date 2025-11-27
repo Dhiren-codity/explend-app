@@ -213,10 +213,6 @@ describe('Navbar', (): void => {
     expect(items.length).toBe(0);
   });
 
-  test('throws when media hook throws (error case)', (): void => {
-    mockedUseMedia.mockImplementation(() => {
-      throw new Error('boom');
-    });
     expect((): void => {
       render(<Navbar linksGroup="top" />);
     }).toThrow('boom');

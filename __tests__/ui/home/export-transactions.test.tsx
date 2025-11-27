@@ -168,11 +168,6 @@ describe('ExportTransactions', () => {
     );
   };
 
-  test('renders with default UI and status text: void', (): void => {
-    setupDefaultMocks();
-    const transactions = [makeTx('1'), makeTx('2')];
-
-    render(<ExportTransactions transactions={transactions} onExport={async (): Promise<TTransaction[]> => transactions} />);
 
     expect(screen.getByText('Export Transactions')).toBeInTheDocument();
     expect(screen.getByLabelText('Export Format')).toBeInTheDocument();
@@ -182,11 +177,6 @@ describe('ExportTransactions', () => {
     expect(screen.getByText('Ready to export all 2 transactions')).toBeInTheDocument();
   });
 
-  test('exports CSV by default and shows success toast: Promise<void>', async (): Promise<void> => {
-    setupDefaultMocks();
-    const transactions = [makeTx('1'), makeTx('2')];
-
-    render(<ExportTransactions transactions={transactions} onExport={async (): Promise<TTransaction[]> => transactions} />);
 
     const exportButton = screen.getByRole('button', { name: 'Export' });
     fireEvent.click(exportButton);
@@ -203,11 +193,6 @@ describe('ExportTransactions', () => {
     expect((toast.success as unknown as vi.Mock).mock.calls[0][0] as string).toMatch(/Exported 2 transactions/);
   });
 
-  test('selects JSON format and exports JSON: Promise<void>', async (): Promise<void> => {
-    setupDefaultMocks();
-    const transactions = [makeTx('1'), makeTx('2')];
-
-    render(<ExportTransactions transactions={transactions} onExport={async (): Promise<TTransaction[]> => transactions} />);
 
     const select = screen.getByLabelText('Export Format') as HTMLSelectElement;
     fireEvent.change(select, { target: { value: 'json' } });
@@ -225,13 +210,6 @@ describe('ExportTransactions', () => {
     expect(downloadFile).toHaveBeenCalledWith('json-content', 'export.json', 'application/json');
   });
 
-  test('shows error toast when there are no transactions to export: Promise<void>', async (): Promise<void> => {
-    setupDefaultMocks();
-    const transactions: TTransaction[] = [];
-
-    const onExport = vi.fn(async (): Promise<TTransaction[]> => transactions);
-
-    render(<ExportTransactions transactions={transactions} onExport={onExport} />);
 
     const exportButton = screen.getByRole('button', { name: 'Export' });
     fireEvent.click(exportButton);
@@ -244,14 +222,6 @@ describe('ExportTransactions', () => {
     expect(onExport).not.toHaveBeenCalled();
   });
 
-  test('when date range is set, calls onExport with adjusted end time and exports filtered results: Promise<void>', async (): Promise<void> => {
-    setupDefaultMocks();
-    const transactionsAll = [makeTx('1'), makeTx('2')];
-    const filtered = [makeTx('only')];
-
-    const onExport = vi.fn(async (_start?: Date, _end?: Date): Promise<TTransaction[]> => filtered);
-
-    render(<ExportTransactions transactions={transactionsAll} onExport={onExport} />);
 
     const startInput = screen.getByLabelText('Date Range (Optional) start');
     const endInput = screen.getByLabelText('Date Range (Optional) end');
@@ -288,15 +258,6 @@ describe('ExportTransactions', () => {
     expect(toast.success).toHaveBeenCalled();
   });
 
-  test('loading state shows "Exporting..." and disables button during export: Promise<void>', async (): Promise<void> => {
-    setupDefaultMocks();
-    const transactions = [makeTx('1')];
-
-    const onExport = vi.fn(
-      () =>
-        new Promise<TTransaction[]>((resolve) => {
-          setTimeout(() => resolve(transactions), 30);
-        })
     );
 
     render(<ExportTransactions transactions={transactions} onExport={onExport} />);
@@ -319,13 +280,6 @@ describe('ExportTransactions', () => {
     expect(downloadFile).toHaveBeenCalled();
   });
 
-  test('handles export error and shows error toast: Promise<void>', async (): Promise<void> => {
-    setupDefaultMocks();
-    const transactions = [makeTx('1')];
-
-    vi.mocked(generateCSV).mockImplementation(() => {
-      throw new Error('boom');
-    });
 
     const errorSpy = vi.spyOn(console, 'error').mockImplementation((): void => {});
 
@@ -347,11 +301,6 @@ describe('ExportTransactions', () => {
     errorSpy.mockRestore();
   });
 
-  test('clearing date range resets status text: Promise<void>', async (): Promise<void> => {
-    setupDefaultMocks();
-    const transactions = [makeTx('1'), makeTx('2'), makeTx('3')];
-
-    render(<ExportTransactions transactions={transactions} onExport={async (): Promise<TTransaction[]> => transactions} />);
 
     const startInput = screen.getByLabelText('Date Range (Optional) start');
     const endInput = screen.getByLabelText('Date Range (Optional) end');

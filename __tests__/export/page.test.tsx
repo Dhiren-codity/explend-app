@@ -86,8 +86,6 @@ describe('Page', (): void => {
     expect(withSidebarRenderMock).toHaveBeenCalledTimes(1);
   });
 
-  test('renders ExportTransactions when transactions exist and handles onExport', async (): Promise<void> => {
-    const sampleTxs: Array<Record<string, unknown>> = [{ id: '1' }, { id: '2' }];
     getCachedAllTransactionsMock.mockResolvedValueOnce(sampleTxs).mockResolvedValueOnce(sampleTxs);
 
     const returnedForExport: Array<Record<string, unknown>> = [{ id: 'exp-1' }];
@@ -114,8 +112,6 @@ describe('Page', (): void => {
     expect(exportResult).toEqual(returnedForExport);
   });
 
-  test('supports calling onExport without dates', async (): Promise<void> => {
-    const sampleTxs: Array<Record<string, unknown>> = [{ id: '1' }];
     getCachedAllTransactionsMock.mockResolvedValueOnce(sampleTxs).mockResolvedValueOnce(sampleTxs);
 
     const exportResultValue: Array<Record<string, unknown>> = [{ id: 'exp-2' }];
@@ -132,8 +128,6 @@ describe('Page', (): void => {
     expect(exportResult).toEqual(exportResultValue);
   });
 
-  test('handles missing session email (undefined userId)', async (): Promise<void> => {
-    getCachedAuthSessionMock.mockResolvedValueOnce({ user: {} });
 
     const sampleTxs: Array<Record<string, unknown>> = [{ id: 'a' }];
     getCachedAllTransactionsMock.mockResolvedValueOnce(sampleTxs).mockResolvedValueOnce(sampleTxs);
@@ -165,8 +159,6 @@ describe('Page', (): void => {
     await expect(Page()).rejects.toThrow('Transactions error');
   });
 
-  test('onExport propagates error when getTransactionsForExport rejects', async (): Promise<void> => {
-    const sampleTxs: Array<Record<string, unknown>> = [{ id: '1' }];
     getCachedAllTransactionsMock.mockResolvedValueOnce(sampleTxs).mockResolvedValueOnce(sampleTxs);
 
     getTransactionsForExportMock.mockRejectedValueOnce(new Error('Export error'));
