@@ -3,6 +3,7 @@ import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/re
 import ExportTransactions from '@/app/ui/home/export-transactions';
 import toast from 'react-hot-toast';
 import { downloadFile, generateCSV, generateJSON, getExportFilename, getMimeType } from '@/app/lib/export-utils';
+import '@testing-library/jest-dom';
 
 vi.mock('react-hot-toast', () => {
   return {
@@ -91,26 +92,26 @@ describe('Tests', (): void => {
     });
 
 
-      expect(screen.getByText('Export Transactions')).toBeInTheDocument();
+      expect(screen.screen.getByText('Export Transactions')).toBeInTheDocument();
 
-      const exportFormatSelect = screen.getByRole('combobox', { name: 'Export Format' });
+      const exportFormatSelect = screen.screen.getByRole('combobox', { name: 'Export Format' });
       expect(exportFormatSelect).toBeInTheDocument();
 
-      expect(screen.getByText('Date Range (Optional)')).toBeInTheDocument();
+      expect(screen.screen.getByText('Date Range (Optional)')).toBeInTheDocument();
 
-      const exportButton = screen.getByRole('button', { name: 'Export' });
+      const exportButton = screen.screen.getByRole('button', { name: 'Export' });
       expect(exportButton).toBeInTheDocument();
 
-      expect(screen.getByText('Ready to export all 2 transactions')).toBeInTheDocument();
+      expect(screen.screen.getByText('Ready to export all 2 transactions')).toBeInTheDocument();
     });
 
-      expect(screen.getByText('Ready to export all 1 transaction')).toBeInTheDocument();
+      expect(screen.screen.getByText('Ready to export all 1 transaction')).toBeInTheDocument();
     });
 
-      const exportButton = screen.getByRole('button', { name: 'Export' });
+      const exportButton = screen.screen.getByRole('button', { name: 'Export' });
       fireEvent.click(exportButton);
 
-      await await waitFor((): void => {
+      await await await waitFor((): void => {
         expect(generateCSV).toHaveBeenCalledTimes(1);
         expect(generateJSON).not.toHaveBeenCalled();
         expect(getExportFilename).toHaveBeenCalledWith('csv');
@@ -121,13 +122,13 @@ describe('Tests', (): void => {
       });
     });
 
-      const formatSelect = screen.getByRole('combobox', { name: 'Export Format' });
+      const formatSelect = screen.screen.getByRole('combobox', { name: 'Export Format' });
       fireEvent.change(formatSelect, { target: { value: 'json' } });
 
-      const exportButton = screen.getByRole('button', { name: 'Export' });
+      const exportButton = screen.screen.getByRole('button', { name: 'Export' });
       fireEvent.click(exportButton);
 
-      await await waitFor((): void => {
+      await await await waitFor((): void => {
         expect(generateJSON).toHaveBeenCalledTimes(1);
         expect(generateCSV).not.toHaveBeenCalled();
         expect(getExportFilename).toHaveBeenCalledWith('json');
@@ -137,28 +138,28 @@ describe('Tests', (): void => {
       });
     });
 
-      expect(screen.getByText('Ready to export all 1 transaction')).toBeInTheDocument();
+      expect(screen.screen.getByText('Ready to export all 1 transaction')).toBeInTheDocument();
 
-      const applyButton = screen.getByRole('button', { name: 'Apply Date Range' });
+      const applyButton = screen.screen.getByRole('button', { name: 'Apply Date Range' });
       fireEvent.click(applyButton);
 
-      expect(screen.getByText('Exporting transactions from 2023-01-01 to 2023-01-31')).toBeInTheDocument();
+      expect(screen.screen.getByText('Exporting transactions from 2023-01-01 to 2023-01-31')).toBeInTheDocument();
 
-      const clearButton = screen.getByRole('button', { name: 'Clear Date Range' });
+      const clearButton = screen.screen.getByRole('button', { name: 'Clear Date Range' });
       fireEvent.click(clearButton);
 
-      expect(screen.getByText('Ready to export all 1 transaction')).toBeInTheDocument();
+      expect(screen.screen.getByText('Ready to export all 1 transaction')).toBeInTheDocument();
     });
       const onExport = vi.fn<[_start?: Date, _end?: Date], Promise<unknown[]>>().mockResolvedValue(returned);
 
       render(<ExportTransactions transactions={[{ id: '1' }, { id: '2' } as Record<string, unknown>]} onExport={onExport} />);
 
-      fireEvent.click(screen.getByRole('button', { name: 'Apply Date Range' }));
+      fireEvent.click(screen.screen.getByRole('button', { name: 'Apply Date Range' }));
 
-      const exportButton = screen.getByRole('button', { name: 'Export' });
+      const exportButton = screen.screen.getByRole('button', { name: 'Export' });
       fireEvent.click(exportButton);
 
-      await await waitFor((): void => {
+      await await await waitFor((): void => {
         expect(onExport).toHaveBeenCalledTimes(1);
         const call = onExport.mock.calls[0];
         const startArg = call[0] as Date | undefined;
@@ -185,10 +186,10 @@ describe('Tests', (): void => {
       });
     });
 
-      const exportButton = screen.getByRole('button', { name: 'Export' });
+      const exportButton = screen.screen.getByRole('button', { name: 'Export' });
       fireEvent.click(exportButton);
 
-      await await waitFor((): void => {
+      await await await waitFor((): void => {
         expect(toast.error).toHaveBeenCalledWith('No transactions to export');
         expect(downloadFile).not.toHaveBeenCalled();
         expect(generateCSV).not.toHaveBeenCalled();
@@ -196,10 +197,10 @@ describe('Tests', (): void => {
       });
     });
 
-      fireEvent.click(screen.getByRole('button', { name: 'Apply Date Range' }));
-      fireEvent.click(screen.getByRole('button', { name: 'Export' }));
+      fireEvent.click(screen.screen.getByRole('button', { name: 'Apply Date Range' }));
+      fireEvent.click(screen.screen.getByRole('button', { name: 'Export' }));
 
-      await await waitFor((): void => {
+      await await await waitFor((): void => {
         expect(onExport).toHaveBeenCalledTimes(1);
         expect(toast.error).toHaveBeenCalledWith('No transactions to export');
         expect(downloadFile).not.toHaveBeenCalled();
@@ -212,12 +213,12 @@ describe('Tests', (): void => {
 
       render(<ExportTransactions transactions={[{ id: '1' } as Record<string, unknown>]} onExport={async (): Promise<unknown[]> => []} />);
 
-      const exportButton = screen.getByRole('button', { name: 'Export' });
+      const exportButton = screen.screen.getByRole('button', { name: 'Export' });
       fireEvent.click(exportButton);
 
-      await await waitFor((): void => {
+      await await await waitFor((): void => {
         expect(toast.error).toHaveBeenCalledWith('Failed to export transactions');
-        expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
+        expect(screen.screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
       });
 
       consoleSpy.mockRestore();
