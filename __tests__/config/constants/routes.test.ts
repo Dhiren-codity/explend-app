@@ -16,20 +16,12 @@ describe('config/constants/routes', () : void => {
   });
 
   describe('DISABLED_ROUTES', () : void => {
-    test('should be an empty array by default', async () : Promise<void> => {
-      const mod = (await import('./routes')) as unknown as {
-        DISABLED_ROUTES: unknown;
-      };
       const disabled = mod.DISABLED_ROUTES;
       expect(Array.isArray(disabled)).toBe(true);
       const list = disabled as unknown[];
       expect(list).toHaveLength(0);
     });
 
-    test('should allow mutating contents locally without affecting a fresh import', async () : Promise<void> => {
-      const firstImport = (await import('./routes')) as unknown as {
-        DISABLED_ROUTES: unknown;
-      };
       const list = firstImport.DISABLED_ROUTES as unknown[];
       list.push('/disabled-route');
       expect(list).toContain('/disabled-route');
@@ -55,10 +47,6 @@ describe('config/constants/routes', () : void => {
   });
 
   describe('ROUTE (const enum)', () : void => {
-    test('should not be available at runtime as a value (const enum is erased)', async () : Promise<void> => {
-      const mod = (await import('./routes')) as unknown as {
-        ROUTE?: unknown;
-      };
       expect('ROUTE' in mod).toBe(false);
       expect(mod.ROUTE).toBeUndefined();
     });

@@ -164,9 +164,6 @@ describe('ExportTransactions', () => {
     vi.clearAllMocks();
   });
 
-  test('renders correctly with default props and shows singular transaction text', (): void => {
-    const onExport: OnExportFn = async (): Promise<unknown[]> => [];
-    render(<ExportTransactionsComponent transactions={[{ id: '1' }]} onExport={onExport} />);
 
     expect(screen.getByText('Export Transactions')).toBeInTheDocument();
     expect(screen.getByLabelText('Export Format')).toBeInTheDocument();
@@ -178,23 +175,16 @@ describe('ExportTransactions', () => {
     expect(screen.getByText('Ready to export all 1 transaction')).toBeInTheDocument();
   });
 
-  test('shows plural transaction text for multiple items', (): void => {
-    const onExport: OnExportFn = async (): Promise<unknown[]> => [];
-    render(
-      <ExportTransactionsComponent transactions={[{ id: '1' }, { id: '2' }]} onExport={onExport} />
     );
 
     expect(screen.getByText('Ready to export all 2 transactions')).toBeInTheDocument();
   });
 
-  test('exports CSV by default using provided transactions and does not call onExport', async (): Promise<void> => {
-    const onExport = vi.fn<OnExportFn>().mockResolvedValue([]);
-    render(<ExportTransactionsComponent transactions={[{ id: '1' }, { id: '2' }]} onExport={onExport} />);
 
     const exportButton = screen.getByRole('button', { name: 'Export' });
     fireEvent.click(exportButton);
 
-    await waitFor((): void => {
+    await await waitFor((): void => {
       expect(generateCSV).toHaveBeenCalledTimes(1);
       expect(generateJSON).not.toHaveBeenCalled();
       expect(onExport).not.toHaveBeenCalled();
@@ -203,9 +193,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('switches to JSON format via select and exports JSON', async (): Promise<void> => {
-    const onExport = vi.fn<OnExportFn>().mockResolvedValue([]);
-    render(<ExportTransactionsComponent transactions={[{ id: '1' }]} onExport={onExport} />);
 
     const select = screen.getByLabelText('Export Format') as HTMLSelectElement;
     fireEvent.change(select, { target: { value: 'json' } });
@@ -213,7 +200,7 @@ describe('ExportTransactions', () => {
     const exportButton = screen.getByRole('button', { name: 'Export' });
     fireEvent.click(exportButton);
 
-    await waitFor((): void => {
+    await await waitFor((): void => {
       expect(generateJSON).toHaveBeenCalledTimes(1);
       expect(generateCSV).not.toHaveBeenCalled();
       expect(downloadFile).toHaveBeenCalledWith('json-content', 'export.json', 'application/json');
@@ -221,16 +208,13 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('applies date range, calls onExport with adjusted end time, and handles empty result with toast error', async (): Promise<void> => {
-    const onExport = vi.fn<OnExportFn>().mockResolvedValue([]);
-    render(<ExportTransactionsComponent transactions={[{ id: '1' }, { id: '2' }]} onExport={onExport} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Apply date range' }));
 
     const exportButton = screen.getByRole('button', { name: 'Export' });
     fireEvent.click(exportButton);
 
-    await waitFor((): void => {
+    await await waitFor((): void => {
       expect(onExport).toHaveBeenCalledTimes(1);
       const [startArg, endArg] = onExport.mock.calls[0] as [Date, Date];
       expect(startArg).toBeInstanceOf(Date);
@@ -245,15 +229,13 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('applies date range and exports using onExport returned transactions', async (): Promise<void> => {
-    const returned = [{ id: 'a' }, { id: 'b' }, { id: 'c' }];
     const onExport = vi.fn<OnExportFn>().mockResolvedValue(returned);
     render(<ExportTransactionsComponent transactions={[]} onExport={onExport} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Apply date range' }));
     fireEvent.click(screen.getByRole('button', { name: 'Export' }));
 
-    await waitFor((): void => {
+    await await waitFor((): void => {
       expect(onExport).toHaveBeenCalledTimes(1);
       expect(generateCSV).toHaveBeenCalledWith(returned);
       expect(downloadFile).toHaveBeenCalledWith('csv-content', 'export.csv', 'text/csv');
@@ -261,10 +243,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('shows loading state during export and resets after completion', async (): Promise<void> => {
-    const deferred = createDeferred<unknown[]>();
-    const onExport = vi.fn<OnExportFn>().mockReturnValue(deferred.promise);
-    render(<ExportTransactionsComponent transactions={[]} onExport={onExport} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Apply date range' }));
     fireEvent.click(screen.getByRole('button', { name: 'Export' }));
@@ -272,18 +250,15 @@ describe('ExportTransactions', () => {
     expect(screen.getByRole('button', { name: 'Exporting...' })).toBeInTheDocument();
 
     deferred.resolve([{ id: '1' }]);
-    await waitFor((): void => {
+    await await waitFor((): void => {
       expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
     });
   });
 
-  test('shows message reflecting active date range', async (): Promise<void> => {
-    const onExport: OnExportFn = async (): Promise<unknown[]> => [];
-    render(<ExportTransactionsComponent transactions={[{ id: '1' }]} onExport={onExport} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Apply date range' }));
 
-    await waitFor((): void => {
+    await await waitFor((): void => {
       expect(
         screen.getByText('Exporting transactions from 2024-01-01 to 2024-01-31')
       ).toBeInTheDocument();
@@ -291,42 +266,30 @@ describe('ExportTransactions', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Clear date range' }));
 
-    await waitFor((): void => {
+    await await waitFor((): void => {
       expect(screen.getByText('Ready to export all 1 transaction')).toBeInTheDocument();
     });
   });
 
-  test('handles export error and shows toast error', async (): Promise<void> => {
-    const onExport = vi.fn<OnExportFn>().mockRejectedValue(new Error('fail'));
-    render(<ExportTransactionsComponent transactions={[]} onExport={onExport} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Apply date range' }));
     fireEvent.click(screen.getByRole('button', { name: 'Export' }));
 
-    await waitFor((): void => {
+    await await waitFor((): void => {
       expect(toast.error).toHaveBeenCalledWith('Failed to export transactions');
       expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
     });
   });
 
-  test('accessibility: button and select are accessible by roles/labels', (): void => {
-    const onExport: OnExportFn = async (): Promise<unknown[]> => [];
-    render(<ExportTransactionsComponent transactions={[{ id: '1' }]} onExport={onExport} />);
 
     expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
     expect(screen.getByLabelText('Export Format')).toBeInTheDocument();
   });
 
-  test('uses correct filename and mime type based on format helpers', async (): Promise<void> => {
-    const onExport = vi.fn<OnExportFn>().mockResolvedValue([]);
-    (getExportFilename as unknown as vi.Mock).mockReturnValueOnce('custom.csv');
-    (getMimeType as unknown as vi.Mock).mockReturnValueOnce('text/csv; charset=utf-8');
-
-    render(<ExportTransactionsComponent transactions={[{ id: '1' }]} onExport={onExport} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Export' }));
 
-    await waitFor((): void => {
+    await await waitFor((): void => {
       expect(downloadFile).toHaveBeenCalledWith('csv-content', 'custom.csv', 'text/csv; charset=utf-8');
       expect(toast.success).toHaveBeenCalledWith('Exported 1 transaction');
     });

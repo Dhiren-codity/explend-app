@@ -94,11 +94,6 @@ describe('config/constants/navigation', () => {
       expect(SEARCH_PARAM.PAGE).toBe('page');
     });
 
-    test('should be usable as URLSearchParams keys', (): void => {
-      const params = new URLSearchParams({
-        [SEARCH_PARAM.QUERY]: 'alpha',
-        [SEARCH_PARAM.PAGE]: '2',
-      });
       expect(params.get('query')).toBe('alpha');
       expect(params.get('page')).toBe('2');
       expect(params.toString()).toContain('query=alpha');
