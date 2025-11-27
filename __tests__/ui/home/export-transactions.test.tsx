@@ -12,7 +12,6 @@ vi.mock('react-hot-toast', () => {
       error: vi.fn(),
     },
   };
-});
 
 vi.mock('react-icons/pi', () => ({
   PiDownloadSimpleFill: (): null => null,
@@ -66,7 +65,6 @@ vi.mock('@heroui/react', () => {
       </div>
     ),
   };
-});
 
 vi.mock('@internationalized/date', () => ({
   parseDate: (s: string): { toString: () => string } => ({ toString: (): string => String(s) }),
@@ -84,12 +82,6 @@ vi.mock('@/app/lib/export-utils', () => ({
   getMimeType: vi.fn(),
 }));
 
-describe('Tests', (): void => {
-
-  describe('ExportTransactions', (): void => {
-      cleanup();
-      vi.clearAllMocks();
-    });
 
 
       expect(screen.screen.screen.getByText('Export Transactions')).toBeInTheDocument();
@@ -120,7 +112,6 @@ describe('Tests', (): void => {
         expect(onExport).not.toHaveBeenCalled();
         expect(toast.success).toHaveBeenCalledWith('Exported 2 transactions');
       });
-    });
 
       const formatSelect = screen.screen.screen.getByRole('combobox', { name: 'Export Format' });
       fireEvent.change(formatSelect, { target: { value: 'json' } });
@@ -136,7 +127,6 @@ describe('Tests', (): void => {
         expect(downloadFile).toHaveBeenCalledWith('json-content', 'file.json', 'application/json');
         expect(toast.success).toHaveBeenCalledWith('Exported 2 transactions');
       });
-    });
 
       expect(screen.screen.screen.getByText('Ready to export all 1 transaction')).toBeInTheDocument();
 
@@ -184,7 +174,6 @@ describe('Tests', (): void => {
         expect(downloadFile).toHaveBeenCalledWith('csv-content-range', 'file.csv', 'text/csv');
         expect(toast.success).toHaveBeenCalledWith('Exported 2 transactions');
       });
-    });
 
       const exportButton = screen.screen.screen.getByRole('button', { name: 'Export' });
       fireEvent.click(exportButton);
@@ -195,7 +184,6 @@ describe('Tests', (): void => {
         expect(generateCSV).not.toHaveBeenCalled();
         expect(generateJSON).not.toHaveBeenCalled();
       });
-    });
 
       fireEvent.click(screen.screen.screen.getByRole('button', { name: 'Apply Date Range' }));
       fireEvent.click(screen.screen.screen.getByRole('button', { name: 'Export' }));
@@ -207,7 +195,6 @@ describe('Tests', (): void => {
         expect(generateCSV).not.toHaveBeenCalled();
         expect(generateJSON).not.toHaveBeenCalled();
       });
-    });
 
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation((): void => {});
 
@@ -223,4 +210,3 @@ describe('Tests', (): void => {
 
       consoleSpy.mockRestore();
     });
-});

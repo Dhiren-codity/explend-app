@@ -48,7 +48,6 @@ vi.mock("../lib/actions", () => {
       },
     ),
   };
-});
 
 vi.mock("../ui/home/export-transactions", () => ({
   default: (props: {
@@ -72,20 +71,6 @@ vi.mock("../ui/sidebar/with-sidebar", () => ({
   },
 }));
 
-describe("Tests", (): void => {
-  describe("Page", (): void => {
-    const g = globalThis as unknown as Record<string, unknown>;
-    g.__calls_getCachedAuthSession = [];
-    g.__calls_getCachedAllTransactions = [];
-    g.__calls_getTransactionsForExport = [];
-    g.__lastExportOnExport = undefined;
-    g.__lastExportTransactions = undefined;
-    g.__throw_getCachedAllTransactions = false;
-
-    g.__mock_session = { user: { email: "user@example.com" } };
-    g.__mock_transactions = [{ id: 1 }, { id: 2 }];
-    g.__mock_exportTransactions = [{ id: "export1" }];
-  });
 
   vi.clearAllMocks();
 });

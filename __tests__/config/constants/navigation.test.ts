@@ -10,10 +10,6 @@ vi.mock("fs", () => ({
   default: {},
 }));
 
-describe("Tests", (): void => {
-  describe("config/constants/navigation", () => {
-    // No setup required for constants
-  });
 
   vi.clearAllMocks();
 });
@@ -68,7 +64,6 @@ describe("DEFAULT_TRANSACTION_LIMIT", () => {
     } else {
       expect(moduleAsRecord.NAV_TITLE).toBeUndefined();
     }
-  });
   test("should either be undefined at runtime or contain expected values if preserved", (): void => {
     const moduleAsRecord: Record<string, unknown> =
       NavigationModule as unknown as Record<string, unknown>;
@@ -82,5 +77,3 @@ describe("DEFAULT_TRANSACTION_LIMIT", () => {
     } else {
       expect(moduleAsRecord.SEARCH_PARAM).toBeUndefined();
     }
-  });
-});

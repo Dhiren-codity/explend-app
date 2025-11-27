@@ -1,10 +1,6 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from "vitest";
 import { ROUTE, DISABLED_ROUTES } from "./config/constants/routes";
 
-describe("Tests", (): void => {
-  describe("config/constants/routes", (): void => {
-    // No setup required for constants
-  });
 
   // Ensure any mutations to the exported array are cleaned up
   DISABLED_ROUTES.length = 0;
@@ -50,7 +46,6 @@ describe("ROUTE const enum", (): void => {
     for (const value of values) {
       expect(value.startsWith("/")).toBe(true);
     }
-  });
   test("should not have trailing slash for non-root paths", (): void => {
     const nonRootValues: string[] = [
       ROUTE.SIGNIN,
@@ -94,4 +89,3 @@ describe("ROUTE const enum", (): void => {
     // so the array should be empty at the start of the test.
     expect(DISABLED_ROUTES).toHaveLength(0);
   });
-});

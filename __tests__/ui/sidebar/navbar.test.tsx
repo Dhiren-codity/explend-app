@@ -10,19 +10,16 @@ vi.mock('next/navigation', () => {
   return {
     usePathname: vi.fn(),
   };
-});
 
 vi.mock('react-use', () => {
   return {
     useMedia: vi.fn(),
   };
-});
 
 vi.mock('@/app/lib/helpers', () => {
   return {
     getBreakpointWidth: vi.fn(),
   };
-});
 
 vi.mock('@/config/constants/navigation', () => {
   return {
@@ -40,7 +37,6 @@ vi.mock('@/config/constants/navigation', () => {
       ISSUE: 'Issue',
     },
   };
-});
 
 vi.mock('@/config/constants/routes', () => {
   type RouteMap = {
@@ -82,21 +78,7 @@ vi.mock('@/config/constants/routes', () => {
     },
     __setDisabledRoutes,
   };
-});
 
-describe('Tests', (): void => {
-
-  describe('Navbar', (): void => {
-      // Reset mocked implementations before each test
-      __setDisabledRoutes([ROUTE.EXPORT, ROUTE.SETTINGS]);
-      (helpers.getBreakpointWidth as unknown as vi.Mock).mockReset();
-      (reactUse.useMedia as unknown as vi.Mock).mockReset();
-      (nextNavigation.usePathname as unknown as vi.Mock).mockReset();
-
-      (helpers.getBreakpointWidth as unknown as vi.Mock).mockReturnValue('(min-width: 768px)');
-      (reactUse.useMedia as unknown as vi.Mock).mockReturnValue(true);
-      (nextNavigation.usePathname as unknown as vi.Mock).mockReturnValue(ROUTE.HOME);
-    });
 
       vi.clearAllMocks();
     });
