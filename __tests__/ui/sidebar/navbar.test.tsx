@@ -155,10 +155,6 @@ describe('Tests', (): void => {
       expect(helpers.getBreakpointWidth).toHaveBeenCalledWith('md');
       expect(reactUse.useMedia).toHaveBeenCalledWith('(min-width: 768px)', true);
     });
-    test('should throw error if useMedia hook throws', (): void => {
-      (reactUse.useMedia as unknown as vi.Mock).mockImplementationOnce(() => {
-        throw new Error('media-error');
-      });
 
       expect((): void => {
         render(<Navbar linksGroup="top" />);

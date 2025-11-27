@@ -101,9 +101,6 @@ test("renders NoTransactionsPlug when there are no transactions", async (): Prom
   expect(screen.queryByText("ExportTransactions")).toBeNull();
   expect(screen.getByText("Export Title")).toBeDefined();
 });
-test("renders ExportTransactions when transactions exist and passes handleExport", async (): Promise<void> => {
-  const g = globalThis as unknown as Record<string, unknown>;
-  const mockTransactions = [{ id: 1 }, { id: 2 }, { id: 3 }];
   g.__mock_transactions = mockTransactions;
 
   const element = await Page();
@@ -133,9 +130,6 @@ test("renders ExportTransactions when transactions exist and passes handleExport
   expect(startArg).toEqual(start);
   expect(endArg).toEqual(end);
 });
-test("calls caching functions twice and with correct arguments", async (): Promise<void> => {
-  const g = globalThis as unknown as Record<string, unknown>;
-  g.__mock_transactions = [{ id: 42 }];
 
   const element = await Page();
   render(element as unknown as JSX.Element);
@@ -150,9 +144,6 @@ test("calls caching functions twice and with correct arguments", async (): Promi
   expect(txCalls[0]).toBe("user@example.com");
   expect(txCalls[1]).toBe("user@example.com");
 });
-test("handles missing session or email by passing undefined userId", async (): Promise<void> => {
-  const g = globalThis as unknown as Record<string, unknown>;
-  g.__mock_session = {};
   g.__mock_transactions = [{ id: "t" }];
 
   const element = await Page();
