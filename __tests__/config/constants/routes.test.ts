@@ -6,10 +6,6 @@ vi.mock('node:path', () => ({
   resolve: vi.fn((_p: unknown): string => String(_p)),
 }));
 
-describe('config/constants/routes', () => {
-  beforeEach((): void => {
-    vi.clearAllMocks();
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -65,8 +61,6 @@ describe('config/constants/routes', () => {
         if (val !== '/') {
           expect(val.endsWith('/')).toBe(false);
         }
-      }
-    });
 
     test('should not contain duplicate route strings', (): void => {
       const routeValues: string[] = [
@@ -107,7 +101,6 @@ describe('config/constants/routes', () => {
       ];
       expect(routeValues.includes('/non-existent')).toBe(false);
     });
-  });
 
   describe('DISABLED_ROUTES constant', () => {
     test('should be an empty array initially', (): void => {
@@ -121,5 +114,3 @@ describe('config/constants/routes', () => {
       expect(result).toBe(DISABLED_ROUTES);
       expect(result.length).toBe(0);
     });
-  });
-});

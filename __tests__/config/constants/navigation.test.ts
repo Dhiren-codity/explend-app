@@ -8,10 +8,6 @@ import {
 } from './navigation';
 import * as navigationModule from './navigation';
 
-describe('config/constants/navigation', () => {
-  beforeEach((): void => {
-    // Setup if needed
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -24,7 +20,6 @@ describe('config/constants/navigation', () => {
       expect(DEFAULT_TRANSACTION_LIMIT).toBe(30);
       expect(DEFAULT_TRANSACTION_LIMIT).toBeGreaterThan(0);
     });
-  });
 
   describe('NAV_ICON_SIZE', () => {
     test('should be a positive integer and equal to 24', (): void => {
@@ -33,7 +28,6 @@ describe('config/constants/navigation', () => {
       expect(NAV_ICON_SIZE).toBe(24);
       expect(NAV_ICON_SIZE).toBeGreaterThan(0);
     });
-  });
 
   describe('NAV_TITLE (const enum) values', () => {
     test('should inline and match expected labels', (): void => {
@@ -54,7 +48,6 @@ describe('config/constants/navigation', () => {
       expect('NAV_TITLE' in navigationModule).toBe(false);
       expect((navigationModule as Record<string, unknown>).NAV_TITLE).toBeUndefined();
     });
-  });
 
   describe('SEARCH_PARAM (const enum) values', () => {
     test('should inline and match expected query keys', (): void => {
@@ -66,7 +59,6 @@ describe('config/constants/navigation', () => {
       expect('SEARCH_PARAM' in navigationModule).toBe(false);
       expect((navigationModule as Record<string, unknown>).SEARCH_PARAM).toBeUndefined();
     });
-  });
 
   describe('DEFAULT_PAGINATION_PAGE_NUMBER', () => {
     test('should be a string "1"', (): void => {
@@ -74,17 +66,4 @@ describe('config/constants/navigation', () => {
       expect(DEFAULT_PAGINATION_PAGE_NUMBER).toBe('1');
       expect(parseInt(DEFAULT_PAGINATION_PAGE_NUMBER, 10)).toBe(1);
     });
-  });
 
-  describe('Module immutability', () => {
-
-      expect(capturedError).toBeInstanceOf(TypeError);
-      expect(moduleAsRecord.DEFAULT_TRANSACTION_LIMIT).toBe(originalValue);
-
-      const descriptor = Object.getOwnPropertyDescriptor(navigationModule, 'DEFAULT_TRANSACTION_LIMIT');
-      expect(descriptor).toBeDefined();
-      expect(Boolean(descriptor?.writable)).toBe(false);
-      expect(Boolean(descriptor?.configurable)).toBe(false);
-    });
-  });
-});

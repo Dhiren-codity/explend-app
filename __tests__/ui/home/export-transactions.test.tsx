@@ -171,7 +171,6 @@ vi.mock('@heroui/react', () => {
       </div>
     ),
   };
-});
 
 vi.mock('@/app/lib/export-utils', () => ({
   downloadFile: vi.fn(),
@@ -181,11 +180,6 @@ vi.mock('@/app/lib/export-utils', () => ({
   getMimeType: vi.fn(),
 }));
 
-describe('ExportTransactions', () => {
-  afterEach((): void => {
-    cleanup();
-    vi.clearAllMocks();
-  });
 
   const makeTx = (id: string): Record<string, unknown> => ({ id, amount: 100, date: '2024-01-01' });
 
@@ -237,7 +231,6 @@ describe('ExportTransactions', () => {
       );
       expect(toast.success).toHaveBeenCalledWith('Exported 2 transactions');
     });
-  });
 
     fireEvent.click(exportButton);
 
@@ -247,7 +240,6 @@ describe('ExportTransactions', () => {
       expect(downloadFile).toHaveBeenCalledWith('csv-content', 'transactions.csv', 'text/csv');
       expect(toast.success).toHaveBeenCalledWith('Exported 3 transactions');
     });
-  });
 
     fireEvent.change(endInput, { target: { value: '2024-01-20' } });
 
@@ -281,7 +273,6 @@ describe('ExportTransactions', () => {
       expect(generateCSV).toHaveBeenCalledWith(returnedTransactions as unknown as never[]);
       expect(toast.success).toHaveBeenCalledWith('Exported 1 transaction');
     });
-  });
 
     fireEvent.click(exportButton);
 
@@ -289,7 +280,6 @@ describe('ExportTransactions', () => {
       expect(toast.error).toHaveBeenCalledWith('No transactions to export');
       expect(downloadFile).not.toHaveBeenCalled();
     });
-  });
 
     fireEvent.change(endInput, { target: { value: '2024-02-02' } });
 
@@ -301,7 +291,6 @@ describe('ExportTransactions', () => {
       expect(toast.error).toHaveBeenCalledWith('No transactions to export');
       expect(downloadFile).not.toHaveBeenCalled();
     });
-  });
 
     fireEvent.click(buttonBefore);
 
@@ -315,7 +304,6 @@ describe('ExportTransactions', () => {
       expect(screen.getByText('Export')).toBeInTheDocument();
       expect(downloadFile).toHaveBeenCalledWith('csv-content', 'transactions.csv', 'text/csv');
     });
-  });
 
 
     const onExportMock = vi.fn().mockResolvedValue(transactions);
@@ -333,7 +321,6 @@ describe('ExportTransactions', () => {
     await waitFor(() => {
       expect(screen.getByText('Export')).toBeInTheDocument();
     });
-  });
 
   test('helper text uses pluralization correctly for single transaction', (): void => {
     const transactions = [makeTx('1')];
@@ -345,4 +332,3 @@ describe('ExportTransactions', () => {
       screen.getByText('Ready to export all 1 transaction')
     ).toBeInTheDocument();
   });
-});

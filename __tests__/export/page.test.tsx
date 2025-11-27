@@ -19,7 +19,6 @@ vi.mock('@/config/constants/navigation', () => {
     __esModule: true,
     NAV_TITLE: { EXPORT: 'Export' },
   };
-});
 
 vi.mock('../lib/actions', () => {
   return {
@@ -28,7 +27,6 @@ vi.mock('../lib/actions', () => {
     getCachedAuthSession: vi.fn(),
     getTransactionsForExport: vi.fn(),
   };
-});
 
 vi.mock('../ui/home/export-transactions', () => {
   type ExportProps = {
@@ -44,7 +42,6 @@ vi.mock('../ui/home/export-transactions', () => {
     __esModule: true,
     default: ExportTransactionsMock,
   };
-});
 
 vi.mock('../ui/no-transactions-plug', () => {
   const NoTransactionsPlugMock = (): JSX.Element => <div data-testid="no-transactions-plug" />;
@@ -53,7 +50,6 @@ vi.mock('../ui/no-transactions-plug', () => {
     __esModule: true,
     default: NoTransactionsPlugMock,
   };
-});
 
 vi.mock('../ui/sidebar/with-sidebar', () => {
   type WithSidebarProps = { contentNearby: React.ReactNode };
@@ -63,7 +59,6 @@ vi.mock('../ui/sidebar/with-sidebar', () => {
     __esModule: true,
     default: WithSidebarMock,
   };
-});
 
 function findByTestId(node: unknown, testId: string): boolean {
   const visit = (n: unknown): boolean => {
@@ -86,17 +81,11 @@ function findByTestId(node: unknown, testId: string): boolean {
       } else if (children !== undefined && children !== null) {
         if (visit(children)) return true;
       }
-    }
     return false;
   };
   return visit(node);
 }
 
-describe('Page', (): void => {
-  beforeEach((): void => {
-    vi.clearAllMocks();
-    lastExportProps = undefined;
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -180,4 +169,3 @@ describe('Page', (): void => {
     expect(getCachedAllTransactions).toHaveBeenCalledTimes(2);
     expect(getCachedAllTransactions).toHaveBeenCalledWith(undefined);
   });
-});

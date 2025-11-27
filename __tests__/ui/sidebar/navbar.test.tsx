@@ -33,19 +33,16 @@ vi.mock('react-icons/pi', (): Record<string, unknown> => {
     PiStack: makeIcon(),
     PiStackFill: makeIcon(),
   };
-});
 
 vi.mock('react-use', () => {
   return {
     useMedia: vi.fn(),
   };
-});
 
 vi.mock('next/navigation', () => {
   return {
     usePathname: vi.fn(),
   };
-});
 
 vi.mock('@/config/constants/navigation', () => {
   return {
@@ -63,7 +60,6 @@ vi.mock('@/config/constants/navigation', () => {
       ISSUE: 'Issue',
     },
   };
-});
 
 vi.mock('@/config/constants/routes', () => {
   const ROUTE = {
@@ -86,7 +82,6 @@ vi.mock('@/app/lib/helpers', () => {
   return {
     getBreakpointWidth: vi.fn(() => '(min-width: 768px)'),
   };
-});
 
 vi.mock('../hoverables', () => {
   return {
@@ -108,7 +103,6 @@ vi.mock('../hoverables', () => {
       );
     },
   };
-});
 
 vi.mock('../logo', () => {
   return {
@@ -116,16 +110,7 @@ vi.mock('../logo', () => {
       <div data-testid="logo" data-size={props.size} />
     ),
   };
-});
 
-describe('Navbar', (): void => {
-  beforeEach((): void => {
-    (useMedia as unknown as ReturnType<typeof vi.fn>).mockReturnValue(true);
-    (usePathname as unknown as ReturnType<typeof vi.fn>).mockReturnValue('/');
-    (getBreakpointWidth as unknown as ReturnType<typeof vi.fn>).mockReset();
-    (getBreakpointWidth as unknown as ReturnType<typeof vi.fn>).mockReturnValue('(min-width: 768px)');
-    DISABLED_ROUTES.length = 0;
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -222,4 +207,3 @@ describe('Navbar', (): void => {
     const logo = screen.queryByTestId('logo');
     expect(logo).toBeNull();
   });
-});
