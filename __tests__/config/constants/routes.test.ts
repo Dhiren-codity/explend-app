@@ -1,12 +1,6 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { ROUTE, DISABLED_ROUTES } from 'config/constants/routes';
 
-describe('config/constants/routes', () => {
-  let originalDisabledRoutes: ROUTE[] = [];
-
-  beforeEach((): void => {
-    originalDisabledRoutes = [...DISABLED_ROUTES];
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -14,7 +8,6 @@ describe('config/constants/routes', () => {
     for (const value of originalDisabledRoutes) {
       DISABLED_ROUTES.push(value);
     }
-  });
 
   describe('ROUTE enum values', () => {
     test('ROUTE.HOME equals "/"', (): void => {
@@ -103,7 +96,6 @@ describe('config/constants/routes', () => {
       for (const v of values) {
         expect(v.startsWith('/')).toBe(true);
       }
-    });
 
     test('Non-enum string is not equal to any ROUTE value', (): void => {
       const notARoute = '/not-a-real-route';
@@ -124,7 +116,6 @@ describe('config/constants/routes', () => {
       ];
       expect(values.includes(notARoute as ROUTE)).toBe(false);
     });
-  });
 
   describe('DISABLED_ROUTES', () => {
     test('is an array', (): void => {
@@ -146,5 +137,3 @@ describe('config/constants/routes', () => {
       const randomValue = '/arbitrary-non-route';
       expect(DISABLED_ROUTES.includes(randomValue as unknown as ROUTE)).toBe(false);
     });
-  });
-});

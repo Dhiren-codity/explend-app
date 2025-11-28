@@ -100,7 +100,6 @@ vi.mock('@heroui/react', () => {
     CardBody,
     CardHeader,
   };
-});
 
 vi.mock('@/app/lib/export-utils', () => ({
   generateCSV: vi.fn().mockReturnValue('csvcontent'),
@@ -114,11 +113,6 @@ vi.mock('@/app/lib/export-utils', () => ({
   ),
 }));
 
-describe('ExportTransactions', () => {
-  afterEach((): void => {
-    cleanup();
-    vi.clearAllMocks();
-  });
 
 
     render(
@@ -296,4 +290,3 @@ describe('ExportTransactions', () => {
 
     expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
   });
-});

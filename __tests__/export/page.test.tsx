@@ -17,7 +17,6 @@ vi.mock('@/config/constants/navigation', () => {
       EXPORT: 'Export',
     },
   };
-});
 
 vi.mock('../lib/actions', () => {
   return {
@@ -25,33 +24,26 @@ vi.mock('../lib/actions', () => {
     getCachedAllTransactions: vi.fn(),
     getTransactionsForExport: vi.fn(),
   };
-});
 
 vi.mock('../ui/home/export-transactions', () => {
   return {
     default: 'ExportTransactions',
   };
-});
 
 vi.mock('../ui/no-transactions-plug', () => {
   return {
     default: 'NoTransactionsPlug',
   };
-});
 
 vi.mock('../ui/sidebar/with-sidebar', () => {
   return {
     default: 'WithSidebar',
   };
-});
 
 
 
 
 
-describe('app/export/page', (): void => {
-  const userId = 'user@example.com';
-  const sessionValue = { user: { email: userId } } as Record<string, unknown>;
   const transactionsValue = [{ id: 't1' }, { id: 't2' }] as unknown[];
   const exportedTransactions = [{ id: 'e1' }] as unknown[];
 
@@ -162,4 +154,3 @@ describe('app/export/page', (): void => {
 
     await expect(onExport()).rejects.toThrow('export failed');
   });
-});
