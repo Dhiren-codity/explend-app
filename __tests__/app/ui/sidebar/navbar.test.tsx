@@ -1,39 +1,82 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import React from 'react'
-import { render, screen, within, cleanup } from '@testing-library/react'
+import { render, screen, cleanup } from '@testing-library/react'
 import '@testing-library/jest-dom'
+import React from 'react'
 
-// Mocks and shared state
 let mockIsMd = true
+let mockPathname = '/'
+
+// Mock react-use useMedia
 vi.mock('react-use', () => {
   return {
-    useMedia: vi.fn((_query: string, _defaultState?: boolean) => mockIsMd),
+    useMedia: vi.fn(() => mockIsMd),
   }
 })
 
-let mockPathname = '/'
+// Mock next/navigation usePathname
 vi.mock('next/navigation', () => {
   return {
     usePathname: () => mockPathname,
   }
 })
 
-const NAV_TITLE_CONST = {
-  HOME: 'Home',
-  MONTHLY_REPORT: 'Monthly report',
-  CHART: 'Chart',
-  LIMITS: 'Limits',
-  SUBSCRIPTIONS: 'Subscriptions',
-  CATEGORIES: 'Categories',
-  EXPORT: 'Export',
-  SETTINGS: 'Settings',
-  FEEDBACK: 'Feedback',
-  ISSUE: 'Issue',
-}
+// Mock react-icons/pi to avoid pulling in heavy dependency
+vi.mock('react-icons/pi', () => {
+  const stub = () => null
+  return {
+    PiBugBeetle: stub,
+    PiBugBeetleFill: stub,
+    PiChatText: stub,
+    PiChatTextFill: stub,
+    PiDownloadSimple: stub,
+    PiDownloadSimpleFill: stub,
+    PiEscalatorUp: stub,
+    PiEscalatorUpFill: stub,
+    PiGearSix: stub,
+    PiGearSixFill: stub,
+    PiHouse: stub,
+    PiHouseFill: stub,
+    PiPolygon: stub,
+    PiPolygonFill: stub,
+    PiPresentationChart: stub,
+    PiPresentationChartFill: stub,
+    PiRepeat: stub,
+    PiRepeatFill: stub,
+    PiStack: stub,
+    PiStackFill: stub,
+  }
+})
 
-const ROUTE_CONST = {
+// Mock helper
+vi.mock('@/app/lib/helpers', () => {
+  return {
+    getBreakpointWidth: () => '(min-width: 768px)',
+  }
+})
+
+// Mock constants: navigation titles and icon size
+vi.mock('@/config/constants/navigation', () => {
+  return {
+    NAV_ICON_SIZE: 20,
+    NAV_TITLE: {
+      HOME: 'Home',
+      MONTHLY_REPORT: 'Monthly report',
+      CHART: 'Chart',
+      LIMITS: 'Limits',
+      SUBSCRIPTIONS: 'Subscriptions',
+      CATEGORIES: 'Categories',
+      EXPORT: 'Export',
+      SETTINGS: 'Settings',
+      FEEDBACK: 'Feedback',
+      ISSUE: 'Issue',
+    },
+  }
+})
+
+// Mock routes and a mutable disabled routes array
+const routes = {
   HOME: '/',
-  MONTHLY_REPORT: '/monthly-report',
+  MONTHLY_REPORT: '/monthly',
   CHART: '/chart',
   LIMITS: '/limits',
   SUBSCRIPTIONS: '/subscriptions',
@@ -43,49 +86,49 @@ const ROUTE_CONST = {
   FEEDBACK: '/feedback',
   ISSUE: '/issue',
 }
-
-let disabledRoutes: string[] = []
-
-vi.mock('@/config/constants/navigation', () => {
-  return {
-    NAV_ICON_SIZE: 20,
-    NAV_TITLE: NAV_TITLE_CONST,
-  }
-})
+let mockDisabledRoutes: string[] = []
 
 vi.mock('@/config/constants/routes', () => {
   return {
-    get DISABLED_ROUTES() {
-      return disabledRoutes
-    },
-    ROUTE: ROUTE_CONST,
+    ROUTE: routes,
+    DISABLED_ROUTES: mockDisabledRoutes,
   }
 })
 
-vi.mock('@/app/lib/helpers', () => {
-  return {
-    getBreakpointWidth: (_bp: string) => '(min-width: 768px)',
-  }
+// Mock child components used by Navbar
+vi.mock('../../../../app/ui/hoverables', () => {
+  // Mock HoverableNavLink to render identifiable list items with props as data attributes
+  const HoverableNavLink = ({
+    idx,
+    link,
+    isActiveLink,
+    withScale,
+  }: {
+    idx: number
+    link: { title: string; url: string }
+    isActiveLink?: boolean
+    withScale?: boolean
+  }) => (
+    <li
+      data-testid={`hover-link-${idx}`}
+      data-title={link.title}
+      data-url={link.url}
+      data-active={isActiveLink ? 'true' : 'false'}
+      data-with-scale={withScale ? 'true' : 'false'}
+    >
+      {link.title}
+    </li>
+  )
+  return { HoverableNavLink }
 })
 
-vi.mock('../../../../app/ui/sidebar/hoverables', () => {
-  return {
-    HoverableNavLink: ({ idx, link, isActiveLink }: any) => (
-      <li
-        data-testid={`nav-link-${link.title}`}
-        data-idx={idx}
-        data-active={isActiveLink ? 'true' : 'false'}
-      >
-        {link.title}
-      </li>
-    ),
-  }
-})
-
-vi.mock('../../../../app/ui/sidebar/logo', () => {
-  return {
-    default: ({ size }: any) => <div data-testid="logo">Logo size: {size}</div>,
-  }
+vi.mock('../../../../app/ui/logo', () => {
+  const Logo = ({ size }: { size: string }) => (
+    <div data-testid="logo" data-size={size}>
+      Logo
+    </div>
+  )
+  return { default: Logo }
 })
 
 import Navbar from '../../../../app/ui/sidebar/navbar'
@@ -94,7 +137,7 @@ describe('Navbar', () => {
   beforeEach(() => {
     mockIsMd = true
     mockPathname = '/'
-    disabledRoutes = []
+    mockDisabledRoutes.length = 0
   })
 
   afterEach(() => {
@@ -102,67 +145,87 @@ describe('Navbar', () => {
     vi.clearAllMocks()
   })
 
-  it('renders top nav links, filters disabled routes, and marks active link', () => {
-    disabledRoutes = [ROUTE_CONST.EXPORT, ROUTE_CONST.CHART]
-    mockPathname = ROUTE_CONST.LIMITS
+  it('renders a list of top nav links and filters disabled routes', () => {
+    mockDisabledRoutes.push('/limits')
 
-    render(<Navbar linksGroup="top" withLogo />)
+    render(<Navbar linksGroup="top" />)
 
-    // Logo is visible and respects md breakpoint
-    expect(screen.getByTestId('logo')).toHaveTextContent('Logo size: sm')
+    expect(screen.getByRole('list')).toBeInTheDocument()
+    expect(screen.queryByTestId('logo')).not.toBeInTheDocument()
 
-    // Present links (filtered)
-    expect(screen.getByTestId('nav-link-Home')).toBeInTheDocument()
-    expect(screen.getByTestId('nav-link-Monthly report')).toBeInTheDocument()
-    expect(screen.getByTestId('nav-link-Limits')).toBeInTheDocument()
-    expect(screen.getByTestId('nav-link-Subscriptions')).toBeInTheDocument()
-    expect(screen.getByTestId('nav-link-Categories')).toBeInTheDocument()
-    expect(screen.getByTestId('nav-link-Settings')).toBeInTheDocument()
+    const items = screen.getAllByTestId(/hover-link-/)
+    // Top group has 8 links; 1 disabled => 7
+    expect(items).toHaveLength(7)
 
-    // Disabled links are not rendered
-    expect(screen.queryByTestId('nav-link-Export')).not.toBeInTheDocument()
-    expect(screen.queryByTestId('nav-link-Chart')).not.toBeInTheDocument()
+    // Disabled "Limits" should not be present
+    expect(screen.queryByText('Limits')).not.toBeInTheDocument()
 
-    // Active state
-    expect(screen.getByTestId('nav-link-Limits')).toHaveAttribute('data-active', 'true')
-    expect(screen.getByTestId('nav-link-Home')).toHaveAttribute('data-active', 'false')
+    // First visible item should be "Home"
+    const first = screen.getByTestId('hover-link-0')
+    expect(first).toHaveAttribute('data-title', 'Home')
+    expect(first).toHaveAttribute('data-url', '/')
+    expect(first).toHaveAttribute('data-with-scale', 'true')
 
-    // Count matches expected (8 total top links - 2 disabled = 6)
-    const list = screen.getByRole('list')
-    const items = within(list).getAllByTestId(/nav-link-/)
-    expect(items).toHaveLength(6)
+    // Indices should be sequential starting from 0..6
+    for (let i = 0; i < 7; i++) {
+      expect(screen.getByTestId(`hover-link-${i}`)).toBeInTheDocument()
+    }
+    expect(screen.queryByTestId('hover-link-7')).not.toBeInTheDocument()
   })
 
-  it('renders bottom nav links and marks active based on pathname', () => {
-    mockPathname = ROUTE_CONST.FEEDBACK
+  it('marks the active link based on the current pathname (top group)', () => {
+    mockPathname = '/chart'
+
+    render(<Navbar linksGroup="top" />)
+
+    const active = screen.getByText('Chart').closest('li')
+    expect(active).toHaveAttribute('data-active', 'true')
+
+    const inactive = screen.getByText('Home').closest('li')
+    expect(inactive).toHaveAttribute('data-active', 'false')
+  })
+
+  it('renders bottom group and filters disabled routes', () => {
+    mockDisabledRoutes.push('/issue')
+    mockPathname = '/feedback'
 
     render(<Navbar linksGroup="bottom" />)
 
-    const list = screen.getByRole('list')
-    const items = within(list).getAllByTestId(/nav-link-/)
-    expect(items).toHaveLength(2)
+    const items = screen.getAllByTestId(/hover-link-/)
+    // Bottom group has 2 links; 1 disabled => 1
+    expect(items).toHaveLength(1)
 
-    expect(screen.getByTestId('nav-link-Feedback')).toBeInTheDocument()
-    expect(screen.getByTestId('nav-link-Issue')).toBeInTheDocument()
+    expect(screen.getByText('Feedback')).toBeInTheDocument()
+    expect(screen.queryByText('Issue')).not.toBeInTheDocument()
 
-    expect(screen.getByTestId('nav-link-Feedback')).toHaveAttribute('data-active', 'true')
-    expect(screen.getByTestId('nav-link-Issue')).toHaveAttribute('data-active', 'false')
+    const feedback = screen.getByText('Feedback').closest('li')
+    expect(feedback).toHaveAttribute('data-active', 'true')
   })
 
-  it('renders Logo with size "sm" when md breakpoint matches', () => {
+  it('shows Logo when withLogo is true and size is sm on md screens', () => {
     mockIsMd = true
     render(<Navbar linksGroup="top" withLogo />)
-    expect(screen.getByTestId('logo')).toHaveTextContent('Logo size: sm')
+
+    const logo = screen.getByTestId('logo')
+    expect(logo).toBeInTheDocument()
+    expect(logo).toHaveAttribute('data-size', 'sm')
   })
 
-  it('renders Logo with size "xxs" when md breakpoint does not match', () => {
+  it('shows Logo with size xxs on small screens (isMd=false)', () => {
     mockIsMd = false
-    render(<Navbar linksGroup="top" withLogo />)
-    expect(screen.getByTestId('logo')).toHaveTextContent('Logo size: xxs')
+    render(<Navbar linksGroup="bottom" withLogo />)
+
+    const logo = screen.getByTestId('logo')
+    expect(logo).toBeInTheDocument()
+    expect(logo).toHaveAttribute('data-size', 'xxs')
   })
 
-  it('does not render Logo when withLogo is false', () => {
-    render(<Navbar linksGroup="top" />)
-    expect(screen.queryByTestId('logo')).not.toBeInTheDocument()
+  it('renders empty list when all routes in a group are disabled', () => {
+    mockDisabledRoutes.push('/feedback', '/issue')
+
+    render(<Navbar linksGroup="bottom" />)
+
+    expect(screen.getByRole('list')).toBeInTheDocument()
+    expect(screen.queryAllByTestId(/hover-link-/)).toHaveLength(0)
   })
 })
