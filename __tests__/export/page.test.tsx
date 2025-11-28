@@ -7,7 +7,6 @@ vi.mock('@/config/constants/navigation', () => {
     __esModule: true,
     NAV_TITLE: { EXPORT: 'Export' },
   };
-});
 
 vi.mock('../lib/actions', () => {
   return {
@@ -16,7 +15,6 @@ vi.mock('../lib/actions', () => {
     getCachedAllTransactions: vi.fn(),
     getTransactionsForExport: vi.fn(),
   };
-});
 
 vi.mock('../ui/home/export-transactions', () => {
   let lastProps = null;
@@ -30,7 +28,6 @@ vi.mock('../ui/home/export-transactions', () => {
     __getLastExportProps: () => lastProps,
     __resetExportProps: () => { lastProps = null; },
   };
-});
 
 vi.mock('../ui/no-transactions-plug', () => {
   function MockNoTransactionsPlug() {
@@ -40,7 +37,6 @@ vi.mock('../ui/no-transactions-plug', () => {
     __esModule: true,
     default: MockNoTransactionsPlug,
   };
-});
 
 vi.mock('../ui/sidebar/with-sidebar', () => {
   function MockWithSidebar(props) {
@@ -50,18 +46,11 @@ vi.mock('../ui/sidebar/with-sidebar', () => {
     __esModule: true,
     default: MockWithSidebar,
   };
-});
 
 import Page, { metadata } from './page';
 import { getCachedAuthSession, getCachedAllTransactions, getTransactionsForExport } from '../lib/actions';
 import { __getLastExportProps, __resetExportProps } from '../ui/home/export-transactions';
 
-describe('app/export/page', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    cleanup();
-    __resetExportProps();
-  });
 
   afterEach(() => {
     cleanup();
@@ -145,4 +134,3 @@ describe('app/export/page', () => {
     await expect(props.onExport(new Date('2024-02-01'), new Date('2024-02-28'))).rejects.toThrow('export-failed');
     expect(getTransactionsForExport).toHaveBeenCalledWith(userId, new Date('2024-02-01'), new Date('2024-02-28'));
   });
-});

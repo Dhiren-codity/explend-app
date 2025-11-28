@@ -12,13 +12,11 @@ vi.mock('react-hot-toast', () => {
     success,
     error
   };
-});
 
 vi.mock('@internationalized/date', () => {
   return {
     parseDate: (s: string) => ({ toString: () => s })
   };
-});
 
 vi.mock('@heroui/react', () => {
   const React = require('react');
@@ -70,7 +68,6 @@ vi.mock('@heroui/react', () => {
     SelectItem,
     DateRangePicker
   };
-});
 
 const mockGenerateCSV = vi.fn(() => 'csv-content');
 const mockGenerateJSON = vi.fn(() => 'json-content');
@@ -86,14 +83,7 @@ vi.mock('@/app/lib/export-utils', () => {
     getMimeType: mockGetMimeType,
     downloadFile: mockDownloadFile
   };
-});
 
-describe('ExportTransactions', () => {
-  const toast = require('react-hot-toast').default;
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
 
   afterEach(() => {
     cleanup();
@@ -262,5 +252,3 @@ describe('ExportTransactions', () => {
     await waitFor(() => {
       expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
     });
-  });
-});

@@ -2,11 +2,6 @@ import { describe, test, expect } from 'vitest'
 import { DEFAULT_TRANSACTION_LIMIT, NAV_ICON_SIZE, DEFAULT_PAGINATION_PAGE_NUMBER } from './config/constants/navigation'
 import * as navigation from './config/constants/navigation'
 
-describe('config/constants/navigation', () => {
-  afterEach(() => {
-    cleanup();
-    vi.clearAllMocks();
-  });
 
   test(async () => {
     expect(DEFAULT_TRANSACTION_LIMIT).toBe(30)

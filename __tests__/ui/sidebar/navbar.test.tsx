@@ -28,19 +28,16 @@ vi.mock('react-icons/pi', () => {
     PiStack: Icon,
     PiStackFill: Icon,
   };
-});
 
 vi.mock('react-use', () => {
   return {
     useMedia: vi.fn(),
   };
-});
 
 vi.mock('next/navigation', () => {
   return {
     usePathname: vi.fn(),
   };
-});
 
 vi.mock('@/config/constants/navigation', () => {
   return {
@@ -58,7 +55,6 @@ vi.mock('@/config/constants/navigation', () => {
       ISSUE: 'Issue',
     },
   };
-});
 
 const disabledRoutesRef: string[] = [];
 const ROUTE_OBJ = {
@@ -79,13 +75,11 @@ vi.mock('@/config/constants/routes', () => {
     DISABLED_ROUTES: disabledRoutesRef,
     ROUTE: ROUTE_OBJ,
   };
-});
 
 vi.mock('@/app/lib/helpers', () => {
   return {
     getBreakpointWidth: vi.fn().mockReturnValue('(min-width: 768px)'),
   };
-});
 
 vi.mock('../hoverables', () => {
   return {
@@ -102,7 +96,6 @@ vi.mock('../hoverables', () => {
       );
     },
   };
-});
 
 vi.mock('../logo', () => {
   return {
@@ -110,7 +103,6 @@ vi.mock('../logo', () => {
       <div data-testid="logo" data-size={props.size || ''} />
     ),
   };
-});
 
 // Imports after mocks
 import Navbar from './navbar';
@@ -119,17 +111,6 @@ import { useMedia } from 'react-use';
 import { DISABLED_ROUTES, ROUTE } from '@/config/constants/routes';
 import { getBreakpointWidth } from '@/app/lib/helpers';
 
-describe('Navbar', () => {
-  beforeEach(() => {
-    cleanup();
-    vi.clearAllMocks();
-    // Reset disabled routes
-    DISABLED_ROUTES.splice(0, DISABLED_ROUTES.length);
-    // Default mocks
-    (usePathname as unknown as vi.Mock).mockReturnValue('/');
-    (useMedia as unknown as vi.Mock).mockReturnValue(true);
-    (getBreakpointWidth as unknown as vi.Mock).mockReturnValue('(min-width: 768px)');
-  });
 
   afterEach(() => {
     cleanup();
@@ -181,7 +162,6 @@ describe('Navbar', () => {
       const isActive = li.getAttribute('data-url') === ROUTE.LIMITS;
       expect(li).toHaveAttribute('data-active', isActive ? 'true' : 'false');
     }
-  });
 
   test(async () => {
     DISABLED_ROUTES.push(ROUTE.EXPORT);
@@ -231,7 +211,6 @@ describe('Navbar', () => {
     for (const li of items) {
       expect(li).toHaveAttribute('data-active', 'false');
     }
-  });
 
   test('renders empty list when all routes are disabled', async () => {
     DISABLED_ROUTES.splice(0, DISABLED_ROUTES.length);
@@ -261,4 +240,3 @@ describe('Navbar', () => {
     const urls = items.map((el) => el.getAttribute('data-url'));
     expect(urls).toEqual([ROUTE.FEEDBACK, ROUTE.ISSUE]);
   });
-});

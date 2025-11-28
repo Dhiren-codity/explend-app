@@ -7,11 +7,6 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 const filePath = path.resolve(process.cwd(), 'config/constants/routes.ts');
 const fileUrl = pathToFileURL(filePath).href;
 
-describe('config/constants/routes.ts', () => {
-  afterEach(() => {
-    cleanup();
-    vi.clearAllMocks();
-  });
 
     expect(enumBlockMatch).toBeTruthy();
 
@@ -46,7 +41,6 @@ describe('config/constants/routes.ts', () => {
     Object.values(found).forEach((v) => {
       expect(v.startsWith('/')).toBe(true);
     });
-  });
 
   test('exports DISABLED_ROUTES as an empty array', async () => {
     const mod = await import(fileUrl);
@@ -73,5 +67,3 @@ describe('config/constants/routes.ts', () => {
       mod.DISABLED_ROUTES.length = originalLength;
       expect(mod.DISABLED_ROUTES.length).toBe(originalLength);
     }
-  });
-});
