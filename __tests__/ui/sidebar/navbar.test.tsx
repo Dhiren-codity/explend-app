@@ -242,10 +242,6 @@ describe('Navbar', (): void => {
     expect(items.length).toBe(0);
   });
 
-  test('throws when breakpoint helper throws (error case)', (): void => {
-    (getBreakpointWidth as unknown as vi.Mock).mockImplementation((_bp: unknown) => {
-      throw new Error('breakpoint-error');
-    });
 
     expect(() => render(<Navbar linksGroup="top" withLogo />)).toThrow('breakpoint-error');
   });

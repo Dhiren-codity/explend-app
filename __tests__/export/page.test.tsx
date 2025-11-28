@@ -71,8 +71,6 @@ describe('Page (app/export/page.tsx)', (): void => {
     expect(metadata.title).toBe('Export');
   });
 
-  test('renders NoTransactionsPlug when there are no transactions', async (): Promise<void> => {
-    (getCachedAuthSession as unknown as { mockResolvedValue: (_: unknown) => unknown }).mockResolvedValue(
       { user: { email: 'no-tx@example.com' } },
     );
     (getCachedAllTransactions as unknown as { mockResolvedValue: (_: unknown) => unknown }).mockResolvedValue([]);
@@ -100,9 +98,6 @@ describe('Page (app/export/page.tsx)', (): void => {
     expect(getCachedAllTransactions).toHaveBeenNthCalledWith(2, 'no-tx@example.com');
   });
 
-  test('renders ExportTransactions and wires onExport with userId', async (): Promise<void> => {
-    const userEmail = 'has-tx@example.com';
-    const transactions = [{ id: 't1' }, { id: 't2' }];
     (getCachedAuthSession as unknown as { mockResolvedValue: (_: unknown) => unknown }).mockResolvedValue(
       { user: { email: userEmail } },
     );
@@ -145,9 +140,6 @@ describe('Page (app/export/page.tsx)', (): void => {
     expect(getCachedAllTransactions).toHaveBeenCalledTimes(2);
   });
 
-  test('onExport should propagate error from getTransactionsForExport', async (): Promise<void> => {
-    const userEmail = 'error-export@example.com';
-    (getCachedAuthSession as unknown as { mockResolvedValue: (_: unknown) => unknown }).mockResolvedValue(
       { user: { email: userEmail } },
     );
     (getCachedAllTransactions as unknown as { mockResolvedValue: (_: unknown) => unknown }).mockResolvedValue(
@@ -173,16 +165,11 @@ describe('Page (app/export/page.tsx)', (): void => {
     expect(getTransactionsForExport).toHaveBeenCalledWith(userEmail, start, end);
   });
 
-  test('Page should reject when getCachedAuthSession throws', async (): Promise<void> => {
-    const err = new Error('auth fail');
-    (getCachedAuthSession as unknown as { mockRejectedValue: (_: unknown) => unknown }).mockRejectedValue(err);
 
     await expect(Page()).rejects.toThrow('auth fail');
     expect(getCachedAuthSession).toHaveBeenCalledTimes(1);
   });
 
-  test('Page should reject when getCachedAllTransactions throws', async (): Promise<void> => {
-    (getCachedAuthSession as unknown as { mockResolvedValue: (_: unknown) => unknown }).mockResolvedValue(
       { user: { email: 'thrower@example.com' } },
     );
     // First call (cache prime) can be resolved; second call (awaited) throws
@@ -197,8 +184,6 @@ describe('Page (app/export/page.tsx)', (): void => {
     expect(getCachedAllTransactions).toHaveBeenCalledTimes(2);
   });
 
-  test('handles undefined session (userId undefined) and still renders NoTransactionsPlug', async (): Promise<void> => {
-    (getCachedAuthSession as unknown as { mockResolvedValue: (_: unknown) => unknown }).mockResolvedValue(undefined);
     (getCachedAllTransactions as unknown as { mockResolvedValue: (_: unknown) => unknown }).mockResolvedValue([]);
 
     const element = await Page();

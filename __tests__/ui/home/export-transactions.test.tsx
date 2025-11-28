@@ -180,11 +180,6 @@ describe('ExportTransactions', () => {
     return base as unknown as TTransaction;
   };
 
-  test('renders with default UI and status text: void', (): void => {
-    const transactions: TTransaction[] = [makeTransaction(), makeTransaction()];
-    const onExport = vi.fn<[_start?: Date, _end?: Date], Promise<TTransaction[]>>().mockResolvedValue(transactions);
-
-    render(<ExportTransactions transactions={transactions} onExport={onExport} />);
 
     expect(screen.getByText('Export Transactions')).toBeInTheDocument();
     expect(screen.getByLabelText('Export Format')).toBeInTheDocument();
@@ -194,11 +189,6 @@ describe('ExportTransactions', () => {
     ).toBeInTheDocument();
   });
 
-  test('exports CSV by default without calling onExport: Promise<void>', async (): Promise<void> => {
-    const transactions: TTransaction[] = [makeTransaction(), makeTransaction()];
-    const onExport = vi.fn<[_start?: Date, _end?: Date], Promise<TTransaction[]>>().mockResolvedValue(transactions);
-
-    render(<ExportTransactions transactions={transactions} onExport={onExport} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Export' }));
 
@@ -211,11 +201,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('changes format to JSON and exports JSON: Promise<void>', async (): Promise<void> => {
-    const transactions: TTransaction[] = [makeTransaction(), makeTransaction(), makeTransaction()];
-    const onExport = vi.fn<[_start?: Date, _end?: Date], Promise<TTransaction[]>>().mockResolvedValue(transactions);
-
-    render(<ExportTransactions transactions={transactions} onExport={onExport} />);
 
     const select = screen.getByLabelText('Export Format');
     fireEvent.change(select, { target: { value: 'json' } });
@@ -232,13 +217,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('applies date range, calls onExport with end-of-day and shows singular message: Promise<void>', async (): Promise<void> => {
-    const allTransactions: TTransaction[] = [makeTransaction(), makeTransaction()];
-    const filtered: TTransaction[] = [makeTransaction()];
-      .fn<[_start?: Date, _end?: Date], Promise<TTransaction[]>>()
-      .mockResolvedValue(filtered);
-
-    render(<ExportTransactions transactions={allTransactions} onExport={onExport} />);
 
     const startInput = screen.getByLabelText('start-date');
     const endInput = screen.getByLabelText('end-date');
@@ -272,11 +250,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('handles empty result when date range yields no transactions: Promise<void>', async (): Promise<void> => {
-    const transactions: TTransaction[] = [makeTransaction()];
-    const onExport = vi.fn<[_start?: Date, _end?: Date], Promise<TTransaction[]>>().mockResolvedValue([]);
-
-    render(<ExportTransactions transactions={transactions} onExport={onExport} />);
 
     const startInput = screen.getByLabelText('start-date');
     const endInput = screen.getByLabelText('end-date');
@@ -293,9 +266,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('shows loading state during async export and recovers after error: Promise<void>', async (): Promise<void> => {
-    const transactions: TTransaction[] = [makeTransaction(), makeTransaction()];
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
       .fn<[_start?: Date, _end?: Date], Promise<TTransaction[]>>()
       .mockRejectedValue(new Error('fail'));
@@ -326,11 +296,6 @@ describe('ExportTransactions', () => {
     consoleSpy.mockRestore();
   });
 
-  test('clears date range and shows default status text again: Promise<void>', async (): Promise<void> => {
-    const transactions: TTransaction[] = [makeTransaction(), makeTransaction(), makeTransaction()];
-    const onExport = vi.fn<[_start?: Date, _end?: Date], Promise<TTransaction[]>>().mockResolvedValue(transactions);
-
-    render(<ExportTransactions transactions={transactions} onExport={onExport} />);
 
     const startInput = screen.getByLabelText('start-date');
     const endInput = screen.getByLabelText('end-date');
