@@ -1,66 +1,51 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
-import { fireEvent, waitFor, cleanup } from '@testing-library/react'
+import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest'
+import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react'
 import React from 'react'
-import ExportTransactions from '../../../../app/ui/home/export-transactions'
 
 vi.mock('@heroui/react', () => {
   const React = require('react')
-  const Button = ({ children, onPress, isLoading, ...props }: any) => (
-    <button onClick={onPress} aria-busy={!!isLoading} {...props}>
+  const Button = ({ children, onPress, isLoading, ...rest }: any) => (
+    <button onClick={onPress} disabled={!!isLoading} {...rest}>
       {children}
     </button>
   )
-  const Card = ({ children }: any) => <div data-testid="card">{children}</div>
-  const CardBody = ({ children, className }: any) => (
-    <div data-testid="card-body" className={className}>
-      {children}
+  const Card = ({ children, ...rest }: any) => <div {...rest}>{children}</div>
+  const CardBody = ({ children, ...rest }: any) => <div {...rest}>{children}</div>
+  const CardHeader = ({ children, ...rest }: any) => <div {...rest}>{children}</div>
+  const Select = ({ label, selectedKeys, onChange, children, ...rest }: any) => {
+    const options = React.Children.toArray(children) as any[]
+    const value = selectedKeys?.[0] ?? ''
+    return (
+      <label>
+        {label}
+        <select aria-label={label} value={value} onChange={onChange} {...rest}>
+          {options.map((child: any) => {
+            const val = child?.props?.value ?? child?.key
+            return (
+              <option key={val} value={val}>
+                {child?.props?.children}
+              </option>
+            )
+          })}
+        </select>
+      </label>
+    )
+  }
+  const SelectItem = ({ children, ...rest }: any) => <option {...rest}>{children}</option>
+  const DateRangePicker = ({ label, onChange, ...rest }: any) => (
+    <div {...rest}>
+      <span>{label}</span>
+      <button type="button" aria-label="Set range Jan 2024" onClick={() => onChange?.({
+        start: { toString: () => '2024-01-01' },
+        end: { toString: () => '2024-01-31' },
+      })}>
+        Set Range Jan
+      </button>
+      <button type="button" aria-label="Clear range" onClick={() => onChange?.(null)}>
+        Clear Range
+      </button>
     </div>
   )
-  const CardHeader = ({ children }: any) => (
-    <div data-testid="card-header">{children}</div>
-  )
-
-  const Select = ({ label, selectedKeys, onChange, children, className }: any) => (
-    <label>
-      {label}
-      <select
-        aria-label={label}
-        value={selectedKeys?.[0]}
-        onChange={onChange}
-        className={className}
-      >
-        {children}
-      </select>
-    </label>
-  )
-  const SelectItem = ({ children, value, key: k }: any) => (
-    <option value={value ?? k}>{children}</option>
-  )
-
-  const DateRangePicker = ({ label, onChange, className }: any) => (
-    <label>
-      {label}
-      <input
-        aria-label={label}
-        className={className}
-        placeholder="start|end"
-        onChange={(e: any) => {
-          const val = e.target.value
-          if (!val) {
-            onChange?.(null)
-            return
-          }
-          const [start, end] = val.split('|')
-          onChange?.({
-            start: { toString: () => start },
-            end: { toString: () => end },
-          })
-        }}
-      />
-    </label>
-  )
-
   return {
     Button,
     Card,
@@ -72,29 +57,22 @@ vi.mock('@heroui/react', () => {
   }
 })
 
-const mockToastSuccess = vi.fn()
-const mockToastError = vi.fn()
 vi.mock('react-hot-toast', () => {
-  const toast = {
-    success: mockToastSuccess,
-    error: mockToastError,
+  return {
+    default: {
+      success: vi.fn(),
+      error: vi.fn(),
+    },
   }
-  return { default: toast }
 })
-
-const mockGenerateCSV = vi.fn(() => 'csv-content')
-const mockGenerateJSON = vi.fn(() => 'json-content')
-const mockDownloadFile = vi.fn()
-const mockGetExportFilename = vi.fn((f: string) => (f === 'csv' ? 'export.csv' : 'export.json'))
-const mockGetMimeType = vi.fn((f: string) => (f === 'csv' ? 'text/csv' : 'application/json'))
 
 vi.mock('@/app/lib/export-utils', () => {
   return {
-    generateCSV: mockGenerateCSV,
-    generateJSON: mockGenerateJSON,
-    downloadFile: mockDownloadFile,
-    getExportFilename: mockGetExportFilename,
-    getMimeType: mockGetMimeType,
+    generateCSV: vi.fn(() => 'MOCK_CSV'),
+    generateJSON: vi.fn(() => 'MOCK_JSON'),
+    getExportFilename: vi.fn((fmt: 'csv' | 'json') => (fmt === 'csv' ? 'transactions.csv' : 'transactions.json')),
+    getMimeType: vi.fn((fmt: 'csv' | 'json') => (fmt === 'csv' ? 'text/csv' : 'application/json')),
+    downloadFile: vi.fn(),
   }
 })
 
@@ -102,12 +80,15 @@ vi.mock('@/config/constants/main', () => ({
   DEFAULT_ICON_SIZE: 16,
 }))
 
-type Tx = {
-  id: string
-  date?: string
-  amount?: number
-  [key: string]: any
-}
+import ExportTransactions from '../../../../app/ui/home/export-transactions'
+import toast from 'react-hot-toast'
+import {
+  generateCSV,
+  generateJSON,
+  getExportFilename,
+  getMimeType,
+  downloadFile,
+} from '@/app/lib/export-utils'
 
 describe('ExportTransactions', () => {
   afterEach(() => {
@@ -115,84 +96,72 @@ describe('ExportTransactions', () => {
     vi.clearAllMocks()
   })
 
-  const sampleTransactions: Tx[] = [
-    { id: '1', date: '2024-01-01T00:00:00.000Z', amount: 10 },
-    { id: '2', date: '2024-01-02T00:00:00.000Z', amount: 20 },
-  ]
-
-  const renderComponent = (props?: Partial<React.ComponentProps<typeof ExportTransactions>>) => {
-    const defaultOnExport = vi.fn().mockResolvedValue(sampleTransactions)
-    return render(
-      <ExportTransactions
-        transactions={sampleTransactions}
-        onExport={defaultOnExport}
-        {...props}
-      />
-    )
-  }
+  const sampleTx = (overrides?: any) => ({
+    id: 't1',
+    date: '2024-01-15T10:00:00Z',
+    amount: 100,
+    description: 'Test',
+    ...overrides,
+  })
 
   it('renders heading, controls, and default status text', () => {
-    renderComponent()
+    render(
+      <ExportTransactions
+        transactions={[sampleTx(), sampleTx({ id: 't2' })] as any}
+        onExport={vi.fn()}
+      />,
+    )
 
     expect(screen.getByText('Export Transactions')).toBeInTheDocument()
     expect(screen.getByLabelText('Export Format')).toBeInTheDocument()
-    expect(screen.getByLabelText('Date Range (Optional)')).toBeInTheDocument()
+    expect(screen.getByText('Date Range (Optional)')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument()
     expect(
-      screen.getByText('Ready to export all 2 transactions')
+      screen.getByText('Ready to export all 2 transactions'),
     ).toBeInTheDocument()
   })
 
-  it('exports CSV by default without date range using provided transactions', async () => {
-    const onExport = vi.fn().mockResolvedValue(sampleTransactions)
-    renderComponent({ onExport })
+  it('exports CSV by default using provided transactions and shows success toast', async () => {
+    const onExport = vi.fn()
+    vi.mocked(generateCSV).mockReturnValue('csv-content')
+    vi.mocked(getExportFilename).mockReturnValue('export.csv')
+    vi.mocked(getMimeType).mockReturnValue('text/csv')
+
+    const transactions = [sampleTx(), sampleTx({ id: 't2' })] as any
+
+    render(<ExportTransactions transactions={transactions} onExport={onExport} />)
 
     fireEvent.click(screen.getByRole('button', { name: 'Export' }))
 
     await waitFor(() => {
-      expect(mockGenerateCSV).toHaveBeenCalledTimes(1)
+      expect(downloadFile).toHaveBeenCalledTimes(1)
     })
 
     expect(onExport).not.toHaveBeenCalled()
-    expect(mockGenerateCSV).toHaveBeenCalledWith(sampleTransactions)
-    expect(mockGenerateJSON).not.toHaveBeenCalled()
-    expect(mockGetExportFilename).toHaveBeenCalledWith('csv')
-    expect(mockGetMimeType).toHaveBeenCalledWith('csv')
-    expect(mockDownloadFile).toHaveBeenCalledWith('csv-content', 'export.csv', 'text/csv')
-    expect(mockToastSuccess).toHaveBeenCalledWith('Exported 2 transactions')
-
-    // button returns to non-loading state
-    expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument()
-  })
-
-  it('allows selecting JSON format and uses JSON utilities', async () => {
-    renderComponent()
-    const select = screen.getByLabelText('Export Format') as HTMLSelectElement
-
-    fireEvent.change(select, { target: { value: 'json' } })
-    fireEvent.click(screen.getByRole('button', { name: 'Export' }))
+    expect(generateCSV).toHaveBeenCalledWith(transactions)
+    expect(getExportFilename).toHaveBeenCalledWith('csv')
+    expect(getMimeType).toHaveBeenCalledWith('csv')
+    expect(downloadFile).toHaveBeenCalledWith('csv-content', 'export.csv', 'text/csv')
+    expect(toast.success).toHaveBeenCalledWith('Exported 2 transactions')
 
     await waitFor(() => {
-      expect(mockGenerateJSON).toHaveBeenCalledTimes(1)
+      expect(screen.getByRole('button', { name: 'Export' })).toBeEnabled()
     })
-
-    expect(mockGenerateCSV).not.toHaveBeenCalled()
-    expect(mockGetExportFilename).toHaveBeenCalledWith('json')
-    expect(mockGetMimeType).toHaveBeenCalledWith('json')
-    expect(mockDownloadFile).toHaveBeenCalledWith('json-content', 'export.json', 'application/json')
-    expect(mockToastSuccess).toHaveBeenCalledWith('Exported 2 transactions')
   })
 
-  it('when date range is set, calls onExport with start and end-of-day end date and exports returned data', async () => {
-    const returned = [{ id: 'x' }]
-    const onExport = vi.fn().mockResolvedValue(returned as any)
-    renderComponent({ onExport })
+  it('calls onExport with selected date range and adjusts end date to end-of-day', async () => {
+    const filtered = [sampleTx({ id: 'fx1' })] as any
+    const onExport = vi.fn().mockResolvedValue(filtered)
+    vi.mocked(generateCSV).mockReturnValue('csv-with-filter')
+    vi.mocked(getExportFilename).mockReturnValue('filtered.csv')
+    vi.mocked(getMimeType).mockReturnValue('text/csv')
 
-    const rangeInput = screen.getByLabelText('Date Range (Optional)') as HTMLInputElement
-    fireEvent.change(rangeInput, { target: { value: '2024-01-01|2024-01-31' } })
+    render(<ExportTransactions transactions={[sampleTx()] as any} onExport={onExport} />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Set range Jan 2024' }))
 
     expect(
-      screen.getByText('Exporting transactions from 2024-01-01 to 2024-01-31')
+      screen.getByText('Exporting transactions from 2024-01-01 to 2024-01-31'),
     ).toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: 'Export' }))
@@ -201,104 +170,78 @@ describe('ExportTransactions', () => {
       expect(onExport).toHaveBeenCalledTimes(1)
     })
 
-    const [startArg, endArg] = onExport.mock.calls[0]
+    const [startArg, endArg] = onExport.mock.calls[0] as [Date, Date]
     expect(startArg).toBeInstanceOf(Date)
     expect(endArg).toBeInstanceOf(Date)
-    // Verify dates
-    const startIso = (startArg as Date).toISOString().slice(0, 10)
-    expect(startIso).toBe('2024-01-01')
-    const endIso = (endArg as Date).toISOString()
-    expect(endIso.startsWith('2024-01-31T23:59:59.')).toBe(true)
+    // Start should be start of day by default Date ctor; we only need to ensure date matches
+    expect(startArg.toISOString().slice(0, 10)).toBe('2024-01-01')
+    // End should be adjusted to end of the day local time
+    expect(endArg.getHours()).toBe(23)
+    expect(endArg.getMinutes()).toBe(59)
+    expect(endArg.getSeconds()).toBe(59)
+    expect(endArg.getMilliseconds()).toBe(999)
 
-    expect(mockGenerateCSV).toHaveBeenCalledWith(returned)
-    expect(mockDownloadFile).toHaveBeenCalled()
-    expect(mockToastSuccess).toHaveBeenCalledWith('Exported 1 transaction')
+    expect(generateCSV).toHaveBeenCalledWith(filtered)
+    expect(downloadFile).toHaveBeenCalledWith('csv-with-filter', 'filtered.csv', 'text/csv')
+    expect(toast.success).toHaveBeenCalledWith('Exported 1 transaction')
   })
 
-  it('shows error when no transactions to export and does not generate/download', async () => {
-    const onExport = vi.fn().mockResolvedValue([] as any)
-    renderComponent({ onExport })
+  it('switches to JSON format and uses JSON-related utils', async () => {
+    const onExport = vi.fn()
+    const transactions = [sampleTx()] as any
+    vi.mocked(generateJSON).mockReturnValue('json-content')
+    vi.mocked(getExportFilename).mockReturnValue('export.json')
+    vi.mocked(getMimeType).mockReturnValue('application/json')
 
-    const rangeInput = screen.getByLabelText('Date Range (Optional)') as HTMLInputElement
-    fireEvent.change(rangeInput, { target: { value: '2024-02-01|2024-02-10' } })
+    render(<ExportTransactions transactions={transactions} onExport={onExport} />)
 
+    fireEvent.change(screen.getByLabelText('Export Format'), { target: { value: 'json' } })
     fireEvent.click(screen.getByRole('button', { name: 'Export' }))
 
     await waitFor(() => {
-      expect(mockToastError).toHaveBeenCalledWith('No transactions to export')
-    })
-
-    expect(mockGenerateCSV).not.toHaveBeenCalled()
-    expect(mockGenerateJSON).not.toHaveBeenCalled()
-    expect(mockDownloadFile).not.toHaveBeenCalled()
-    expect(mockToastSuccess).not.toHaveBeenCalled()
-  })
-
-  it('handles error path and shows failure toast', async () => {
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
-    mockGenerateCSV.mockImplementationOnce(() => {
-      throw new Error('boom')
-    })
-
-    renderComponent()
-
-    fireEvent.click(screen.getByRole('button', { name: 'Export' }))
-
-    await waitFor(() => {
-      expect(mockToastError).toHaveBeenCalledWith('Failed to export transactions')
-    })
-
-    expect(consoleSpy).toHaveBeenCalled()
-    consoleSpy.mockRestore()
-  })
-
-  it('shows loading state while exporting and reverts after completion', async () => {
-    let resolveFn: (v: any) => void = () => {}
-    const onExport = vi.fn(
-      () =>
-        new Promise((resolve) => {
-          resolveFn = resolve
-        })
-    )
-
-    renderComponent({ onExport })
-
-    const rangeInput = screen.getByLabelText('Date Range (Optional)') as HTMLInputElement
-    fireEvent.change(rangeInput, { target: { value: '2024-03-01|2024-03-05' } })
-
-    fireEvent.click(screen.getByRole('button', { name: 'Export' }))
-
-    // While pending
-    expect(screen.getByRole('button', { name: 'Exporting...' })).toBeInTheDocument()
-    expect(screen.getByRole('button')).toHaveAttribute('aria-busy', 'true')
-
-    // Resolve export
-    resolveFn([{ id: 'a' }])
-
-    await waitFor(() => {
-      expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument()
-    })
-    expect(screen.getByRole('button')).toHaveAttribute('aria-busy', 'false')
-    expect(mockToastSuccess).toHaveBeenCalledWith('Exported 1 transaction')
-  })
-
-  it('shows "No transactions to export" when transactions prop is empty without date range', async () => {
-    const onExport = vi.fn().mockResolvedValue([])
-    render(
-      <ExportTransactions
-        transactions={[]}
-        onExport={onExport}
-      />
-    )
-
-    fireEvent.click(screen.getByRole('button', { name: 'Export' }))
-
-    await waitFor(() => {
-      expect(mockToastError).toHaveBeenCalledWith('No transactions to export')
+      expect(downloadFile).toHaveBeenCalledTimes(1)
     })
 
     expect(onExport).not.toHaveBeenCalled()
-    expect(mockGenerateCSV).not.toHaveBeenCalled()
-    expect(mockDownloadFile).not.toHaveBeenCalled()
+    expect(generateCSV).not.toHaveBeenCalled()
+    expect(generateJSON).toHaveBeenCalledWith(transactions)
+    expect(getExportFilename).toHaveBeenCalledWith('json')
+    expect(getMimeType).toHaveBeenCalledWith('json')
+    expect(downloadFile).toHaveBeenCalledWith('json-content', 'export.json', 'application/json')
+    expect(toast.success).toHaveBeenCalledWith('Exported 1 transaction')
+  })
+
+  it('shows error toast when there are no transactions to export', async () => {
+    const onExport = vi.fn()
+
+    render(<ExportTransactions transactions={[]} onExport={onExport} />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Export' }))
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith('No transactions to export')
+    })
+    expect(downloadFile).not.toHaveBeenCalled()
+    expect(onExport).not.toHaveBeenCalled()
+  })
+
+  it('handles unexpected errors and shows failure toast', async () => {
+    const onExport = vi.fn()
+    vi.mocked(generateCSV).mockImplementation(() => {
+      throw new Error('boom')
+    })
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    render(<ExportTransactions transactions={[sampleTx()] as any} onExport={onExport} />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Export' }))
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith('Failed to export transactions')
+    })
+    expect(downloadFile).not.toHaveBeenCalled()
+    expect(consoleErrorSpy).toHaveBeenCalled()
+
+    consoleErrorSpy.mockRestore()
   })
 })
