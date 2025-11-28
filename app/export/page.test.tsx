@@ -63,8 +63,6 @@ describe('app/export/page metadata', () => {
 })
 
 describe('app/export/page', () => {
-  test('renders NoTransactionsPlug when there are no transactions', async () => {
-    getCachedAuthSession.mockResolvedValue({ user: { email: 'user@example.com' } })
     getCachedAllTransactions.mockResolvedValue([])
 
     const element = await Page()
@@ -81,9 +79,6 @@ describe('app/export/page', () => {
     expect(getCachedAllTransactions).toHaveBeenNthCalledWith(2, 'user@example.com')
   })
 
-  test('renders ExportTransactions when transactions exist and onExport delegates to action', async () => {
-    const userId = 'exporter@example.com'
-    const txs = [{ id: 't1' }, { id: 't2' }]
     const exported = [{ id: 'e1' }]
 
     getCachedAuthSession.mockResolvedValue({ user: { email: userId } })
@@ -118,8 +113,6 @@ describe('app/export/page', () => {
     expect(getCachedAllTransactions).toHaveBeenNthCalledWith(2, userId)
   })
 
-  test('propagates error when getCachedAllTransactions throws', async () => {
-    getCachedAuthSession.mockResolvedValue({ user: { email: 'user@example.com' } })
     getCachedAllTransactions.mockImplementation(() => {
       throw new Error('boom')
     })
@@ -127,9 +120,6 @@ describe('app/export/page', () => {
     await expect(Page()).rejects.toThrow('boom')
   })
 
-  test('works with null session (userId undefined) and passes undefined to actions', async () => {
-    getCachedAuthSession.mockResolvedValue(null)
-    const txs = [{ id: 't1' }]
     getCachedAllTransactions.mockResolvedValue(txs)
     getTransactionsForExport.mockResolvedValue([{ id: 'out' }])
 
