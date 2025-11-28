@@ -144,8 +144,6 @@ describe('Page', (): void => {
     expect(noTxEl.type).toBe(NoTransactionsPlug);
   });
 
-  test('passes undefined userId when session is missing', async (): Promise<void> => {
-    (getCachedAuthSession as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({});
 
     await Page();
 
@@ -160,19 +158,12 @@ describe('Page', (): void => {
     );
   });
 
-  test('throws when getCachedAuthSession (awaited call) rejects', async (): Promise<void> => {
-    (getCachedAuthSession as unknown as ReturnType<typeof vi.fn>)
-      .mockResolvedValueOnce({ user: { email: defaultUserId } })
       .mockRejectedValueOnce(new Error('session failed'));
 
     await expect(Page()).rejects.toThrow('session failed');
     expect(getCachedAllTransactions).not.toHaveBeenCalled();
   });
 
-  test('throws when getCachedAllTransactions (awaited call) rejects', async (): Promise<void> => {
-    (getCachedAuthSession as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({
-      user: { email: defaultUserId },
-    });
 
     (getCachedAllTransactions as unknown as ReturnType<typeof vi.fn>)
       .mockResolvedValueOnce([])

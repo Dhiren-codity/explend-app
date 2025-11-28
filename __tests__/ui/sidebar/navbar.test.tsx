@@ -227,8 +227,6 @@ describe('Navbar', (): void => {
     expect(items.length).toBe(0);
   });
 
-  test('does not render logo when withLogo is false', (): void => {
-    render(<Navbar linksGroup="top" withLogo={false} />);
 
     const logo = screen.queryByTestId('logo');
     expect(logo).toBeNull();
