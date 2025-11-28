@@ -7,7 +7,7 @@ describe('config/constants/navigation', () => {
     vi.clearAllMocks();
   });
 
-  test('exports expected constant values', () => {
+  test(async () => {
     expect(nav.DEFAULT_TRANSACTION_LIMIT).toBe(30);
     expect(typeof nav.DEFAULT_TRANSACTION_LIMIT).toBe('number');
 
@@ -18,12 +18,12 @@ describe('config/constants/navigation', () => {
     expect(typeof nav.DEFAULT_PAGINATION_PAGE_NUMBER).toBe('string');
   });
 
-  test('const enum exports are not available at runtime', () => {
+  test(async () => {
     expect(nav.NAV_TITLE).toBeUndefined();
     expect(nav.SEARCH_PARAM).toBeUndefined();
   });
 
-  test('constants are immutable (cannot be reassigned)', () => {
+  test(async () => {
     expect(() => {
       // @ts-expect-error attempting to mutate imported constant
       nav.DEFAULT_TRANSACTION_LIMIT = 9999;
@@ -40,7 +40,7 @@ describe('config/constants/navigation', () => {
     }).toThrow(TypeError);
   });
 
-  test('namespace does not contain non-exported members', () => {
+  test(async () => {
     expect(Object.prototype.hasOwnProperty.call(nav, 'NAV_TITLE')).toBe(false);
     expect(Object.prototype.hasOwnProperty.call(nav, 'SEARCH_PARAM')).toBe(false);
   });

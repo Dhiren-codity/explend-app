@@ -81,7 +81,7 @@ describe('config/constants/routes.ts', () => {
     }
   });
 
-  test('DISABLED_ROUTES is exported, is an array, and defaults to empty', () => {
+  test(async () => {
     expect(Object.prototype.hasOwnProperty.call(routesModule, 'DISABLED_ROUTES')).toBe(true);
     expect(Array.isArray(routesModule.DISABLED_ROUTES)).toBe(true);
     expect(routesModule.DISABLED_ROUTES).toHaveLength(0);

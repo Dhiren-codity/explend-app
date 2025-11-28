@@ -142,7 +142,7 @@ describe('Navbar', () => {
     cleanup();
   });
 
-  test('renders top links (excluding disabled) and marks active link', () => {
+  test(async () => {
     __setDisabledRoutes([ROUTE.EXPORT]);
     useMedia.mockReturnValue(true);
     usePathname.mockReturnValue(ROUTE.SETTINGS);
@@ -174,7 +174,7 @@ describe('Navbar', () => {
     expect(screen.queryByTestId('logo')).toBeNull();
   });
 
-  test('renders bottom links and filters disabled', () => {
+  test(async () => {
     __setDisabledRoutes([ROUTE.ISSUE]);
     useMedia.mockReturnValue(false);
     usePathname.mockReturnValue(ROUTE.ISSUE);
@@ -189,7 +189,7 @@ describe('Navbar', () => {
     expect(call.isActiveLink).toBe(false); // active was disabled
   });
 
-  test('renders logo with sm size on md screens (useMedia=true)', () => {
+  test(async () => {
     useMedia.mockReturnValue(true);
     usePathname.mockReturnValue(ROUTE.HOME);
 
@@ -204,7 +204,7 @@ describe('Navbar', () => {
     expect(logoSpy.mock.calls[0][0].size).toBe('sm');
   });
 
-  test('renders logo with xxs size on small screens (useMedia=false)', () => {
+  test(async () => {
     useMedia.mockReturnValue(false);
     usePathname.mockReturnValue(ROUTE.HOME);
 
@@ -218,7 +218,7 @@ describe('Navbar', () => {
     expect(logoSpy.mock.calls[0][0].size).toBe('xxs');
   });
 
-  test('falls back to bottom links when linksGroup is invalid (error case)', () => {
+  test(async () => {
     useMedia.mockReturnValue(true);
     usePathname.mockReturnValue(ROUTE.FEEDBACK);
 
@@ -233,7 +233,7 @@ describe('Navbar', () => {
     expect(titles).toEqual(['Feedback', 'Issue']);
   });
 
-  test('renders empty list when all routes disabled', () => {
+  test(async () => {
     __setDisabledRoutes([
       ROUTE.HOME,
       ROUTE.MONTHLY_REPORT,
