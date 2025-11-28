@@ -1,167 +1,165 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import * as navigation from '../../../config/constants/navigation'
 import {
-  DEFAULT_TRANSACTION_LIMIT as DTL,
-  NAV_ICON_SIZE as NIS,
-  DEFAULT_PAGINATION_PAGE_NUMBER as DPP,
+  DEFAULT_TRANSACTION_LIMIT,
+  NAV_ICON_SIZE,
+  NAV_TITLE,
+  SEARCH_PARAM,
+  DEFAULT_PAGINATION_PAGE_NUMBER,
 } from '../../../config/constants/navigation'
 
 afterEach(() => {
   vi.clearAllMocks()
 })
 
-describe('config/constants/navigation - runtime exports', () => {
-  it('exports only the runtime constants (no const enums at runtime)', () => {
-    const keys = Object.keys(navigation).sort()
-    expect(keys).toEqual([
-      'DEFAULT_PAGINATION_PAGE_NUMBER',
-      'DEFAULT_TRANSACTION_LIMIT',
-      'NAV_ICON_SIZE',
-    ])
+describe('config/constants/navigation - DEFAULT_TRANSACTION_LIMIT', () => {
+  it('should be 30', () => {
+    expect(DEFAULT_TRANSACTION_LIMIT).toBe(30)
   })
 
-  it('does not expose NAV_TITLE as a runtime export', () => {
-    expect('NAV_TITLE' in navigation).toBe(false)
-    expect((navigation as any).NAV_TITLE).toBeUndefined()
+  it('should be a number', () => {
+    expect(typeof DEFAULT_TRANSACTION_LIMIT).toBe('number')
   })
 
-  it('does not expose SEARCH_PARAM as a runtime export', () => {
-    expect('SEARCH_PARAM' in navigation).toBe(false)
-    expect((navigation as any).SEARCH_PARAM).toBeUndefined()
-  })
-})
-
-describe('DEFAULT_TRANSACTION_LIMIT', () => {
-  it('has the expected value of 30', () => {
-    expect(navigation.DEFAULT_TRANSACTION_LIMIT).toBe(30)
+  it('should be a positive integer', () => {
+    expect(DEFAULT_TRANSACTION_LIMIT).toBeGreaterThan(0)
+    expect(Number.isInteger(DEFAULT_TRANSACTION_LIMIT)).toBe(true)
   })
 
-  it('is a positive integer', () => {
-    const value = navigation.DEFAULT_TRANSACTION_LIMIT
-    expect(typeof value).toBe('number')
-    expect(Number.isInteger(value)).toBe(true)
-    expect(value).toBeGreaterThan(0)
+  it('should not be NaN or Infinity', () => {
+    expect(Number.isNaN(DEFAULT_TRANSACTION_LIMIT)).toBe(false)
+    expect(DEFAULT_TRANSACTION_LIMIT).not.toBe(Infinity)
   })
 
-  it('is finite and not NaN', () => {
-    const value = navigation.DEFAULT_TRANSACTION_LIMIT
-    expect(Number.isFinite(value)).toBe(true)
-    expect(Number.isNaN(value)).toBe(false)
+  it('stringified should be "30"', () => {
+    expect(String(DEFAULT_TRANSACTION_LIMIT)).toBe('30')
   })
 
-  it('cannot be reassigned via the module namespace and remains unchanged', () => {
-    const before = navigation.DEFAULT_TRANSACTION_LIMIT
-    try {
-      ;(navigation as any).DEFAULT_TRANSACTION_LIMIT = 999
-    } catch {
-      // ignore potential TypeError in strict mode
-    }
-    expect(navigation.DEFAULT_TRANSACTION_LIMIT).toBe(before)
-  })
-
-  it('has a non-configurable, enumerable accessor descriptor', () => {
-    const desc = Object.getOwnPropertyDescriptor(navigation, 'DEFAULT_TRANSACTION_LIMIT')
-    expect(desc).toBeDefined()
-    expect(desc?.enumerable).toBe(true)
-    expect(desc?.configurable).toBe(false)
-    // Module namespace properties are accessors with only a getter
-    expect(typeof desc?.get).toBe('function')
-    expect(desc?.set).toBeUndefined()
+  it('should be within reasonable range (1..1000)', () => {
+    expect(DEFAULT_TRANSACTION_LIMIT).toBeGreaterThanOrEqual(1)
+    expect(DEFAULT_TRANSACTION_LIMIT).toBeLessThanOrEqual(1000)
   })
 })
 
-describe('NAV_ICON_SIZE', () => {
-  it('has the expected value of 24', () => {
-    expect(navigation.NAV_ICON_SIZE).toBe(24)
+describe('config/constants/navigation - NAV_ICON_SIZE', () => {
+  it('should be 24', () => {
+    expect(NAV_ICON_SIZE).toBe(24)
   })
 
-  it('is a positive integer number', () => {
-    const value = navigation.NAV_ICON_SIZE
-    expect(typeof value).toBe('number')
-    expect(Number.isInteger(value)).toBe(true)
-    expect(value).toBeGreaterThan(0)
+  it('should be a number', () => {
+    expect(typeof NAV_ICON_SIZE).toBe('number')
   })
 
-  it('works in arithmetic operations', () => {
-    const value = navigation.NAV_ICON_SIZE
-    expect(value / 2).toBe(12)
-    expect(value * 2).toBe(48)
-    expect(Math.min(navigation.DEFAULT_TRANSACTION_LIMIT, value)).toBe(24)
+  it('should be a positive integer', () => {
+    expect(NAV_ICON_SIZE).toBeGreaterThan(0)
+    expect(Number.isInteger(NAV_ICON_SIZE)).toBe(true)
   })
 
-  it('cannot be reassigned via the module namespace and remains unchanged', () => {
-    const before = navigation.NAV_ICON_SIZE
-    try {
-      ;(navigation as any).NAV_ICON_SIZE = 111
-    } catch {
-      // ignore potential TypeError in strict mode
-    }
-    expect(navigation.NAV_ICON_SIZE).toBe(before)
+  it('should not be zero', () => {
+    expect(NAV_ICON_SIZE).not.toBe(0)
   })
 
-  it('has a non-configurable, enumerable accessor descriptor', () => {
-    const desc = Object.getOwnPropertyDescriptor(navigation, 'NAV_ICON_SIZE')
-    expect(desc).toBeDefined()
-    expect(desc?.enumerable).toBe(true)
-    expect(desc?.configurable).toBe(false)
-    expect(typeof desc?.get).toBe('function')
-    expect(desc?.set).toBeUndefined()
-  })
-
-  it('stringifies to "24"', () => {
-    expect(String(navigation.NAV_ICON_SIZE)).toBe('24')
+  it('should be less than 100', () => {
+    expect(NAV_ICON_SIZE).toBeLessThan(100)
   })
 })
 
-describe('DEFAULT_PAGINATION_PAGE_NUMBER', () => {
-  it('has the expected value of "1"', () => {
-    expect(navigation.DEFAULT_PAGINATION_PAGE_NUMBER).toBe('1')
+describe('config/constants/navigation - DEFAULT_PAGINATION_PAGE_NUMBER', () => {
+  it('should be "1"', () => {
+    expect(DEFAULT_PAGINATION_PAGE_NUMBER).toBe('1')
   })
 
-  it('is a string representing a positive integer', () => {
-    const value = navigation.DEFAULT_PAGINATION_PAGE_NUMBER
-    expect(typeof value).toBe('string')
-    expect(value).toMatch(/^\d+$/)
-    expect(parseInt(value, 10)).toBe(1)
+  it('should be a string', () => {
+    expect(typeof DEFAULT_PAGINATION_PAGE_NUMBER).toBe('string')
   })
 
-  it('cannot be reassigned via the module namespace and remains unchanged', () => {
-    const before = navigation.DEFAULT_PAGINATION_PAGE_NUMBER
-    try {
-      ;(navigation as any).DEFAULT_PAGINATION_PAGE_NUMBER = '999'
-    } catch {
-      // ignore potential TypeError in strict mode
-    }
-    expect(navigation.DEFAULT_PAGINATION_PAGE_NUMBER).toBe(before)
+  it('should be numeric string equal to 1 when parsed', () => {
+    expect(parseInt(DEFAULT_PAGINATION_PAGE_NUMBER, 10)).toBe(1)
   })
 
-  it('has a non-configurable, enumerable accessor descriptor', () => {
-    const desc = Object.getOwnPropertyDescriptor(navigation, 'DEFAULT_PAGINATION_PAGE_NUMBER')
-    expect(desc).toBeDefined()
-    expect(desc?.enumerable).toBe(true)
-    expect(desc?.configurable).toBe(false)
-    expect(typeof desc?.get).toBe('function')
-    expect(desc?.set).toBeUndefined()
+  it('should match digits only', () => {
+    expect(/^\d+$/.test(DEFAULT_PAGINATION_PAGE_NUMBER)).toBe(true)
   })
 
-  it('parses to number 1 and retains exact string value', () => {
-    const str = navigation.DEFAULT_PAGINATION_PAGE_NUMBER
-    const num = Number(str)
-    expect(num).toBe(1)
-    expect(String(num)).toBe('1')
+  it('should not be "0" or "01"', () => {
+    expect(DEFAULT_PAGINATION_PAGE_NUMBER).not.toBe('0')
+    expect(DEFAULT_PAGINATION_PAGE_NUMBER).not.toBe('01')
   })
 })
 
-describe('consistency between named and namespace imports', () => {
-  it('named and namespace imports reference the same DEFAULT_TRANSACTION_LIMIT value', () => {
-    expect(DTL).toBe(navigation.DEFAULT_TRANSACTION_LIMIT)
+describe('config/constants/navigation - NAV_TITLE enum values', () => {
+  it('HOME should be "Home"', () => {
+    expect(NAV_TITLE.HOME).toBe('Home')
   })
 
-  it('named and namespace imports reference the same NAV_ICON_SIZE value', () => {
-    expect(NIS).toBe(navigation.NAV_ICON_SIZE)
+  it('MONTHLY_REPORT should be "Monthly Report"', () => {
+    expect(NAV_TITLE.MONTHLY_REPORT).toBe('Monthly Report')
   })
 
-  it('named and namespace imports reference the same DEFAULT_PAGINATION_PAGE_NUMBER value', () => {
-    expect(DPP).toBe(navigation.DEFAULT_PAGINATION_PAGE_NUMBER)
+  it('CHART should be "Chart"', () => {
+    expect(NAV_TITLE.CHART).toBe('Chart')
+  })
+
+  it('LIMITS should be "Limits"', () => {
+    expect(NAV_TITLE.LIMITS).toBe('Limits')
+  })
+
+  it('SUBSCRIPTIONS should be "Subscriptions"', () => {
+    expect(NAV_TITLE.SUBSCRIPTIONS).toBe('Subscriptions')
+  })
+
+  it('CATEGORIES should be "Categories"', () => {
+    expect(NAV_TITLE.CATEGORIES).toBe('Categories')
+  })
+
+  it('EXPORT should be "Export"', () => {
+    expect(NAV_TITLE.EXPORT).toBe('Export')
+  })
+
+  it('SETTINGS should be "Settings"', () => {
+    expect(NAV_TITLE.SETTINGS).toBe('Settings')
+  })
+
+  it('FEEDBACK should be "Give Feedback"', () => {
+    expect(NAV_TITLE.FEEDBACK).toBe('Give Feedback')
+  })
+
+  it('ISSUE should be "Report Issue"', () => {
+    expect(NAV_TITLE.ISSUE).toBe('Report Issue')
+  })
+
+  it('SIGNIN should be "Sign In"', () => {
+    expect(NAV_TITLE.SIGNIN).toBe('Sign In')
+  })
+
+  it('should have unique values across all titles', () => {
+    const values = [
+      NAV_TITLE.HOME,
+      NAV_TITLE.MONTHLY_REPORT,
+      NAV_TITLE.CHART,
+      NAV_TITLE.LIMITS,
+      NAV_TITLE.SUBSCRIPTIONS,
+      NAV_TITLE.CATEGORIES,
+      NAV_TITLE.EXPORT,
+      NAV_TITLE.SETTINGS,
+      NAV_TITLE.FEEDBACK,
+      NAV_TITLE.ISSUE,
+      NAV_TITLE.SIGNIN,
+    ]
+    expect(new Set(values).size).toBe(values.length)
+  })
+})
+
+describe('config/constants/navigation - SEARCH_PARAM enum values', () => {
+  it('QUERY should be "query"', () => {
+    expect(SEARCH_PARAM.QUERY).toBe('query')
+  })
+
+  it('PAGE should be "page"', () => {
+    expect(SEARCH_PARAM.PAGE).toBe('page')
+  })
+
+  it('should have unique values across all search params', () => {
+    const values = [SEARCH_PARAM.QUERY, SEARCH_PARAM.PAGE]
+    expect(new Set(values).size).toBe(values.length)
   })
 })
