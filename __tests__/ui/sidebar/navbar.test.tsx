@@ -136,7 +136,7 @@ describe('Navbar', () => {
     vi.clearAllMocks();
   });
 
-  test('renders top links with correct count, ordering and props', () => {
+  test(async () => {
     render(<Navbar linksGroup="top" />);
 
     // getBreakpointWidth called with md
@@ -170,7 +170,7 @@ describe('Navbar', () => {
     expect(gotUrls).toEqual(expectedTopUrls);
   });
 
-  test('applies active state when pathname matches link url', () => {
+  test(async () => {
     (usePathname as unknown as vi.Mock).mockReturnValue(ROUTE.LIMITS);
     render(<Navbar linksGroup="top" />);
 
@@ -183,7 +183,7 @@ describe('Navbar', () => {
     }
   });
 
-  test('filters out disabled routes from top links', () => {
+  test(async () => {
     DISABLED_ROUTES.push(ROUTE.EXPORT);
     render(<Navbar linksGroup="top" />);
 
@@ -195,7 +195,7 @@ describe('Navbar', () => {
     expect(items.length).toBe(7);
   });
 
-  test('renders bottom links and filters disabled', () => {
+  test(async () => {
     DISABLED_ROUTES.push(ROUTE.ISSUE);
     render(<Navbar linksGroup="bottom" />);
 
@@ -205,7 +205,7 @@ describe('Navbar', () => {
     expect(items[0]).toHaveAttribute('data-url', ROUTE.FEEDBACK);
   });
 
-  test('renders logo when withLogo and chooses sm size at md breakpoint', () => {
+  test(async () => {
     (useMedia as unknown as vi.Mock).mockReturnValue(true);
     render(<Navbar linksGroup="top" withLogo />);
 
@@ -213,7 +213,7 @@ describe('Navbar', () => {
     expect(logo).toHaveAttribute('data-size', 'sm');
   });
 
-  test('renders logo when withLogo and chooses xxs size below md breakpoint', () => {
+  test(async () => {
     (useMedia as unknown as vi.Mock).mockReturnValue(false);
     render(<Navbar linksGroup="top" withLogo />);
 
@@ -221,7 +221,7 @@ describe('Navbar', () => {
     expect(logo).toHaveAttribute('data-size', 'xxs');
   });
 
-  test('handles undefined pathname without crashing and no active links', () => {
+  test(async () => {
     (usePathname as unknown as vi.Mock).mockReturnValue(undefined);
     render(<Navbar linksGroup="top" />);
 
