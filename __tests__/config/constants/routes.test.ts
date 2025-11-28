@@ -41,11 +41,6 @@ function validateDisabledRoutes(list, allowedSet) {
   return true;
 }
 
-describe('config/constants/routes.ts', () => {
-  afterEach(() => {
-    cleanup();
-    vi.clearAllMocks();
-  });
 
 
     // Expected key -> value pairs
@@ -79,7 +74,6 @@ describe('config/constants/routes.ts', () => {
       expect(v.trim()).toBe(v);
       expect(v.includes('//')).toBe(false);
     }
-  });
 
   test(async () => {
     expect(Object.prototype.hasOwnProperty.call(routesModule, 'DISABLED_ROUTES')).toBe(true);
@@ -92,7 +86,6 @@ describe('config/constants/routes.ts', () => {
     for (const route of routesModule.DISABLED_ROUTES) {
       expect(allowedSet.has(route)).toBe(true);
     }
-  });
 
     const allowedSet = new Set(values);
     const sample = values.slice(0, 3); // take a few valid routes
@@ -116,7 +109,6 @@ describe('config/constants/routes.ts', () => {
       return {
         DISABLED_ROUTES: ['/not-exists', '/also-bad'],
       };
-    });
 
     const mocked = await import('./routes');
     expect(Array.isArray(mocked.DISABLED_ROUTES)).toBe(true);
@@ -126,4 +118,3 @@ describe('config/constants/routes.ts', () => {
     vi.unmock('./routes');
     vi.resetModules();
   });
-});

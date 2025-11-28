@@ -32,19 +32,16 @@ vi.mock('react-icons/pi', () => {
     PiStack: Stub,
     PiStackFill: Stub,
   };
-});
 
 vi.mock('react-use', () => {
   return {
     useMedia: vi.fn(),
   };
-});
 
 vi.mock('next/navigation', () => {
   return {
     usePathname: vi.fn(),
   };
-});
 
 vi.mock('@/config/constants/navigation', () => {
   return {
@@ -62,7 +59,6 @@ vi.mock('@/config/constants/navigation', () => {
       ISSUE: 'Issue',
     },
   };
-});
 
 vi.mock('@/config/constants/routes', () => {
   const ROUTE = {
@@ -87,13 +83,11 @@ vi.mock('@/config/constants/routes', () => {
       state.disabled = arr;
     },
   };
-});
 
 vi.mock('@/app/lib/helpers', () => {
   return {
     getBreakpointWidth: vi.fn().mockReturnValue('(min-width: 768px)'),
   };
-});
 
 vi.mock('../hoverables', () => {
   const React = require('react');
@@ -112,7 +106,6 @@ vi.mock('../hoverables', () => {
       );
     },
   };
-});
 
 vi.mock('../logo', () => {
   const React = require('react');
@@ -122,21 +115,11 @@ vi.mock('../logo', () => {
       return React.createElement('div', { 'data-testid': 'logo', 'data-size': props.size }, null);
     },
   };
-});
 
 const { useMedia } = await vi.importMock<any>('react-use');
 const { usePathname } = await vi.importMock<any>('next/navigation');
 const { __setDisabledRoutes, ROUTE } = await vi.importMock<any>('@/config/constants/routes');
 
-describe('Navbar', () => {
-  beforeEach(() => {
-    cleanup();
-    hoverSpy.mockReset();
-    logoSpy.mockReset();
-    useMedia.mockReset();
-    usePathname.mockReset();
-    __setDisabledRoutes([]);
-  });
 
   afterEach(() => {
     cleanup();
@@ -253,4 +236,3 @@ describe('Navbar', () => {
     const list = screen.getByRole('list');
     expect(list).toBeInTheDocument();
   });
-});

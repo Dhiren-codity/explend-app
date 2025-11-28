@@ -63,20 +63,17 @@ vi.mock('@heroui/react', () => {
     CardHeader,
     DateRangePicker,
   };
-});
 
 vi.mock('@internationalized/date', () => {
   return {
     parseDate: (s: string) => ({ toString: () => s }),
   };
-});
 
 vi.mock('date-fns', () => {
   return {
     format: (_date: Date, _fmt: string) => '2024-01-01',
     subMonths: (date: Date, _n: number) => new Date(date),
   };
-});
 
 const toastSuccess = vi.fn();
 const toastError = vi.fn();
@@ -87,13 +84,11 @@ vi.mock('react-hot-toast', () => {
       error: toastError,
     },
   };
-});
 
 vi.mock('react-icons/pi', () => {
   return {
     PiDownloadSimpleFill: () => <svg data-testid="icon" />,
   };
-});
 
 vi.mock('@/config/constants/main', () => {
   return { DEFAULT_ICON_SIZE: 24 };
@@ -113,14 +108,9 @@ vi.mock('@/app/lib/export-utils', () => {
     getMimeType: mockGetMimeType,
     downloadFile: mockDownloadFile,
   };
-});
 
 import ExportTransactions from '@/app/ui/home/export-transactions';
 
-describe('ExportTransactions', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
 
   afterEach(() => {
     cleanup();
@@ -155,7 +145,6 @@ describe('ExportTransactions', () => {
       expect(toastSuccess).toHaveBeenCalledWith('Exported 2 transactions');
       expect(onExport).not.toHaveBeenCalled();
     });
-  });
 
 
     await userEvent.click(screen.getByRole('button', { name: 'Export' }));
@@ -172,7 +161,6 @@ describe('ExportTransactions', () => {
       );
       expect(toastSuccess).toHaveBeenCalledWith('Exported 1 transaction');
     });
-  });
 
     const onExport = vi.fn().mockResolvedValue(filteredTx);
     render(
@@ -212,7 +200,6 @@ describe('ExportTransactions', () => {
       expect(mockDownloadFile).toHaveBeenCalled();
       expect(toastSuccess).toHaveBeenCalledWith('Exported 1 transaction');
     });
-  });
 
 
     await userEvent.click(screen.getByRole('button', { name: 'Export' }));
@@ -223,7 +210,6 @@ describe('ExportTransactions', () => {
       expect(mockGenerateCSV).not.toHaveBeenCalled();
       expect(mockGenerateJSON).not.toHaveBeenCalled();
     });
-  });
 
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     render(
@@ -240,4 +226,3 @@ describe('ExportTransactions', () => {
 
     consoleSpy.mockRestore();
   });
-});
