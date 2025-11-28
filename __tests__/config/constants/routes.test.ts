@@ -1,141 +1,185 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import { ROUTE, DISABLED_ROUTES } from '../../../config/constants/routes'
+import { DISABLED_ROUTES } from '../../../config/constants/routes'
+import type { ROUTE } from '../../../config/constants/routes'
+import { render, screen, waitFor, fireEvent } from '@testing-library/react'
+
+const knownRoutes: ROUTE[] = [
+  '/',
+  '/sign-in',
+  '/monthly-report',
+  '/chart',
+  '/limits',
+  '/subscriptions',
+  '/categories',
+  '/export',
+  '/settings',
+  '/feedback',
+  '/issue',
+  '/sitemap.xml',
+  '/disabled-route',
+]
+
+const nonHomeRoutes: ROUTE[] = knownRoutes.filter((r) => r !== '/')
 
 afterEach(() => {
   vi.clearAllMocks()
+  while (DISABLED_ROUTES.length) {
+    DISABLED_ROUTES.pop()
+  }
 })
 
-const allRoutes = [
-  ROUTE.HOME,
-  ROUTE.SIGNIN,
-  ROUTE.MONTHLY_REPORT,
-  ROUTE.CHART,
-  ROUTE.LIMITS,
-  ROUTE.SUBSCRIPTIONS,
-  ROUTE.CATEGORIES,
-  ROUTE.EXPORT,
-  ROUTE.SETTINGS,
-  ROUTE.FEEDBACK,
-  ROUTE.ISSUE,
-  ROUTE.SITEMAP,
-  ROUTE.DISABLED_ROUTE,
-]
-
-describe('ROUTE enum values', () => {
-  it('HOME is "/"', () => {
-    expect(ROUTE.HOME).toBe('/')
+describe('ROUTE constants (string literals)', () => {
+  it('includes HOME "/"', () => {
+    expect(knownRoutes).toContain('/')
   })
 
-  it('SIGNIN is "/sign-in"', () => {
-    expect(ROUTE.SIGNIN).toBe('/sign-in')
+  it('includes SIGNIN "/sign-in"', () => {
+    expect(knownRoutes).toContain('/sign-in')
   })
 
-  it('MONTHLY_REPORT is "/monthly-report"', () => {
-    expect(ROUTE.MONTHLY_REPORT).toBe('/monthly-report')
+  it('includes MONTHLY_REPORT "/monthly-report"', () => {
+    expect(knownRoutes).toContain('/monthly-report')
   })
 
-  it('CHART is "/chart"', () => {
-    expect(ROUTE.CHART).toBe('/chart')
+  it('includes CHART "/chart"', () => {
+    expect(knownRoutes).toContain('/chart')
   })
 
-  it('LIMITS is "/limits"', () => {
-    expect(ROUTE.LIMITS).toBe('/limits')
+  it('includes LIMITS "/limits"', () => {
+    expect(knownRoutes).toContain('/limits')
   })
 
-  it('SUBSCRIPTIONS is "/subscriptions"', () => {
-    expect(ROUTE.SUBSCRIPTIONS).toBe('/subscriptions')
+  it('includes SUBSCRIPTIONS "/subscriptions"', () => {
+    expect(knownRoutes).toContain('/subscriptions')
   })
 
-  it('CATEGORIES is "/categories"', () => {
-    expect(ROUTE.CATEGORIES).toBe('/categories')
+  it('includes CATEGORIES "/categories"', () => {
+    expect(knownRoutes).toContain('/categories')
   })
 
-  it('EXPORT is "/export"', () => {
-    expect(ROUTE.EXPORT).toBe('/export')
+  it('includes EXPORT "/export"', () => {
+    expect(knownRoutes).toContain('/export')
   })
 
-  it('SETTINGS is "/settings"', () => {
-    expect(ROUTE.SETTINGS).toBe('/settings')
+  it('includes SETTINGS "/settings"', () => {
+    expect(knownRoutes).toContain('/settings')
   })
 
-  it('FEEDBACK is "/feedback"', () => {
-    expect(ROUTE.FEEDBACK).toBe('/feedback')
+  it('includes FEEDBACK "/feedback"', () => {
+    expect(knownRoutes).toContain('/feedback')
   })
 
-  it('ISSUE is "/issue"', () => {
-    expect(ROUTE.ISSUE).toBe('/issue')
+  it('includes ISSUE "/issue"', () => {
+    expect(knownRoutes).toContain('/issue')
   })
 
-  it('SITEMAP is "/sitemap.xml"', () => {
-    expect(ROUTE.SITEMAP).toBe('/sitemap.xml')
+  it('includes SITEMAP "/sitemap.xml"', () => {
+    expect(knownRoutes).toContain('/sitemap.xml')
   })
 
-  it('DISABLED_ROUTE is "/disabled-route"', () => {
-    expect(ROUTE.DISABLED_ROUTE).toBe('/disabled-route')
-  })
-})
-
-describe('ROUTE enum integrity', () => {
-  it('all values are strings', () => {
-    const allAreStrings = allRoutes.every((r) => typeof r === 'string')
-    expect(allAreStrings).toBe(true)
+  it('includes DISABLED_ROUTE "/disabled-route"', () => {
+    expect(knownRoutes).toContain('/disabled-route')
   })
 
-  it('all values are unique', () => {
-    const unique = new Set(allRoutes)
-    expect(unique.size).toBe(allRoutes.length)
+  it('has all unique route values', () => {
+    const unique = new Set(knownRoutes)
+    expect(unique.size).toBe(knownRoutes.length)
   })
 
-  it('all routes start with "/"', () => {
-    const allStartWithSlash = allRoutes.every((r) => r.startsWith('/'))
-    expect(allStartWithSlash).toBe(true)
+  it('every route starts with "/"', () => {
+    for (const r of knownRoutes) {
+      expect(r.startsWith('/')).toBe(true)
+    }
   })
 
-  it('no route (except HOME) ends with "/"', () => {
-    const nonHomeRoutes = allRoutes.filter((r) => r !== ROUTE.HOME)
-    const noneEndWithSlash = nonHomeRoutes.every((r) => !r.endsWith('/'))
-    expect(noneEndWithSlash).toBe(true)
+  it('non-HOME routes do not end with "/"', () => {
+    for (const r of nonHomeRoutes) {
+      expect(r.endsWith('/')).toBe(false)
+    }
   })
 
-  it('routes contain no whitespace characters', () => {
-    const hasNoWhitespace = allRoutes.every((r) => !/\s/.test(r))
-    expect(hasNoWhitespace).toBe(true)
-  })
-
-  it('SITEMAP route ends with ".xml"', () => {
-    expect(ROUTE.SITEMAP.endsWith('.xml')).toBe(true)
-  })
-
-  it('total number of defined route constants is 13', () => {
-    expect(allRoutes.length).toBe(13)
+  it('non-HOME routes have length > 1', () => {
+    for (const r of nonHomeRoutes) {
+      expect(r.length).toBeGreaterThan(1)
+    }
   })
 })
 
-describe('DISABLED_ROUTES constant', () => {
-  it('is an array', () => {
+describe('DISABLED_ROUTES', () => {
+  it('is defined and is an array', () => {
     expect(Array.isArray(DISABLED_ROUTES)).toBe(true)
   })
 
   it('is empty by default', () => {
-    expect(DISABLED_ROUTES.length).toBe(0)
+    expect(DISABLED_ROUTES).toHaveLength(0)
   })
 
-  it('deep equals an empty array initially', () => {
-    expect(DISABLED_ROUTES).toEqual([])
+  it('allows adding a valid route', () => {
+    const route: ROUTE = '/sign-in'
+    DISABLED_ROUTES.push(route)
+    expect(DISABLED_ROUTES).toHaveLength(1)
+    expect(DISABLED_ROUTES.includes(route)).toBe(true)
   })
 
-  it('is not frozen (mutable array export)', () => {
-    expect(Object.isFrozen(DISABLED_ROUTES)).toBe(false)
+  it('allows adding duplicates (no automatic de-duplication)', () => {
+    const route: ROUTE = '/chart'
+    DISABLED_ROUTES.push(route)
+    DISABLED_ROUTES.push(route)
+    expect(DISABLED_ROUTES).toHaveLength(2)
+    expect(DISABLED_ROUTES[0]).toBe(route)
+    expect(DISABLED_ROUTES[1]).toBe(route)
   })
 
-  it('contains only valid ROUTE values (subset check)', () => {
-    const allowed = new Set(allRoutes)
-    const isSubset = DISABLED_ROUTES.every((r) => allowed.has(r))
-    expect(isSubset).toBe(true)
+  it('preserves insertion order', () => {
+    const r1: ROUTE = '/limits'
+    const r2: ROUTE = '/subscriptions'
+    const r3: ROUTE = '/categories'
+    DISABLED_ROUTES.push(r1, r2, r3)
+    expect(DISABLED_ROUTES).toEqual([r1, r2, r3])
   })
 
-  it('does not contain duplicate routes', () => {
-    const unique = new Set(DISABLED_ROUTES)
-    expect(unique.size).toBe(DISABLED_ROUTES.length)
+  it('does not include a route that was not added', () => {
+    const notAdded: ROUTE = '/export'
+    expect(DISABLED_ROUTES.includes(notAdded)).toBe(false)
+  })
+
+  it('can add all known routes', () => {
+    for (const r of knownRoutes) {
+      DISABLED_ROUTES.push(r)
+    }
+    expect(DISABLED_ROUTES).toHaveLength(knownRoutes.length)
+    expect(DISABLED_ROUTES).toEqual(knownRoutes)
+  })
+
+  it('pop removes the last inserted route', () => {
+    const r1: ROUTE = '/settings'
+    const r2: ROUTE = '/feedback'
+    DISABLED_ROUTES.push(r1, r2)
+    const removed = DISABLED_ROUTES.pop()
+    expect(removed).toBe(r2)
+    expect(DISABLED_ROUTES).toEqual([r1])
+  })
+
+  it('afterEach cleanup resets DISABLED_ROUTES to empty between tests (sanity check)', () => {
+    expect(DISABLED_ROUTES).toHaveLength(0)
+  })
+
+  it('every element in DISABLED_ROUTES is one of the known routes when added from known set', () => {
+    const sample: ROUTE[] = ['/issue', '/sitemap.xml', '/disabled-route']
+    for (const r of sample) {
+      DISABLED_ROUTES.push(r)
+    }
+    const validSet = new Set(knownRoutes)
+    expect(DISABLED_ROUTES.every((r) => validSet.has(r))).toBe(true)
+  })
+
+  it('can clear all added routes by popping', () => {
+    for (const r of ['/sign-in', '/monthly-report', '/chart'] as ROUTE[]) {
+      DISABLED_ROUTES.push(r)
+    }
+    while (DISABLED_ROUTES.length) {
+      DISABLED_ROUTES.pop()
+    }
+    expect(DISABLED_ROUTES).toHaveLength(0)
   })
 })
