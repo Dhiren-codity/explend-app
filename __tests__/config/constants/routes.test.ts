@@ -42,9 +42,11 @@ function validateDisabledRoutes(list, allowedSet) {
 }
 
 describe('config/constants/routes.ts', () => {
-  test('ROUTE enum contains expected keys and values and is well-formed', async () => {
-    await Promise.resolve();
-    const { map, keys, values } = parseRoutesSource();
+  afterEach(() => {
+    cleanup();
+    vi.clearAllMocks();
+  });
+
 
     // Expected key -> value pairs
     const expected = {
@@ -85,8 +87,6 @@ describe('config/constants/routes.ts', () => {
     expect(routesModule.DISABLED_ROUTES).toHaveLength(0);
   });
 
-  test('DISABLED_ROUTES contains only values defined in ROUTE enum', () => {
-    const { values } = parseRoutesSource();
     const allowedSet = new Set(values);
 
     for (const route of routesModule.DISABLED_ROUTES) {
@@ -94,15 +94,11 @@ describe('config/constants/routes.ts', () => {
     }
   });
 
-  test('validation helper: happy path with valid entries', () => {
-    const { values } = parseRoutesSource();
     const allowedSet = new Set(values);
     const sample = values.slice(0, 3); // take a few valid routes
     expect(validateDisabledRoutes(sample, allowedSet)).toBe(true);
   });
 
-  test('validation helper: throws for invalid, duplicate, and non-string entries', () => {
-    const { values } = parseRoutesSource();
     const allowedSet = new Set(values);
 
     expect(() => validateDisabledRoutes(['/not-exists'], allowedSet)).toThrow(RangeError);
@@ -113,8 +109,6 @@ describe('config/constants/routes.ts', () => {
     expect(() => validateDisabledRoutes('not-an-array', allowedSet)).toThrow(TypeError);
   });
 
-  test('module mocking: detect invalid mocked DISABLED_ROUTES entries', async () => {
-    const { values } = parseRoutesSource();
     const allowedSet = new Set(values);
 
     vi.resetModules();

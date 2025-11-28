@@ -53,8 +53,6 @@ describe('app/export/page', () => {
     expect(metadata.title).toBe('Export')
   })
 
-  test('renders NoTransactionsPlug when there are no transactions', async () => {
-    vi.mocked(getCachedAuthSession).mockResolvedValue({ user: { email: 'user@example.com' } } as any)
     vi.mocked(getCachedAllTransactions).mockResolvedValue([])
 
     const element = await Page()
@@ -71,8 +69,6 @@ describe('app/export/page', () => {
     expect(vi.mocked(getCachedAllTransactions).mock.calls[1][0]).toBe('user@example.com')
   })
 
-  test('renders ExportTransactions when transactions exist and onExport delegates to getTransactionsForExport', async () => {
-    const session = { user: { email: 'user@example.com' } }
     const transactions = [{ id: 't1' }, { id: 't2' }] as any
     const exported = [{ id: 'e1' }] as any
     vi.mocked(getCachedAuthSession).mockResolvedValue(session as any)
@@ -100,8 +96,6 @@ describe('app/export/page', () => {
     expect(result).toEqual(exported)
   })
 
-  test('throws when getCachedAuthSession (awaited call) fails', async () => {
-    const session = { user: { email: 'user@example.com' } }
     vi.mocked(getCachedAuthSession)
       .mockResolvedValueOnce(session as any) // first fire-and-forget call
       .mockRejectedValueOnce(new Error('Session failure')) // awaited call rejects

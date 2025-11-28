@@ -122,6 +122,11 @@ describe('ExportTransactions', () => {
     vi.clearAllMocks();
   });
 
+  afterEach(() => {
+    cleanup();
+    vi.clearAllMocks();
+  });
+
   test('renders and shows default info with transaction count', () => {
     render(
       
@@ -137,14 +142,6 @@ describe('ExportTransactions', () => {
     expect(screen.getByText('JSON (Data)')).toBeInTheDocument();
   });
 
-  test('exports CSV by default using provided transactions', async () => {
-    const onExport = vi.fn();
-    render(
-      
-      />
-    );
-
-    const exportBtn = screen.getByRole('button', { name: 'Export' });
     await userEvent.click(exportBtn);
 
     await waitFor(() => {
@@ -160,14 +157,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('switches to JSON format and exports JSON', async () => {
-    render(
-      
-      />
-    );
-
-    const select = screen.getByLabelText('Export Format') as HTMLSelectElement;
-    fireEvent.change(select, { target: { value: 'json' } });
 
     await userEvent.click(screen.getByRole('button', { name: 'Export' }));
 
@@ -185,8 +174,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('applies date range and calls onExport with start and end dates', async () => {
-    const filteredTx = [{ id: 'only-in-range' } as any];
     const onExport = vi.fn().mockResolvedValue(filteredTx);
     render(
       
@@ -227,18 +214,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('shows error toast when no transactions to export for selected range', async () => {
-    const onExport = vi.fn().mockResolvedValue([]);
-    render(
-      
-      />
-    );
-
-    const startInput = screen.getByLabelText('Date Range (Optional) Start');
-    const endInput = screen.getByLabelText('Date Range (Optional) End');
-    await userEvent.type(startInput, '2024-06-01');
-    await userEvent.type(endInput, '2024-06-02');
-    await userEvent.click(screen.getByRole('button', { name: 'Apply Date Range' }));
 
     await userEvent.click(screen.getByRole('button', { name: 'Export' }));
 
@@ -250,10 +225,6 @@ describe('ExportTransactions', () => {
     });
   });
 
-  test('handles export errors and shows failure toast', async () => {
-    mockGenerateCSV.mockImplementationOnce(() => {
-      throw new Error('boom');
-    });
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     render(
       

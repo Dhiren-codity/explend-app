@@ -2,6 +2,11 @@ import { describe, test, expect, vi } from 'vitest';
 import * as nav from '../navigation';
 
 describe('config/constants/navigation', () => {
+  afterEach(() => {
+    cleanup();
+    vi.clearAllMocks();
+  });
+
   test('exports expected constant values', () => {
     expect(nav.DEFAULT_TRANSACTION_LIMIT).toBe(30);
     expect(typeof nav.DEFAULT_TRANSACTION_LIMIT).toBe('number');
