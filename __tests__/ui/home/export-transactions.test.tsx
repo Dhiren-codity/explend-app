@@ -120,8 +120,6 @@ describe('ExportTransactions', () => {
     vi.clearAllMocks();
   });
 
-  test('renders default UI and accessibility labels: void', (): void => {
-    const transactions = [{ id: 't1' }, { id: 't2' }, { id: 't3' }] as unknown as unknown[];
 
     render(
       
@@ -138,8 +136,6 @@ describe('ExportTransactions', () => {
     ).toBeInTheDocument();
   });
 
-  test('exports CSV using provided transactions when no date range: Promise<void>', async (): Promise<void> => {
-    const transactions = [{ id: 't1' }, { id: 't2' }] as unknown as unknown[];
     const onExportMock = vi.fn() as unknown as (start?: Date, end?: Date) => Promise<unknown[]>;
 
     render(
@@ -162,8 +158,6 @@ describe('ExportTransactions', () => {
     expect(toast.success).toHaveBeenCalledWith('Exported 2 transactions');
   });
 
-  test('changes format to JSON and exports correctly: Promise<void>', async (): Promise<void> => {
-    const transactions = [{ id: 't1' }, { id: 't2' }] as unknown as unknown[];
     const onExportMock = vi.fn() as unknown as (start?: Date, end?: Date) => Promise<unknown[]>;
 
     render(
@@ -190,8 +184,6 @@ describe('ExportTransactions', () => {
     expect(toast.success).toHaveBeenCalledWith('Exported 2 transactions');
   });
 
-  test('sets and clears date range, reflects in UI text: Promise<void>', async (): Promise<void> => {
-    const transactions = [{ id: 't1' }] as unknown as unknown[];
     const onExportMock = vi.fn().mockResolvedValue([{ id: 'ex1' }]) as unknown as (start?: Date, end?: Date) => Promise<unknown[]>;
 
     render(
@@ -216,8 +208,6 @@ describe('ExportTransactions', () => {
     ).toBeInTheDocument();
   });
 
-  test('calls onExport with date range and enforces end-of-day time, exports CSV: Promise<void>', async (): Promise<void> => {
-    const transactions = [{ id: 't1' }, { id: 't2' }] as unknown as unknown[];
     const returned = [{ id: 'r1' }] as unknown as unknown[];
     const onExportSpy = vi.fn().mockResolvedValue(returned) as unknown as (start?: Date, end?: Date) => Promise<unknown[]>;
 
@@ -247,16 +237,6 @@ describe('ExportTransactions', () => {
     expect(toast.success).toHaveBeenCalledWith('Exported 1 transaction');
   });
 
-  test('shows error toast when no transactions to export: Promise<void>', async (): Promise<void> => {
-    const transactions: unknown[] = [];
-    const onExportMock = vi.fn() as unknown as (start?: Date, end?: Date) => Promise<unknown[]>;
-
-    render(
-      
-      />
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: 'Export' }));
 
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith('No transactions to export');
@@ -268,8 +248,6 @@ describe('ExportTransactions', () => {
     expect(generateJSON).not.toHaveBeenCalled();
   });
 
-  test('handles export failure with error toast and logs error: Promise<void>', async (): Promise<void> => {
-    const transactions = [{ id: 't1' }] as unknown as unknown[];
     const error = new Error('fetch failed');
     const onExportMock = vi.fn().mockRejectedValue(error) as unknown as (start?: Date, end?: Date) => Promise<unknown[]>;
 
@@ -291,8 +269,6 @@ describe('ExportTransactions', () => {
     consoleSpy.mockRestore();
   });
 
-  test('shows loading state while exporting and resets after completion: Promise<void>', async (): Promise<void> => {
-    const transactions = [{ id: 't1' }] as unknown as unknown[];
     let resolveExport: ((value: unknown) => void) | null = null;
       .fn()
       .mockImplementation(

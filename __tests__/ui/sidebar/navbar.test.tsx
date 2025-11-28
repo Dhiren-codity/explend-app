@@ -117,8 +117,6 @@ describe('Navbar', (): void => {
     vi.clearAllMocks();
   });
 
-  test('renders top links, filters disabled routes, sets active, and shows logo with sm on md', (): void => {
-    const useMediaMock = useMedia as unknown as { mockReturnValue: (_v: unknown) => unknown };
     useMediaMock.mockReturnValue(true);
     const usePathnameMock = usePathname as unknown as { mockReturnValue: (_v: unknown) => unknown };
     usePathnameMock.mockReturnValue(routeObject.MONTHLY_REPORT);
@@ -147,8 +145,6 @@ describe('Navbar', (): void => {
     expect(active?.textContent).toContain('Monthly Report');
   });
 
-  test('renders bottom links, sets active, and shows logo with xxs on non-md', (): void => {
-    const useMediaMock = useMedia as unknown as { mockReturnValue: (_v: unknown) => unknown };
     useMediaMock.mockReturnValue(false);
     const usePathnameMock = usePathname as unknown as { mockReturnValue: (_v: unknown) => unknown };
     usePathnameMock.mockReturnValue(routeObject.FEEDBACK);
@@ -174,9 +170,6 @@ describe('Navbar', (): void => {
     expect(items[1].getAttribute('data-scale')).toBe('true');
   });
 
-  test('renders no items when all routes are disabled and handles null pathname gracefully', (): void => {
-    disabledRoutes.splice(0, disabledRoutes.length, ...Object.values(routeObject));
-    const usePathnameMock = usePathname as unknown as { mockReturnValue: (_v: unknown) => unknown };
     usePathnameMock.mockReturnValue(null as unknown as string);
 
     render(<Navbar linksGroup="top" />);
