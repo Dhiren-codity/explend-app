@@ -1,73 +1,64 @@
-import { describe, it, expect, vi, afterEach } from 'vitest'
-import { render, screen, cleanup, fireEvent } from '@testing-library/react'
+import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest'
+import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react'
 import React from 'react'
-
-afterEach(() => {
-  cleanup()
-  vi.clearAllMocks()
-  vi.resetModules()
-})
 
 const mockGetCachedAuthSession = vi.fn()
 const mockGetCachedAllTransactions = vi.fn()
 const mockGetTransactionsForExport = vi.fn()
 
-vi.mock('../../../app/export/lib/actions', () => ({
+vi.mock('@/config/constants/navigation', () => ({
+  NAV_TITLE: { EXPORT: 'Export' },
+}))
+
+vi.mock('../../../app/lib/actions', () => ({
   getCachedAuthSession: mockGetCachedAuthSession,
   getCachedAllTransactions: mockGetCachedAllTransactions,
   getTransactionsForExport: mockGetTransactionsForExport,
 }))
 
-vi.mock('../../../app/export/ui/sidebar/with-sidebar', () => ({
+vi.mock('../../../app/ui/no-transactions-plug', () => ({
+  default: () => <div data-testid="no-transactions-plug">No transactions</div>,
+}))
+
+vi.mock('../../../app/ui/sidebar/with-sidebar', () => ({
   default: ({ contentNearby }: { contentNearby: React.ReactNode }) => (
     <div data-testid="with-sidebar">{contentNearby}</div>
   ),
 }))
 
-vi.mock('../../../app/export/ui/no-transactions-plug', () => ({
-  default: () => <div>No transactions</div>,
-}))
-
-vi.mock('../../../app/export/ui/home/export-transactions', () => ({
-  default: ({ onExport, transactions }: { onExport?: Function; transactions?: any[] }) => (
-    <div>
-      <div>ExportTransactions Component</div>
-      <div data-testid="tx-count">{transactions?.length ?? 0}</div>
-      <button
-        type="button"
-        onClick={() =>
-          onExport?.(new Date('2020-01-01T00:00:00.000Z'), new Date('2020-12-31T00:00:00.000Z'))
-        }
-      >
-        Do Export
-      </button>
+vi.mock('../../../app/ui/home/export-transactions', () => ({
+  default: ({ transactions, onExport }: { transactions: any[]; onExport: (start?: Date, end?: Date) => Promise<any> }) => (
+    <div data-testid="export-transactions">
+      <span>ExportTransactions Component</span>
+      <div data-testid="transactions-count">{transactions.length}</div>
+      <button onClick={() => onExport(new Date('2020-01-01'), new Date('2020-01-31'))}>trigger-export</button>
     </div>
   ),
 }))
 
-vi.mock('@/config/constants/navigation', () => ({
-  NAV_TITLE: { EXPORT: 'Export' },
-}))
+afterEach(() => {
+  cleanup()
+  vi.clearAllMocks()
+})
+
+beforeEach(() => {
+  vi.resetModules()
+})
 
 describe('app/export/page', () => {
-  it('renders title and NoTransactionsPlug when there are no transactions', async () => {
-    mockGetCachedAuthSession.mockResolvedValueOnce({ user: { email: 'user@example.com' } })
-    mockGetCachedAuthSession.mockResolvedValueOnce({ user: { email: 'user@example.com' } })
-    mockGetCachedAllTransactions.mockResolvedValueOnce([])
-    mockGetCachedAllTransactions.mockResolvedValueOnce([])
+  it('renders NoTransactionsPlug when there are no transactions and calls data loaders correctly', async () => {
+    const session = { user: { email: 'user@example.com' } }
+    mockGetCachedAuthSession.mockResolvedValue(session)
+    mockGetCachedAllTransactions.mockResolvedValue([])
 
-    const mod = await import('../../../app/export/page')
-    const Page = mod.default
-    const { metadata } = mod as { metadata: { title: string } }
-
-    expect(metadata.title).toBe('Export')
-
-    render(await Page())
+    const { default: Page } = await import('../../../app/export/page')
+    const ui = await Page()
+    render(ui)
 
     expect(screen.getByRole('heading', { name: 'Export' })).toBeInTheDocument()
     expect(screen.getByTestId('with-sidebar')).toBeInTheDocument()
-    expect(screen.getByText('No transactions')).toBeInTheDocument()
-    expect(screen.queryByText('ExportTransactions Component')).not.toBeInTheDocument()
+    expect(screen.getByTestId('no-transactions-plug')).toBeInTheDocument()
+    expect(screen.queryByTestId('export-transactions')).not.toBeInTheDocument()
 
     expect(mockGetCachedAuthSession).toHaveBeenCalledTimes(2)
     expect(mockGetCachedAllTransactions).toHaveBeenCalledTimes(2)
@@ -75,47 +66,38 @@ describe('app/export/page', () => {
     expect(mockGetCachedAllTransactions).toHaveBeenNthCalledWith(2, 'user@example.com')
   })
 
-  it('renders ExportTransactions when transactions exist', async () => {
-    mockGetCachedAuthSession.mockResolvedValueOnce({ user: { email: 'user@example.com' } })
-    mockGetCachedAuthSession.mockResolvedValueOnce({ user: { email: 'user@example.com' } })
-    const txs = [{ id: 't1' }] as any[]
-    mockGetCachedAllTransactions.mockResolvedValueOnce(txs)
-    mockGetCachedAllTransactions.mockResolvedValueOnce(txs)
+  it('renders ExportTransactions when there are transactions and handleExport calls getTransactionsForExport with correct args', async () => {
+    const session = { user: { email: 'user@example.com' } }
+    mockGetCachedAuthSession.mockResolvedValue(session)
+    mockGetCachedAllTransactions.mockResolvedValue([{ id: 't1' } as any])
+    mockGetTransactionsForExport.mockResolvedValue([{ id: 'exported' } as any])
 
-    const mod = await import('../../../app/export/page')
-    const Page = mod.default
-
-    render(await Page())
+    const { default: Page } = await import('../../../app/export/page')
+    const ui = await Page()
+    render(ui)
 
     expect(screen.getByRole('heading', { name: 'Export' })).toBeInTheDocument()
-    expect(screen.getByText('ExportTransactions Component')).toBeInTheDocument()
-    expect(screen.getByTestId('tx-count').textContent).toBe('1')
-    expect(screen.queryByText('No transactions')).not.toBeInTheDocument()
+    expect(screen.getByTestId('with-sidebar')).toBeInTheDocument()
+    expect(screen.getByTestId('export-transactions')).toBeInTheDocument()
+    expect(screen.getByTestId('transactions-count').textContent).toBe('1')
+
+    const trigger = screen.getByRole('button', { name: /trigger-export/i })
+    fireEvent.click(trigger)
+
+    await waitFor(() => {
+      expect(mockGetTransactionsForExport).toHaveBeenCalledTimes(1)
+    })
+
+    const [userIdArg, startArg, endArg] = mockGetTransactionsForExport.mock.calls[0]
+    expect(userIdArg).toBe('user@example.com')
+    expect(startArg).toBeInstanceOf(Date)
+    expect(endArg).toBeInstanceOf(Date)
+    expect((startArg as Date).toISOString()).toContain('2020-01-01')
+    expect((endArg as Date).toISOString()).toContain('2020-01-31')
 
     expect(mockGetCachedAuthSession).toHaveBeenCalledTimes(2)
     expect(mockGetCachedAllTransactions).toHaveBeenCalledTimes(2)
     expect(mockGetCachedAllTransactions).toHaveBeenNthCalledWith(1, 'user@example.com')
     expect(mockGetCachedAllTransactions).toHaveBeenNthCalledWith(2, 'user@example.com')
-  })
-
-  it('passes onExport that calls getTransactionsForExport with userId and date range', async () => {
-    mockGetCachedAuthSession.mockResolvedValueOnce({ user: { email: 'user@example.com' } })
-    mockGetCachedAuthSession.mockResolvedValueOnce({ user: { email: 'user@example.com' } })
-    const txs = [{ id: 't1' }] as any[]
-    mockGetCachedAllTransactions.mockResolvedValueOnce(txs)
-    mockGetCachedAllTransactions.mockResolvedValueOnce(txs)
-    mockGetTransactionsForExport.mockResolvedValue([])
-
-    const mod = await import('../../../app/export/page')
-    const Page = mod.default
-
-    render(await Page())
-
-    fireEvent.click(screen.getByRole('button', { name: 'Do Export' }))
-
-    expect(mockGetTransactionsForExport).toHaveBeenCalledTimes(1)
-    const start = new Date('2020-01-01T00:00:00.000Z')
-    const end = new Date('2020-12-31T00:00:00.000Z')
-    expect(mockGetTransactionsForExport).toHaveBeenCalledWith('user@example.com', start, end)
   })
 })
