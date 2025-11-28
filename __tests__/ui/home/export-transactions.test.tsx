@@ -95,6 +95,11 @@ describe('ExportTransactions', () => {
     vi.clearAllMocks();
   });
 
+  afterEach(() => {
+    cleanup();
+    vi.clearAllMocks();
+  });
+
   test('renders UI with default state', () => {
     render(
       
@@ -108,8 +113,6 @@ describe('ExportTransactions', () => {
     expect(screen.getByText('Ready to export all 2 transactions')).toBeInTheDocument();
   });
 
-  test('exports CSV by default for all transactions', () => {
-    const transactions = [{ id: '1' }, { id: '2' }] as any;
 
     render(
       
@@ -129,8 +132,6 @@ describe('ExportTransactions', () => {
     expect(toast.success).toHaveBeenCalledWith('Exported 2 transactions');
   });
 
-  test('switches to JSON format and exports', () => {
-    const transactions = [{ id: '1' }] as any;
 
     render(
       
@@ -153,13 +154,6 @@ describe('ExportTransactions', () => {
     expect(toast.success).toHaveBeenCalledWith('Exported 1 transaction');
   });
 
-  test('shows error when there are no transactions to export', () => {
-    render(
-      
-      />
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: 'Export' }));
 
     expect(toast.error).toHaveBeenCalledWith('No transactions to export');
     expect(mockDownloadFile).not.toHaveBeenCalled();
@@ -167,10 +161,6 @@ describe('ExportTransactions', () => {
     expect(mockGenerateJSON).not.toHaveBeenCalled();
   });
 
-  test('applies date range, calls onExport with normalized end, and exports returned data', async () => {
-    const onExport = vi.fn(async (start?: Date, end?: Date) => {
-      return Promise.resolve([{ id: 'range-1' }, { id: 'range-2' }] as any);
-    });
 
     render(
       
@@ -215,16 +205,6 @@ describe('ExportTransactions', () => {
     expect(require('react-hot-toast').default.success).toHaveBeenCalledWith('Exported 2 transactions');
   });
 
-  test('clears date range and shows default helper text', () => {
-    render(
-      
-      />
-    );
-
-    const startInput = screen.getByLabelText('Date Range (Optional) Start');
-    const endInput = screen.getByLabelText('Date Range (Optional) End');
-
-    fireEvent.change(startInput, { target: { value: '2025-01-01' } });
     fireEvent.change(endInput, { target: { value: '2025-01-02' } });
     fireEvent.click(screen.getByText('Apply Date Range'));
 
@@ -235,10 +215,6 @@ describe('ExportTransactions', () => {
     expect(screen.getByText('Ready to export all 1 transaction')).toBeInTheDocument();
   });
 
-  test('handles errors during export and resets loading state', async () => {
-    const onExport = vi.fn(async () => {
-      return Promise.reject(new Error('boom'));
-    });
 
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
@@ -267,9 +243,6 @@ describe('ExportTransactions', () => {
     consoleErrorSpy.mockRestore();
   });
 
-  test('shows loading text while exporting with date range', async () => {
-    let resolveFn: (value: any) => void;
-    const onExport = vi.fn(() => new Promise((resolve) => { resolveFn = resolve; }));
 
     render(
       

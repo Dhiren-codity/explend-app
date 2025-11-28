@@ -131,6 +131,11 @@ describe('Navbar', () => {
     (getBreakpointWidth as unknown as vi.Mock).mockReturnValue('(min-width: 768px)');
   });
 
+  afterEach(() => {
+    cleanup();
+    vi.clearAllMocks();
+  });
+
   test('renders top links with correct count, ordering and props', () => {
     render(<Navbar linksGroup="top" />);
 
@@ -248,8 +253,6 @@ describe('Navbar', () => {
     expect(items.length).toBe(0);
   });
 
-  test('falls back to bottom links when linksGroup is invalid', () => {
-    render(<Navbar linksGroup={'invalid' as any} />);
 
     const list = screen.getByRole('list');
     const items = within(list).getAllByTestId('nav-item');

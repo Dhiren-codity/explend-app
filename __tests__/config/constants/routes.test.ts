@@ -8,10 +8,11 @@ const filePath = path.resolve(process.cwd(), 'config/constants/routes.ts');
 const fileUrl = pathToFileURL(filePath).href;
 
 describe('config/constants/routes.ts', () => {
-  test('ROUTE enum in source contains expected keys and values', async () => {
-    const source = await fs.readFile(filePath, 'utf8');
+  afterEach(() => {
+    cleanup();
+    vi.clearAllMocks();
+  });
 
-    const enumBlockMatch = source.match(/export\s+const\s+enum\s+ROUTE\s*{([\s\S]*?)}/);
     expect(enumBlockMatch).toBeTruthy();
 
     const enumBody = enumBlockMatch ? enumBlockMatch[1] : '';

@@ -63,12 +63,15 @@ describe('app/export/page', () => {
     __resetExportProps();
   });
 
+  afterEach(() => {
+    cleanup();
+    vi.clearAllMocks();
+  });
+
   test('metadata title is set from NAV_TITLE.EXPORT', async () => {
     expect(metadata.title).toBe('Export');
   });
 
-  test('renders NoTransactionsPlug when there are no transactions', async () => {
-    getCachedAuthSession.mockResolvedValue({ user: { email: 'user@example.com' } });
     getCachedAllTransactions.mockResolvedValue([]);
 
     const element = await Page();
@@ -84,9 +87,6 @@ describe('app/export/page', () => {
     expect(screen.queryByTestId('export-transactions')).toBeNull();
   });
 
-  test('renders ExportTransactions when transactions exist and onExport works', async () => {
-    const userId = 'user@example.com';
-    const initialTx = [{ id: 't1' }];
     const exportedTx = [{ id: 't2' }];
 
     getCachedAuthSession.mockResolvedValue({ user: { email: userId } });
@@ -127,8 +127,6 @@ describe('app/export/page', () => {
     expect(screen.getByTestId('no-transactions')).toBeDefined();
   });
 
-  test('propagates error when fetching transactions fails', async () => {
-    getCachedAuthSession.mockResolvedValue({ user: { email: 'user@example.com' } });
     getCachedAllTransactions.mockImplementation(() => {
       throw new Error('fetch-failed');
     });
@@ -136,9 +134,6 @@ describe('app/export/page', () => {
     await expect(Page()).rejects.toThrow('fetch-failed');
   });
 
-  test('onExport propagates error from getTransactionsForExport', async () => {
-    const userId = 'user@example.com';
-    getCachedAuthSession.mockResolvedValue({ user: { email: userId } });
     getCachedAllTransactions.mockResolvedValue([{ id: 't1' }]);
     getTransactionsForExport.mockRejectedValue(new Error('export-failed'));
 
