@@ -1,140 +1,147 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { DISABLED_ROUTES } from '../../../config/constants/routes'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 
-describe('config/constants/routes', () => {
-  beforeEach(() => {
-    DISABLED_ROUTES.length = 0
-  })
+afterEach(async () => {
+  vi.clearAllMocks()
+  const mod = await import('../../../config/constants/routes')
+  if (Array.isArray(mod.DISABLED_ROUTES)) {
+    mod.DISABLED_ROUTES.length = 0
+    for (const key of Object.keys(mod.DISABLED_ROUTES)) {
+      if (!/^\d+$/.test(key)) {
+        delete (mod.DISABLED_ROUTES as any)[key]
+      }
+    }
+  }
+})
 
-  afterEach(() => {
-    vi.clearAllMocks()
-    DISABLED_ROUTES.length = 0
-  })
-
-  it('exports DISABLED_ROUTES and not ROUTE at runtime', async () => {
+describe('config/constants/routes runtime exports', () => {
+  it('exports DISABLED_ROUTES at runtime', async () => {
     const mod = await import('../../../config/constants/routes')
     expect('DISABLED_ROUTES' in mod).toBe(true)
+  })
+
+  it('does not export ROUTE const enum at runtime', async () => {
+    const mod = await import('../../../config/constants/routes')
     expect('ROUTE' in mod).toBe(false)
     expect((mod as any).ROUTE).toBeUndefined()
   })
+})
 
-  it('DISABLED_ROUTES is an array', () => {
+describe('DISABLED_ROUTES basics', () => {
+  it('is an array', async () => {
+    const { DISABLED_ROUTES } = await import('../../../config/constants/routes')
     expect(Array.isArray(DISABLED_ROUTES)).toBe(true)
+    expect(typeof DISABLED_ROUTES).toBe('object')
   })
 
-  it('DISABLED_ROUTES is initially empty', () => {
+  it('is initially empty', async () => {
+    const { DISABLED_ROUTES } = await import('../../../config/constants/routes')
     expect(DISABLED_ROUTES.length).toBe(0)
+    expect(JSON.stringify(DISABLED_ROUTES)).toBe('[]')
   })
 
-  it('can push a route string', () => {
-    const route = '/' as unknown as never
-    DISABLED_ROUTES.push(route as any)
+  it('allows pushing strings and tracks length', async () => {
+    const { DISABLED_ROUTES } = await import('../../../config/constants/routes')
+    DISABLED_ROUTES.push('/disabled-route')
     expect(DISABLED_ROUTES.length).toBe(1)
-    expect(DISABLED_ROUTES[0]).toBe('/')
+    expect(DISABLED_ROUTES[0]).toBe('/disabled-route')
+    expect(DISABLED_ROUTES.includes('/disabled-route')).toBe(true)
   })
 
-  it('preserves insertion order when pushing multiple items', () => {
-    const first = '/sign-in' as any
-    const second = '/export' as any
-    DISABLED_ROUTES.push(first, second)
-    expect(DISABLED_ROUTES).toEqual(['/sign-in', '/export'])
-  })
-
-  it('allows duplicate entries', () => {
-    const value = '/chart' as any
-    DISABLED_ROUTES.push(value, value, value)
-    expect(DISABLED_ROUTES.length).toBe(3)
-    expect(DISABLED_ROUTES).toEqual(['/chart', '/chart', '/chart'])
-  })
-
-  it('pop removes and returns the last element', () => {
-    const items = ['/limits', '/categories', '/settings'] as any
-    DISABLED_ROUTES.push(...items)
-    const popped = DISABLED_ROUTES.pop()
-    expect(popped).toBe('/settings')
-    expect(DISABLED_ROUTES).toEqual(['/limits', '/categories'])
-  })
-
-  it('unshift adds to the beginning and shift removes from the beginning', () => {
-    DISABLED_ROUTES.push('/feedback' as any)
-    const lenAfterUnshift = DISABLED_ROUTES.unshift('/issue' as any)
-    expect(lenAfterUnshift).toBe(2)
-    expect(DISABLED_ROUTES[0]).toBe('/issue')
-    const shifted = DISABLED_ROUTES.shift()
-    expect(shifted).toBe('/issue')
-    expect(DISABLED_ROUTES).toEqual(['/feedback'])
-  })
-
-  it('splice can remove elements', () => {
-    DISABLED_ROUTES.push('/a' as any, '/b' as any, '/c' as any)
-    const removed = DISABLED_ROUTES.splice(1, 1)
-    expect(removed).toEqual(['/b'])
-    expect(DISABLED_ROUTES).toEqual(['/a', '/c'])
-  })
-
-  it('splice can insert elements', () => {
-    DISABLED_ROUTES.push('/a' as any, '/c' as any)
-    DISABLED_ROUTES.splice(1, 0, '/b' as any)
+  it('preserves order when multiple entries are added', async () => {
+    const { DISABLED_ROUTES } = await import('../../../config/constants/routes')
+    DISABLED_ROUTES.push('/a', '/b', '/c')
     expect(DISABLED_ROUTES).toEqual(['/a', '/b', '/c'])
   })
 
-  it('setting length to 0 clears the array', () => {
-    DISABLED_ROUTES.push('/one' as any, '/two' as any)
+  it('supports splice to remove entries', async () => {
+    const { DISABLED_ROUTES } = await import('../../../config/constants/routes')
+    DISABLED_ROUTES.push('/first', '/second')
+    const removed = DISABLED_ROUTES.splice(0, 1)
+    expect(removed).toEqual(['/first'])
+    expect(DISABLED_ROUTES).toEqual(['/second'])
+  })
+
+  it('accepts values of any type at runtime', async () => {
+    const { DISABLED_ROUTES } = await import('../../../config/constants/routes')
+    const obj = { a: 1 }
+    DISABLED_ROUTES.push(123 as unknown as string, obj as unknown as string)
+    expect(DISABLED_ROUTES.length).toBe(2)
+    expect(DISABLED_ROUTES[0]).toBe(123)
+    expect(DISABLED_ROUTES[1]).toBe(obj)
+  })
+
+  it('is not frozen and remains mutable', async () => {
+    const { DISABLED_ROUTES } = await import('../../../config/constants/routes')
+    expect(Object.isFrozen(DISABLED_ROUTES)).toBe(false)
+    DISABLED_ROUTES.push('/mutable')
+    expect(DISABLED_ROUTES[0]).toBe('/mutable')
+  })
+
+  it('allows setting arbitrary properties on the array object', async () => {
+    const { DISABLED_ROUTES } = await import('../../../config/constants/routes')
+    ;(DISABLED_ROUTES as any).foo = 'bar'
+    expect((DISABLED_ROUTES as any).foo).toBe('bar')
+  })
+
+  it('can be cleared by setting length to 0', async () => {
+    const { DISABLED_ROUTES } = await import('../../../config/constants/routes')
+    DISABLED_ROUTES.push('/x', '/y')
+    expect(DISABLED_ROUTES.length).toBe(2)
     DISABLED_ROUTES.length = 0
     expect(DISABLED_ROUTES.length).toBe(0)
-    expect(DISABLED_ROUTES).toEqual([])
+    expect(JSON.stringify(DISABLED_ROUTES)).toBe('[]')
+  })
+})
+
+describe('Module caching and reset behavior for DISABLED_ROUTES', () => {
+  it('multiple imports without reset return the same array instance', async () => {
+    const mod1 = await import('../../../config/constants/routes')
+    const mod2 = await import('../../../config/constants/routes')
+    expect(mod1.DISABLED_ROUTES).toBe(mod2.DISABLED_ROUTES)
   })
 
-  it('dynamic import sees the same reference and mutations', async () => {
-    const modBefore = await import('../../../config/constants/routes')
-    expect(modBefore.DISABLED_ROUTES).toBe(DISABLED_ROUTES)
-    DISABLED_ROUTES.push('/sitemap.xml' as any)
-    const modAfter = await import('../../../config/constants/routes')
-    expect(modAfter.DISABLED_ROUTES).toBe(DISABLED_ROUTES)
-    expect(modAfter.DISABLED_ROUTES.includes('/sitemap.xml')).toBe(true)
+  it('state persists across imports without reset', async () => {
+    const mod1 = await import('../../../config/constants/routes')
+    mod1.DISABLED_ROUTES.push('/persist')
+    const mod2 = await import('../../../config/constants/routes')
+    expect(mod2.DISABLED_ROUTES.includes('/persist')).toBe(true)
+    expect(mod2.DISABLED_ROUTES.length).toBe(1)
   })
 
-  it('array is extensible, not sealed, and not frozen', () => {
-    expect(Object.isExtensible(DISABLED_ROUTES)).toBe(true)
-    expect(Object.isSealed(DISABLED_ROUTES)).toBe(false)
-    expect(Object.isFrozen(DISABLED_ROUTES)).toBe(false)
+  it('vi.resetModules() provides a fresh array reference and state', async () => {
+    const mod1 = await import('../../../config/constants/routes')
+    mod1.DISABLED_ROUTES.push('/before-reset')
+    expect(mod1.DISABLED_ROUTES.length).toBe(1)
+
+    vi.resetModules()
+
+    const mod2 = await import('../../../config/constants/routes')
+    expect(mod2.DISABLED_ROUTES).not.toBe(mod1.DISABLED_ROUTES)
+    expect(mod2.DISABLED_ROUTES.length).toBe(0)
+    expect(mod2.DISABLED_ROUTES.includes('/before-reset')).toBe(false)
   })
 
-  it('can reassign elements by index', () => {
-    DISABLED_ROUTES.push('/old' as any)
-    DISABLED_ROUTES[0] = '/new' as any
-    expect(DISABLED_ROUTES[0]).toBe('/new')
-    expect(DISABLED_ROUTES.length).toBe(1)
+  it('subsequent resets continue to yield new clean instances', async () => {
+    let mod = await import('../../../config/constants/routes')
+    mod.DISABLED_ROUTES.push('/first-cycle')
+    expect(mod.DISABLED_ROUTES.length).toBe(1)
+
+    vi.resetModules()
+    mod = await import('../../../config/constants/routes')
+    expect(mod.DISABLED_ROUTES.length).toBe(0)
+
+    mod.DISABLED_ROUTES.push('/second-cycle')
+    expect(mod.DISABLED_ROUTES.length).toBe(1)
+
+    vi.resetModules()
+    const mod3 = await import('../../../config/constants/routes')
+    expect(mod3.DISABLED_ROUTES.length).toBe(0)
   })
 
-  it('fill modifies the array elements', () => {
-    DISABLED_ROUTES.push('/1' as any, '/2' as any, '/3' as any)
-    DISABLED_ROUTES.fill('/x' as any, 0, 2)
-    expect(DISABLED_ROUTES).toEqual(['/x', '/x', '/3'])
-  })
-
-  it('includes returns true for existing values', () => {
-    DISABLED_ROUTES.push('/exists' as any)
-    expect(DISABLED_ROUTES.includes('/exists')).toBe(true)
-    expect(DISABLED_ROUTES.includes('/not-exists')).toBe(false)
-  })
-
-  it('forEach iterates over all elements in order', () => {
-    const calls: string[] = []
-    DISABLED_ROUTES.push('/a' as any, '/b' as any, '/c' as any)
-    DISABLED_ROUTES.forEach((v) => calls.push(v as any))
-    expect(calls).toEqual(['/a', '/b', '/c'])
-  })
-
-  it('map creates a new array without mutating DISABLED_ROUTES', () => {
-    DISABLED_ROUTES.push('/a' as any, '/b' as any)
-    const mapped = DISABLED_ROUTES.map((v) => `${v}-mapped`)
-    expect(mapped).toEqual(['/a-mapped', '/b-mapped'])
-    expect(DISABLED_ROUTES).toEqual(['/a', '/b'])
-  })
-
-  it('join concatenates entries with comma by default', () => {
-    DISABLED_ROUTES.push('/a' as any, '/b' as any)
-    expect(DISABLED_ROUTES.join()).toBe('/a,/b')
+  it('JSON serialization reflects current state', async () => {
+    const mod = await import('../../../config/constants/routes')
+    expect(JSON.stringify(mod.DISABLED_ROUTES)).toBe('[]')
+    mod.DISABLED_ROUTES.push('/x')
+    expect(JSON.stringify(mod.DISABLED_ROUTES)).toBe('["/x"]')
   })
 })
