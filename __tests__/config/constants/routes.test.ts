@@ -1,176 +1,141 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import type { ROUTE } from '../../../config/constants/routes'
+import { describe, it, expect, vi, afterEach } from 'vitest'
+import { ROUTE, DISABLED_ROUTES } from '../../../config/constants/routes'
 
-const HOME: ROUTE = '/'
-const SIGNIN: ROUTE = '/sign-in'
-const CHART: ROUTE = '/chart'
-const LIMITS: ROUTE = '/limits'
-const EXPORT_R: ROUTE = '/export'
-const SETTINGS: ROUTE = '/settings'
-const SITEMAP: ROUTE = '/sitemap.xml'
-const DISABLED_ROUTE_PATH: ROUTE = '/disabled-route'
+afterEach(() => {
+  vi.clearAllMocks()
+})
 
-describe('config/constants/routes', () => {
-  beforeEach(() => {
-    vi.resetModules()
+const allRoutes = [
+  ROUTE.HOME,
+  ROUTE.SIGNIN,
+  ROUTE.MONTHLY_REPORT,
+  ROUTE.CHART,
+  ROUTE.LIMITS,
+  ROUTE.SUBSCRIPTIONS,
+  ROUTE.CATEGORIES,
+  ROUTE.EXPORT,
+  ROUTE.SETTINGS,
+  ROUTE.FEEDBACK,
+  ROUTE.ISSUE,
+  ROUTE.SITEMAP,
+  ROUTE.DISABLED_ROUTE,
+]
+
+describe('ROUTE enum values', () => {
+  it('HOME is "/"', () => {
+    expect(ROUTE.HOME).toBe('/')
   })
 
-  afterEach(() => {
-    vi.clearAllMocks()
+  it('SIGNIN is "/sign-in"', () => {
+    expect(ROUTE.SIGNIN).toBe('/sign-in')
   })
 
-  it('exports DISABLED_ROUTES as an array', async () => {
-    const mod = await import('../../../config/constants/routes')
-    expect('DISABLED_ROUTES' in mod).toBe(true)
-    expect(Array.isArray(mod.DISABLED_ROUTES)).toBe(true)
+  it('MONTHLY_REPORT is "/monthly-report"', () => {
+    expect(ROUTE.MONTHLY_REPORT).toBe('/monthly-report')
   })
 
-  it('DISABLED_ROUTES is initially empty', async () => {
-    const { DISABLED_ROUTES } = await import('../../../config/constants/routes')
-    expect(DISABLED_ROUTES.length).toBe(0)
-    expect(DISABLED_ROUTES).toEqual([])
+  it('CHART is "/chart"', () => {
+    expect(ROUTE.CHART).toBe('/chart')
   })
 
-  it('allows pushing a single route', async () => {
-    const { DISABLED_ROUTES } = await import('../../../config/constants/routes')
-    DISABLED_ROUTES.push(SIGNIN)
-    expect(DISABLED_ROUTES.length).toBe(1)
-    expect(DISABLED_ROUTES[0]).toBe('/sign-in')
-    expect(DISABLED_ROUTES.includes('/sign-in')).toBe(true)
+  it('LIMITS is "/limits"', () => {
+    expect(ROUTE.LIMITS).toBe('/limits')
   })
 
-  it('maintains order when pushing multiple routes', async () => {
-    const { DISABLED_ROUTES } = await import('../../../config/constants/routes')
-    DISABLED_ROUTES.push(SETTINGS)
-    DISABLED_ROUTES.push(EXPORT_R)
-    DISABLED_ROUTES.push(CHART)
-    expect(DISABLED_ROUTES).toEqual(['/settings', '/export', '/chart'])
+  it('SUBSCRIPTIONS is "/subscriptions"', () => {
+    expect(ROUTE.SUBSCRIPTIONS).toBe('/subscriptions')
   })
 
-  it('allows duplicate routes', async () => {
-    const { DISABLED_ROUTES } = await import('../../../config/constants/routes')
-    DISABLED_ROUTES.push(LIMITS)
-    DISABLED_ROUTES.push(LIMITS)
-    expect(DISABLED_ROUTES.length).toBe(2)
-    expect(DISABLED_ROUTES[0]).toBe('/limits')
-    expect(DISABLED_ROUTES[1]).toBe('/limits')
+  it('CATEGORIES is "/categories"', () => {
+    expect(ROUTE.CATEGORIES).toBe('/categories')
   })
 
-  it('module import returns the same array reference within the same module instance', async () => {
-    const mod1 = await import('../../../config/constants/routes')
-    const mod2 = await import('../../../config/constants/routes')
-    expect(mod1.DISABLED_ROUTES).toBe(mod2.DISABLED_ROUTES)
-
-    mod1.DISABLED_ROUTES.push(SITEMAP)
-    expect(mod2.DISABLED_ROUTES.includes('/sitemap.xml')).toBe(true)
-    expect(mod2.DISABLED_ROUTES.length).toBe(1)
+  it('EXPORT is "/export"', () => {
+    expect(ROUTE.EXPORT).toBe('/export')
   })
 
-  it('resetting modules gives a fresh DISABLED_ROUTES array', async () => {
-    const mod1 = await import('../../../config/constants/routes')
-    mod1.DISABLED_ROUTES.push(CHART)
-    expect(mod1.DISABLED_ROUTES.length).toBe(1)
-
-    vi.resetModules()
-    const mod2 = await import('../../../config/constants/routes')
-    expect(mod2.DISABLED_ROUTES.length).toBe(0)
-    expect(mod2.DISABLED_ROUTES).not.toBe(mod1.DISABLED_ROUTES)
+  it('SETTINGS is "/settings"', () => {
+    expect(ROUTE.SETTINGS).toBe('/settings')
   })
 
-  it('export binding cannot be reassigned on the module namespace', async () => {
-    const mod = await import('../../../config/constants/routes')
-    expect(() => {
-      // @ts-expect-error - intentional reassignment to test read-only binding
-      ;(mod as any).DISABLED_ROUTES = []
-    }).toThrow()
+  it('FEEDBACK is "/feedback"', () => {
+    expect(ROUTE.FEEDBACK).toBe('/feedback')
   })
 
-  it('array is mutable: push and pop work as expected', async () => {
-    const { DISABLED_ROUTES } = await import('../../../config/constants/routes')
-    DISABLED_ROUTES.push(EXPORT_R)
-    expect(DISABLED_ROUTES).toEqual(['/export'])
-
-    const popped = DISABLED_ROUTES.pop()
-    expect(popped).toBe('/export')
-    expect(DISABLED_ROUTES.length).toBe(0)
+  it('ISSUE is "/issue"', () => {
+    expect(ROUTE.ISSUE).toBe('/issue')
   })
 
-  it('JSON serialization reflects current contents', async () => {
-    const { DISABLED_ROUTES } = await import('../../../config/constants/routes')
-    DISABLED_ROUTES.push(SETTINGS, EXPORT_R)
-    expect(JSON.stringify(DISABLED_ROUTES)).toBe('["/settings","/export"]')
+  it('SITEMAP is "/sitemap.xml"', () => {
+    expect(ROUTE.SITEMAP).toBe('/sitemap.xml')
   })
 
-  it('join() returns a delimiter-separated string of routes', async () => {
-    const { DISABLED_ROUTES } = await import('../../../config/constants/routes')
-    DISABLED_ROUTES.push(HOME, SIGNIN, CHART)
-    expect(DISABLED_ROUTES.join('|')).toBe('|||/sign-in|/chart'.replace('||', '/').replace('||', '/')) // ensure HOME is '/'
-    // Simpler explicit expectation:
-    expect(DISABLED_ROUTES.join(',')).toBe(',,/sign-in,/chart'.replace(',,', '/')) // HOME is '/'
+  it('DISABLED_ROUTE is "/disabled-route"', () => {
+    expect(ROUTE.DISABLED_ROUTE).toBe('/disabled-route')
+  })
+})
+
+describe('ROUTE enum integrity', () => {
+  it('all values are strings', () => {
+    const allAreStrings = allRoutes.every((r) => typeof r === 'string')
+    expect(allAreStrings).toBe(true)
   })
 
-  it('includes() correctly reports presence of a route', async () => {
-    const { DISABLED_ROUTES } = await import('../../../config/constants/routes')
-    DISABLED_ROUTES.push(DISABLED_ROUTE_PATH)
-    expect(DISABLED_ROUTES.includes('/disabled-route')).toBe(true)
-    expect(DISABLED_ROUTES.includes('/non-existent')).toBe(false)
+  it('all values are unique', () => {
+    const unique = new Set(allRoutes)
+    expect(unique.size).toBe(allRoutes.length)
   })
 
-  it('clearing via length resets the array contents', async () => {
-    const { DISABLED_ROUTES } = await import('../../../config/constants/routes')
-    DISABLED_ROUTES.push(SIGNIN, CHART, LIMITS)
-    expect(DISABLED_ROUTES.length).toBe(3)
-    DISABLED_ROUTES.length = 0
-    expect(DISABLED_ROUTES.length).toBe(0)
-    expect(DISABLED_ROUTES).toEqual([])
-  })
-
-  it('splice can remove specific indexes', async () => {
-    const { DISABLED_ROUTES } = await import('../../../config/constants/routes')
-    DISABLED_ROUTES.push(SETTINGS, EXPORT_R, CHART)
-    const removed = DISABLED_ROUTES.splice(1, 1)
-    expect(removed).toEqual(['/export'])
-    expect(DISABLED_ROUTES).toEqual(['/settings', '/chart'])
-  })
-
-  it('every element is a string starting with "/" after pushing known routes', async () => {
-    const { DISABLED_ROUTES } = await import('../../../config/constants/routes')
-    DISABLED_ROUTES.push(HOME, SIGNIN, LIMITS, SITEMAP)
-    const allStartWithSlash = DISABLED_ROUTES.every((r) => typeof r === 'string' && r.startsWith('/'))
+  it('all routes start with "/"', () => {
+    const allStartWithSlash = allRoutes.every((r) => r.startsWith('/'))
     expect(allStartWithSlash).toBe(true)
   })
 
-  it('indexOf returns the first occurrence for duplicates', async () => {
-    const { DISABLED_ROUTES } = await import('../../../config/constants/routes')
-    DISABLED_ROUTES.push(SIGNIN, CHART, SIGNIN, LIMITS)
-    expect(DISABLED_ROUTES.indexOf('/sign-in')).toBe(0)
-    expect(DISABLED_ROUTES.lastIndexOf('/sign-in')).toBe(2)
+  it('no route (except HOME) ends with "/"', () => {
+    const nonHomeRoutes = allRoutes.filter((r) => r !== ROUTE.HOME)
+    const noneEndWithSlash = nonHomeRoutes.every((r) => !r.endsWith('/'))
+    expect(noneEndWithSlash).toBe(true)
   })
 
-  it('copying the array with spread results in a shallow copy separate from the original', async () => {
-    const { DISABLED_ROUTES } = await import('../../../config/constants/routes')
-    DISABLED_ROUTES.push(SETTINGS, EXPORT_R)
-    const copy = [...DISABLED_ROUTES]
-    expect(copy).toEqual(['/settings', '/export'])
-
-    DISABLED_ROUTES.push(CHART)
-    expect(copy).toEqual(['/settings', '/export'])
-    expect(DISABLED_ROUTES).toEqual(['/settings', '/export', '/chart'])
+  it('routes contain no whitespace characters', () => {
+    const hasNoWhitespace = allRoutes.every((r) => !/\s/.test(r))
+    expect(hasNoWhitespace).toBe(true)
   })
 
-  it('Array.from creates a copy with identical contents', async () => {
-    const { DISABLED_ROUTES } = await import('../../../config/constants/routes')
-    DISABLED_ROUTES.push(HOME, SIGNIN)
-    const arr = Array.from(DISABLED_ROUTES)
-    expect(arr).toEqual(['/', '/sign-in'])
-    expect(arr).not.toBe(DISABLED_ROUTES)
+  it('SITEMAP route ends with ".xml"', () => {
+    expect(ROUTE.SITEMAP.endsWith('.xml')).toBe(true)
   })
 
-  it('slice returns a subarray without modifying the original', async () => {
-    const { DISABLED_ROUTES } = await import('../../../config/constants/routes')
-    DISABLED_ROUTES.push(CHART, LIMITS, EXPORT_R, SETTINGS)
-    const sub = DISABLED_ROUTES.slice(1, 3)
-    expect(sub).toEqual(['/limits', '/export'])
-    expect(DISABLED_ROUTES).toEqual(['/chart', '/limits', '/export', '/settings'])
+  it('total number of defined route constants is 13', () => {
+    expect(allRoutes.length).toBe(13)
+  })
+})
+
+describe('DISABLED_ROUTES constant', () => {
+  it('is an array', () => {
+    expect(Array.isArray(DISABLED_ROUTES)).toBe(true)
+  })
+
+  it('is empty by default', () => {
+    expect(DISABLED_ROUTES.length).toBe(0)
+  })
+
+  it('deep equals an empty array initially', () => {
+    expect(DISABLED_ROUTES).toEqual([])
+  })
+
+  it('is not frozen (mutable array export)', () => {
+    expect(Object.isFrozen(DISABLED_ROUTES)).toBe(false)
+  })
+
+  it('contains only valid ROUTE values (subset check)', () => {
+    const allowed = new Set(allRoutes)
+    const isSubset = DISABLED_ROUTES.every((r) => allowed.has(r))
+    expect(isSubset).toBe(true)
+  })
+
+  it('does not contain duplicate routes', () => {
+    const unique = new Set(DISABLED_ROUTES)
+    expect(unique.size).toBe(DISABLED_ROUTES.length)
   })
 })
