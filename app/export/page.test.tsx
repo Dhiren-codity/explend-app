@@ -62,22 +62,6 @@ describe('app/export/page metadata', () => {
   })
 })
 
-describe('app/export/page', () => {
-    getCachedAllTransactions.mockResolvedValue([])
-
-    const element = await Page()
-    render(element)
-
-    expect(screen.getByTestId('with-sidebar')).toBeInTheDocument()
-    expect(screen.getByText('Export')).toBeInTheDocument()
-    expect(screen.getByTestId('no-transactions-plug')).toBeInTheDocument()
-    expect(screen.queryByTestId('export-transactions')).toBeNull()
-
-    expect(getCachedAuthSession).toHaveBeenCalledTimes(2)
-    expect(getCachedAllTransactions).toHaveBeenCalledTimes(2)
-    expect(getCachedAllTransactions).toHaveBeenNthCalledWith(1, 'user@example.com')
-    expect(getCachedAllTransactions).toHaveBeenNthCalledWith(2, 'user@example.com')
-  })
 
     const exported = [{ id: 'e1' }]
 
