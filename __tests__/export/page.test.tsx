@@ -16,7 +16,6 @@ vi.mock('../lib/actions', () => {
     getCachedAuthSession: vi.fn(),
     getTransactionsForExport: vi.fn(),
   };
-});
 
 vi.mock('../ui/home/export-transactions', () => {
   return { default: vi.fn((_props: unknown) => null) };
@@ -35,9 +34,6 @@ type ReactElementLike = {
   props: Record<string, unknown>;
 };
 
-describe('Page', (): void => {
-  const defaultUserId = 'user@example.com';
-  const sampleTransactions = [{ id: 't1' } as Record<string, unknown>];
 
   beforeEach((): void => {
     vi.clearAllMocks();
@@ -202,4 +198,3 @@ describe('Page', (): void => {
     expect(element.type).toBe(WithSidebar);
     expect(element.props.contentNearby).toBeDefined();
   });
-});

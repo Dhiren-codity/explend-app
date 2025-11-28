@@ -11,13 +11,11 @@ vi.mock('next/navigation', () => {
   return {
     usePathname: usePathnameMock,
   };
-});
 
 vi.mock('react-use', () => {
   return {
     useMedia: useMediaMock,
   };
-});
 
 vi.mock('@/config/constants/navigation', () => {
   const NAV_ICON_SIZE = 20;
@@ -37,7 +35,6 @@ vi.mock('@/config/constants/navigation', () => {
     NAV_ICON_SIZE,
     NAV_TITLE,
   };
-});
 
 vi.mock('@/config/constants/routes', () => {
   const DISABLED_ROUTES: string[] = [];
@@ -57,13 +54,11 @@ vi.mock('@/config/constants/routes', () => {
     DISABLED_ROUTES,
     ROUTE,
   };
-});
 
 vi.mock('@/app/lib/helpers', () => {
   return {
     getBreakpointWidth: (bp: string): string => `(min-width: ${bp})`,
   };
-});
 
 vi.mock('../hoverables', () => {
   const HoverableNavLink = ({
@@ -116,20 +111,7 @@ vi.mock('react-icons/pi', () => {
     PiStack: Stub,
     PiStackFill: Stub,
   };
-});
 
-describe('Navbar', (): void => {
-  beforeEach((): void => {
-    usePathnameMock.mockReset();
-    useMediaMock.mockReset();
-    // Default media query to true (md and above)
-    useMediaMock.mockReturnValue(true);
-    // Default pathname
-    usePathnameMock.mockReturnValue('/chart');
-
-    // Reset disabled routes
-    DISABLED_ROUTES.length = 0;
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -231,4 +213,3 @@ describe('Navbar', (): void => {
     const logo = screen.queryByTestId('logo');
     expect(logo).toBeNull();
   });
-});

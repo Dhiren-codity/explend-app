@@ -1,10 +1,6 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { ROUTE, DISABLED_ROUTES } from './routes';
 
-describe('config/constants/routes', () => {
-  beforeEach((): void => {
-    // Ensure clean slate for each test
-  });
 
   afterEach((): void => {
     // Cleanup mutations to shared exported array and reset mocks
@@ -57,7 +53,6 @@ describe('config/constants/routes', () => {
     test('sitemap route should end with .xml', (): void => {
       expect(ROUTE.SITEMAP.endsWith('.xml')).toBe(true);
     });
-  });
 
   describe('DISABLED_ROUTES constant', () => {
     test('should be an array and initially empty', (): void => {
@@ -74,5 +69,3 @@ describe('config/constants/routes', () => {
     test('should not contain values by default other than what tests add', (): void => {
       expect(DISABLED_ROUTES).toEqual([]);
     });
-  });
-});

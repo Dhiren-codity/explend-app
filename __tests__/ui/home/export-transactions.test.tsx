@@ -118,7 +118,6 @@ vi.mock('@heroui/react', () => {
     CardHeader,
     DateRangePicker,
   };
-});
 
 vi.mock('@/app/lib/export-utils', () => ({
   generateCSV: vi.fn(() => 'csv-content'),
@@ -128,8 +127,6 @@ vi.mock('@/app/lib/export-utils', () => ({
   downloadFile: vi.fn(),
 }));
 
-describe('ExportTransactions', () => {
-  const transactionA = { id: '1', amount: 100 } as unknown as TTransaction;
   const transactionB = { id: '2', amount: 200 } as unknown as TTransaction;
   const transactionsList: TTransaction[] = [transactionA, transactionB];
 
@@ -164,7 +161,6 @@ describe('ExportTransactions', () => {
       expect(downloadFile).toHaveBeenCalledWith('csv-content', 'export.csv', 'text/csv');
       expect(toast.success).toHaveBeenCalledWith('Exported 2 transactions');
     });
-  });
 
 
     const formatSelect = screen.getByLabelText('Export Format') as HTMLSelectElement;
@@ -182,7 +178,6 @@ describe('ExportTransactions', () => {
       expect(downloadFile).toHaveBeenCalledWith('json-content', 'export.json', 'application/json');
       expect(toast.success).toHaveBeenCalledWith('Exported 2 transactions');
     });
-  });
 
 
     expect(screen.getByText('Ready to export all 0 transactions')).toBeInTheDocument();
@@ -197,7 +192,6 @@ describe('ExportTransactions', () => {
       expect(generateJSON).not.toHaveBeenCalled();
       expect(onExport).not.toHaveBeenCalled();
     });
-  });
 
   test('selecting a date range calls onExport with start and end-of-day end date, updates helper text, and exports: Promise<void>', async (): Promise<void> => {
     const rangedResult: TTransaction[] = [transactionA];
@@ -229,7 +223,6 @@ describe('ExportTransactions', () => {
       expect(downloadFile).toHaveBeenCalled();
       expect(toast.success).toHaveBeenCalledWith('Exported 1 transaction');
     });
-  });
 
 
     fireEvent.click(screen.getByRole('button', { name: 'Set Date Range' }));
@@ -240,7 +233,6 @@ describe('ExportTransactions', () => {
       expect(toast.error).toHaveBeenCalledWith('No transactions to export');
       expect(downloadFile).not.toHaveBeenCalled();
     });
-  });
 
 
     fireEvent.click(screen.getByRole('button', { name: 'Set Date Range' }));
@@ -256,7 +248,6 @@ describe('ExportTransactions', () => {
       expect(downloadFile).toHaveBeenCalled();
       expect(toast.success).toHaveBeenCalled();
     });
-  });
 
 
     (generateCSV as unknown as vi.Mock).mockImplementationOnce(() => {
@@ -274,4 +265,3 @@ describe('ExportTransactions', () => {
 
     consoleErrorSpy.mockRestore();
   });
-});
