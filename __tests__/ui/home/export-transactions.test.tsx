@@ -120,8 +120,6 @@ vi.mock('@heroui/react', () => {
           start: { toString: () => startValue },
           end: { toString: () => endValue },
         });
-      }
-    };
 
     const handleEnd = (e: React.ChangeEvent<HTMLInputElement>): void => {
       endValue = e.target.value;
@@ -130,8 +128,6 @@ vi.mock('@heroui/react', () => {
           start: { toString: () => startValue },
           end: { toString: () => endValue },
         });
-      }
-    };
 
     const handleClear = (): void => {
       startValue = '';
@@ -161,13 +157,7 @@ vi.mock('@heroui/react', () => {
     Select,
     SelectItem,
   };
-});
 
-describe('ExportTransactions', () => {
-  afterEach((): void => {
-    cleanup();
-    vi.clearAllMocks();
-  });
 
   const makeTransaction = (overrides: Record<string, unknown> = {}): TTransaction => {
     const base = {
@@ -199,7 +189,6 @@ describe('ExportTransactions', () => {
       expect(mockDownloadFile).toHaveBeenCalledTimes(1);
       expect(mockToast.success).toHaveBeenCalledWith('Exported 2 transactions');
     });
-  });
 
 
     const select = screen.getByLabelText('Export Format');
@@ -215,7 +204,6 @@ describe('ExportTransactions', () => {
       expect(mockDownloadFile).toHaveBeenCalledTimes(1);
       expect(mockToast.success).toHaveBeenCalledWith('Exported 3 transactions');
     });
-  });
 
 
     const startInput = screen.getByLabelText('start-date');
@@ -248,7 +236,6 @@ describe('ExportTransactions', () => {
       expect(mockGenerateCSV).toHaveBeenCalledWith(filtered);
       expect(mockToast.success).toHaveBeenCalledWith('Exported 1 transaction');
     });
-  });
 
 
     const startInput = screen.getByLabelText('start-date');
@@ -264,7 +251,6 @@ describe('ExportTransactions', () => {
       expect(mockGenerateCSV).not.toHaveBeenCalled();
       expect(mockGenerateJSON).not.toHaveBeenCalled();
     });
-  });
 
 
       .fn<[_start?: Date, _end?: Date], Promise<TTransaction[]>>()
@@ -313,5 +299,3 @@ describe('ExportTransactions', () => {
         screen.getByText('Ready to export all 3 transactions')
       ).toBeInTheDocument();
     });
-  });
-});

@@ -50,14 +50,7 @@ describe('config/constants/routes', () => {
       const unknownPath = '/unknown-route-not-present';
       expect(allRoutes.includes(unknownPath)).toBe(false);
     });
-  });
 
-  describe('DISABLED_ROUTES', () => {
-    let initialLength: number;
-
-    beforeEach((): void => {
-      initialLength = DISABLED_ROUTES.length;
-    });
 
     afterEach((): void => {
       // cleanup any mutations performed in a test
@@ -91,5 +84,3 @@ describe('config/constants/routes', () => {
       const allValid = DISABLED_ROUTES.every((p: string): boolean => allowedSet.has(p));
       expect(allValid).toBe(true);
     });
-  });
-});

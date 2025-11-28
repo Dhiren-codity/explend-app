@@ -9,7 +9,6 @@ vi.mock('@/config/constants/navigation', () => {
   return {
     NAV_TITLE: { EXPORT: 'Export' },
   };
-});
 
 vi.mock('../lib/actions', () => {
   return {
@@ -17,7 +16,6 @@ vi.mock('../lib/actions', () => {
     getCachedAuthSession: vi.fn(),
     getTransactionsForExport: vi.fn(),
   };
-});
 
 vi.mock('../ui/sidebar/with-sidebar', () => {
   return {
@@ -25,13 +23,11 @@ vi.mock('../ui/sidebar/with-sidebar', () => {
       React.createElement('mock-with-sidebar', props),
     ),
   };
-});
 
 vi.mock('../ui/no-transactions-plug', () => {
   return {
     default: vi.fn(() => React.createElement('mock-no-transactions-plug', {})),
   };
-});
 
 vi.mock('../ui/home/export-transactions', () => {
   return {
@@ -39,12 +35,7 @@ vi.mock('../ui/home/export-transactions', () => {
       React.createElement('mock-export-transactions', props),
     ),
   };
-});
 
-describe('Page (app/export/page.tsx)', (): void => {
-  const toElement = (node: unknown): { type: unknown; props: Record<string, unknown> } => {
-    return node as { type: unknown; props: Record<string, unknown> };
-  };
 
   const getChildren = (node: unknown): unknown[] => {
     const el = toElement(node);
@@ -199,4 +190,3 @@ describe('Page (app/export/page.tsx)', (): void => {
     expect(getCachedAllTransactions).toHaveBeenNthCalledWith(1, undefined);
     expect(getCachedAllTransactions).toHaveBeenNthCalledWith(2, undefined);
   });
-});

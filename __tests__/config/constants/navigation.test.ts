@@ -7,10 +7,6 @@ import {
   DEFAULT_PAGINATION_PAGE_NUMBER,
 } from './navigation';
 
-describe('config/constants/navigation', () => {
-  beforeEach((): void => {
-    // No setup required for constants
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -22,7 +18,6 @@ describe('config/constants/navigation', () => {
       expect(Number.isInteger(DEFAULT_TRANSACTION_LIMIT)).toBe(true);
       expect(DEFAULT_TRANSACTION_LIMIT).toBeGreaterThan(0);
     });
-  });
 
   describe('NAV_ICON_SIZE', () => {
     test('should be 24 and a positive integer', (): void => {
@@ -30,7 +25,6 @@ describe('config/constants/navigation', () => {
       expect(Number.isInteger(NAV_ICON_SIZE)).toBe(true);
       expect(NAV_ICON_SIZE).toBeGreaterThan(0);
     });
-  });
 
   describe('DEFAULT_PAGINATION_PAGE_NUMBER', () => {
     test('should be "1" and parse to integer 1', (): void => {
@@ -39,7 +33,6 @@ describe('config/constants/navigation', () => {
       expect(parsed).toBe(1);
       expect(Number.isInteger(parsed)).toBe(true);
     });
-  });
 
   describe('NAV_TITLE const enum', () => {
     test('should provide correct string values for each title', (): void => {
@@ -74,8 +67,6 @@ describe('config/constants/navigation', () => {
         expect(typeof value).toBe('string');
         expect(value.length).toBeGreaterThan(0);
       }
-    });
-  });
 
   describe('SEARCH_PARAM const enum', () => {
     test('should provide correct param keys', (): void => {
@@ -90,5 +81,3 @@ describe('config/constants/navigation', () => {
       expect(params.get('query')).toBe('budget');
       expect(params.get('page')).toBe('2');
     });
-  });
-});

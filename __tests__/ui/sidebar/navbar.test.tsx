@@ -27,19 +27,16 @@ vi.mock('react-icons/pi', (): Record<string, unknown> => {
     PiStack: Dummy,
     PiStackFill: Dummy,
   };
-});
 
 vi.mock('react-use', () => {
   return {
     useMedia: vi.fn(),
   };
-});
 
 vi.mock('next/navigation', () => {
   return {
     usePathname: vi.fn(),
   };
-});
 
 vi.mock('@/config/constants/navigation', () => {
   return {
@@ -57,7 +54,6 @@ vi.mock('@/config/constants/navigation', () => {
       ISSUE: 'Issue',
     },
   };
-});
 
 vi.mock('@/config/constants/routes', () => {
   const disabledRoutes: string[] = [];
@@ -76,13 +72,11 @@ vi.mock('@/config/constants/routes', () => {
       ISSUE: '/issue',
     },
   };
-});
 
 vi.mock('@/app/lib/helpers', () => {
   return {
     getBreakpointWidth: vi.fn((_bp: unknown) => '(min-width: 768px)'),
   };
-});
 
 vi.mock('../../../app/ui/sidebar/hoverables', () => {
   const HoverableNavLink = (props: {
@@ -111,17 +105,6 @@ import { usePathname } from 'next/navigation';
 import { DISABLED_ROUTES, ROUTE } from '@/config/constants/routes';
 import { getBreakpointWidth } from '@/app/lib/helpers';
 
-describe('Navbar', (): void => {
-  beforeEach((): void => {
-    vi.clearAllMocks();
-    cleanup();
-    (useMedia as unknown as vi.Mock).mockReturnValue(true);
-    (usePathname as unknown as vi.Mock).mockReturnValue('/home');
-    // Reset disabled routes
-    (DISABLED_ROUTES.splice as unknown as (start: number, deleteCount?: number) => number).call(DISABLED_ROUTES, 0, DISABLED_ROUTES.length);
-    // Ensure breakpoint helper returns a string by default
-    (getBreakpointWidth as unknown as vi.Mock).mockImplementation((_bp: unknown) => '(min-width: 768px)');
-  });
 
   afterEach((): void => {
     cleanup();
@@ -145,7 +128,6 @@ describe('Navbar', (): void => {
     if (logoElement) {
       expect(logoElement.getAttribute('data-logo-size')).toBe('sm');
     }
-  });
 
   test('renders logo with size "xxs" when md media query is false', (): void => {
     (useMedia as unknown as vi.Mock).mockReturnValue(false);
@@ -157,7 +139,6 @@ describe('Navbar', (): void => {
     if (logoElement) {
       expect(logoElement.getAttribute('data-logo-size')).toBe('xxs');
     }
-  });
 
   test('does not render logo when withLogo is false/omitted', (): void => {
     (useMedia as unknown as vi.Mock).mockReturnValue(true);
@@ -216,7 +197,6 @@ describe('Navbar', (): void => {
     if (issueItem) {
       expect(issueItem.getAttribute('data-active')).toBe('false');
     }
-  });
 
   test('renders empty list when all routes in the selected group are disabled', (): void => {
     // Disable all top routes
@@ -245,4 +225,3 @@ describe('Navbar', (): void => {
 
     expect(() => render(<Navbar linksGroup="top" withLogo />)).toThrow('breakpoint-error');
   });
-});
