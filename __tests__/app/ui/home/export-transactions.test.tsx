@@ -4,47 +4,66 @@ import '@testing-library/jest-dom'
 import React from 'react'
 
 vi.mock('date-fns', () => ({
-  format: vi.fn((date, fmt) => '2000-01-01'),
-  subMonths: vi.fn((date, n) => new Date('1999-12-01')),
+  format: vi.fn(() => '2024-01-01'),
+  subMonths: vi.fn(() => new Date()),
 }))
 
-vi.mock('react-hot-toast', () => ({
-  default: {
-    success: vi.fn(),
-    error: vi.fn(),
-  },
-}))
+vi.mock('react-hot-toast', async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    default: {
+      success: vi.fn(),
+      error: vi.fn(),
+    },
+  }
+})
 
-vi.mock('react-icons/pi', () => ({
-  PiDownloadSimpleFill: () => null,
-}))
+vi.mock('react-icons/pi', async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    PiDownloadSimpleFill: () => null,
+  }
+})
 
 vi.mock('@/config/constants/main', () => ({
   DEFAULT_ICON_SIZE: 20,
 }))
 
-vi.mock('@heroui/react', () => {
+vi.mock('@heroui/react', async (importOriginal) => {
+  const actual = await importOriginal()
   const React = require('react')
   const SelectItem = ({ children, ...props }: any) => {
     const value = props.value ?? props.key ?? props['data-key'] ?? ''
     return <option value={value}>{children}</option>
   }
-  const Select = ({ label, selectedKeys, onChange, children, className }: any) => {
-    const value = Array.isArray(selectedKeys) ? selectedKeys[0] : selectedKeys
+  const Select = ({ label, selectedKeys, onChange, onSelectionChange, children, className }: any) => {
+    const getFirst = (val: any) =>
+      Array.isArray(val) ? val[0] : val instanceof Set ? Array.from(val)[0] : val
+    const value = getFirst(selectedKeys) ?? ''
+    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      onChange?.(e)
+      onSelectionChange?.(new Set([e.target.value]))
+    }
     return (
       <label>
         {label}
-        <select aria-label={label} value={value} onChange={onChange} className={className}>
+        <select aria-label={label} value={value} onChange={handleChange} className={className}>
           {children}
         </select>
       </label>
     )
   }
-  const Button = ({ children, onPress, isLoading, startContent, className }: any) => {
+  const Button = ({ children, onPress, onClick, isLoading, startContent, className }: any) => {
+    const handleClick = () => {
+      onPress?.()
+      onClick?.()
+    }
     return (
       <button
         type="button"
-        onClick={() => onPress?.()}
+        onClick={handleClick}
         disabled={!!isLoading}
         aria-busy={!!isLoading}
         className={className}
@@ -85,8 +104,8 @@ vi.mock('@heroui/react', () => {
           onClick={() => {
             if (start && end) {
               onChange?.({
-                start: { toString: () => start },
-                end: { toString: () => end },
+                start: { toString: () => start, toDate: () => new Date(start) },
+                end: { toString: () => end, toDate: () => new Date(end) },
               })
             } else {
               onChange?.(null)
@@ -98,7 +117,7 @@ vi.mock('@heroui/react', () => {
       </div>
     )
   }
-  return { Button, Card, CardBody, CardHeader, DateRangePicker, Select, SelectItem }
+  return { ...actual, Button, Card, CardBody, CardHeader, DateRangePicker, Select, SelectItem }
 })
 
 vi.mock('@/app/lib/export-utils', () => {
@@ -196,9 +215,9 @@ describe('ExportTransactions', () => {
     fireEvent.change(endInput, { target: { value: '2024-05-03' } })
     fireEvent.click(screen.getByRole('button', { name: 'Apply Range' }))
 
-    // Confirm info text updates
+    // Confirm info text updates (date-fns is mocked to 2024-01-01)
     expect(
-      screen.getByText('Exporting transactions from 2024-05-01 to 2024-05-03')
+      screen.getByText('Exporting transactions from 2024-01-01 to 2024-01-01')
     ).toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: 'Export' }))

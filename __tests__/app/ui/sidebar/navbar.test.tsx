@@ -1,20 +1,20 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { render, screen, cleanup } from '@testing-library/react'
-import '@testing-library/jest-dom'
 import React from 'react'
 
-let mockedIsMd = true
-let mockedPathname = '/settings'
-
-vi.mock('next/navigation', () => ({
-  usePathname: vi.fn(() => mockedPathname),
-}))
+vi.mock('next/navigation', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('next/navigation')>()
+  return {
+    ...actual,
+    usePathname: vi.fn(),
+  }
+})
 
 vi.mock('react-use', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-use')>()
   return {
     ...actual,
-    useMedia: vi.fn(() => mockedIsMd),
+    useMedia: vi.fn(),
   }
 })
 
@@ -75,6 +75,8 @@ vi.mock('@/config/constants/routes', () => ({
 
 import Navbar from '../../../../app/ui/sidebar/navbar'
 import { getBreakpointWidth } from '@/app/lib/helpers'
+import { useMedia } from 'react-use'
+import { usePathname } from 'next/navigation'
 
 afterEach(() => {
   cleanup()
@@ -83,17 +85,17 @@ afterEach(() => {
 
 describe('Navbar', () => {
   it('renders logo with size "sm" when withLogo and media is md', () => {
-    mockedIsMd = true
-    mockedPathname = '/settings'
+    ;(useMedia as unknown as vi.Mock).mockReturnValue(true)
+    ;(usePathname as unknown as vi.Mock).mockReturnValue('/settings')
 
     render(<Navbar linksGroup="top" withLogo />)
 
     const logo = screen.getByTestId('logo')
-    expect(logo).toBeInTheDocument()
-    expect(logo).toHaveAttribute('data-size', 'sm')
+    expect(logo).toBeTruthy()
+    expect(logo.getAttribute('data-size')).toBe('sm')
 
     // list is present
-    expect(screen.getByRole('list')).toBeInTheDocument()
+    expect(screen.getByRole('list')).toBeTruthy()
 
     // top links: 8 defined, 1 disabled ('/export') => 7 rendered
     const navLinks = screen.getAllByTestId('nav-link')
@@ -101,7 +103,7 @@ describe('Navbar', () => {
 
     // active link matches pathname strictly
     const active = navLinks.find((n) => n.getAttribute('data-active') === 'true')
-    expect(active).toBeTruthy()
+    expect(!!active).toBe(true)
     expect(active?.getAttribute('data-url')).toBe('/settings')
 
     // ensure disabled route '/export' is filtered out
@@ -109,31 +111,31 @@ describe('Navbar', () => {
     expect(exportLink).toBeUndefined()
 
     // idxs are sequential starting at 0
-    expect(navLinks[0]).toHaveAttribute('data-idx', '0')
-    expect(navLinks[navLinks.length - 1]).toHaveAttribute('data-idx', String(navLinks.length - 1))
+    expect(navLinks[0].getAttribute('data-idx')).toBe('0')
+    expect(navLinks[navLinks.length - 1].getAttribute('data-idx')).toBe(String(navLinks.length - 1))
 
     // verify breakpoint helper is called
     expect(getBreakpointWidth).toHaveBeenCalledWith('md')
   })
 
   it('renders logo with size "xxs" when withLogo and media is not md', () => {
-    mockedIsMd = false
-    mockedPathname = '/settings'
+    ;(useMedia as unknown as vi.Mock).mockReturnValue(false)
+    ;(usePathname as unknown as vi.Mock).mockReturnValue('/settings')
 
     render(<Navbar linksGroup="top" withLogo />)
 
     const logo = screen.getByTestId('logo')
-    expect(logo).toBeInTheDocument()
-    expect(logo).toHaveAttribute('data-size', 'xxs')
+    expect(logo).toBeTruthy()
+    expect(logo.getAttribute('data-size')).toBe('xxs')
   })
 
   it('renders top links without logo when withLogo is not provided', () => {
-    mockedIsMd = true
-    mockedPathname = '/chart'
+    ;(useMedia as unknown as vi.Mock).mockReturnValue(true)
+    ;(usePathname as unknown as vi.Mock).mockReturnValue('/chart')
 
     render(<Navbar linksGroup="top" />)
 
-    expect(screen.queryByTestId('logo')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('logo')).toBeNull()
 
     const navLinks = screen.getAllByTestId('nav-link')
     expect(navLinks).toHaveLength(7)
@@ -143,8 +145,8 @@ describe('Navbar', () => {
   })
 
   it('renders bottom links and sets active correctly', () => {
-    mockedIsMd = true
-    mockedPathname = '/issue'
+    ;(useMedia as unknown as vi.Mock).mockReturnValue(true)
+    ;(usePathname as unknown as vi.Mock).mockReturnValue('/issue')
 
     render(<Navbar linksGroup="bottom" />)
 
