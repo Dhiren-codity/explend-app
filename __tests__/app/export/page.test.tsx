@@ -3,16 +3,14 @@ import { render, screen, cleanup } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import React from 'react'
 
-const mockGetCachedAuthSession = vi.fn()
-const mockGetCachedAllTransactions = vi.fn()
-const mockGetTransactionsForExport = vi.fn()
-
-vi.mock('../../../app/lib/actions', () => ({
-  __esModule: true,
-  getCachedAuthSession: mockGetCachedAuthSession,
-  getCachedAllTransactions: mockGetCachedAllTransactions,
-  getTransactionsForExport: mockGetTransactionsForExport,
-}))
+vi.mock('../../../app/lib/actions', () => {
+  return {
+    __esModule: true,
+    getCachedAuthSession: vi.fn(),
+    getCachedAllTransactions: vi.fn(),
+    getTransactionsForExport: vi.fn(),
+  }
+})
 
 vi.mock('@/config/constants/navigation', () => ({
   __esModule: true,
@@ -41,6 +39,7 @@ vi.mock('../../../app/ui/home/export-transactions', () => ({
 }))
 
 import Page from '../../../app/export/page'
+import { getCachedAuthSession, getCachedAllTransactions } from '../../../app/lib/actions'
 
 afterEach(() => {
   cleanup()
@@ -49,8 +48,8 @@ afterEach(() => {
 
 describe('app/export/page', () => {
   it('renders heading and NoTransactionsPlug when there are no transactions', async () => {
-    mockGetCachedAuthSession.mockResolvedValue({ user: { email: 'user@example.com' } })
-    mockGetCachedAllTransactions.mockResolvedValue([])
+    ;(getCachedAuthSession as any).mockResolvedValue({ user: { email: 'user@example.com' } })
+    ;(getCachedAllTransactions as any).mockResolvedValue([])
 
     const ui = await Page()
     render(ui as unknown as React.ReactElement)
@@ -60,15 +59,14 @@ describe('app/export/page', () => {
     expect(screen.getByTestId('no-transactions-plug')).toBeInTheDocument()
     expect(screen.queryByTestId('export-transactions')).not.toBeInTheDocument()
 
-    expect(mockGetCachedAuthSession).toHaveBeenCalledTimes(2)
-    expect(mockGetCachedAllTransactions).toHaveBeenCalledTimes(2)
-    expect(mockGetCachedAllTransactions).toHaveBeenNthCalledWith(1, 'user@example.com')
-    expect(mockGetCachedAllTransactions).toHaveBeenNthCalledWith(2, 'user@example.com')
+    expect(getCachedAuthSession).toHaveBeenCalledTimes(1)
+    expect(getCachedAllTransactions).toHaveBeenCalledTimes(1)
+    expect(getCachedAllTransactions).toHaveBeenNthCalledWith(1, 'user@example.com')
   })
 
   it('renders ExportTransactions when transactions exist', async () => {
-    mockGetCachedAuthSession.mockResolvedValue({ user: { email: 'abc@x.com' } })
-    mockGetCachedAllTransactions.mockResolvedValue([{ id: 't1' }, { id: 't2' }])
+    ;(getCachedAuthSession as any).mockResolvedValue({ user: { email: 'abc@x.com' } })
+    ;(getCachedAllTransactions as any).mockResolvedValue([{ id: 't1' }, { id: 't2' }])
 
     const ui = await Page()
     render(ui as unknown as React.ReactElement)
@@ -79,15 +77,14 @@ describe('app/export/page', () => {
     expect(screen.getByTestId('export-transactions')).toHaveTextContent('count: 2')
     expect(screen.queryByTestId('no-transactions-plug')).not.toBeInTheDocument()
 
-    expect(mockGetCachedAuthSession).toHaveBeenCalledTimes(2)
-    expect(mockGetCachedAllTransactions).toHaveBeenCalledTimes(2)
-    expect(mockGetCachedAllTransactions).toHaveBeenNthCalledWith(1, 'abc@x.com')
-    expect(mockGetCachedAllTransactions).toHaveBeenNthCalledWith(2, 'abc@x.com')
+    expect(getCachedAuthSession).toHaveBeenCalledTimes(1)
+    expect(getCachedAllTransactions).toHaveBeenCalledTimes(1)
+    expect(getCachedAllTransactions).toHaveBeenNthCalledWith(1, 'abc@x.com')
   })
 
   it('passes undefined userId to data fetch when session has no email', async () => {
-    mockGetCachedAuthSession.mockResolvedValue(undefined)
-    mockGetCachedAllTransactions.mockResolvedValue([])
+    ;(getCachedAuthSession as any).mockResolvedValue(undefined)
+    ;(getCachedAllTransactions as any).mockResolvedValue([])
 
     const ui = await Page()
     render(ui as unknown as React.ReactElement)
@@ -95,9 +92,8 @@ describe('app/export/page', () => {
     expect(screen.getByRole('heading', { name: 'Export' })).toBeInTheDocument()
     expect(screen.getByTestId('no-transactions-plug')).toBeInTheDocument()
 
-    expect(mockGetCachedAuthSession).toHaveBeenCalledTimes(2)
-    expect(mockGetCachedAllTransactions).toHaveBeenCalledTimes(2)
-    expect(mockGetCachedAllTransactions).toHaveBeenNthCalledWith(1, undefined)
-    expect(mockGetCachedAllTransactions).toHaveBeenNthCalledWith(2, undefined)
+    expect(getCachedAuthSession).toHaveBeenCalledTimes(1)
+    expect(getCachedAllTransactions).toHaveBeenCalledTimes(1)
+    expect(getCachedAllTransactions).toHaveBeenNthCalledWith(1, undefined)
   })
 })

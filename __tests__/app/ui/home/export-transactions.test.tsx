@@ -3,22 +3,31 @@ import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/re
 import '@testing-library/jest-dom'
 import React from 'react'
 
-// Mocks
 vi.mock('date-fns', () => ({
   format: vi.fn(() => '2024-01-01'),
   subMonths: vi.fn(() => new Date('2023-12-01')),
 }))
 
-vi.mock('@heroui/react', () => {
-  const React = require('react')
-  const Select = ({ label, selectedKeys, onChange, children }: any) => (
-    <label>
-      {label}
-      <select aria-label={label} value={selectedKeys?.[0] ?? ''} onChange={onChange}>
-        {children}
-      </select>
-    </label>
-  )
+vi.mock('@heroui/react', async (importOriginal) => {
+  const actual: any = await importOriginal()
+  const Select = ({ label, selectedKeys, onSelectionChange, onChange, children }: any) => {
+    const value = selectedKeys ? Array.from(selectedKeys)[0] : ''
+    return (
+      <label>
+        {label}
+        <select
+          aria-label={label}
+          value={value ?? ''}
+          onChange={(e) => {
+            onChange?.(e)
+            onSelectionChange?.(new Set([e.target.value]))
+          }}
+        >
+          {children}
+        </select>
+      </label>
+    )
+  }
   const SelectItem = ({ value, children }: any) => <option value={value}>{children}</option>
   const Button = ({ children, onPress, isLoading, ...props }: any) => (
     <button type="button" onClick={onPress} aria-busy={isLoading} {...props}>
@@ -45,25 +54,29 @@ vi.mock('@heroui/react', () => {
       <button type="button" onClick={() => onChange?.(null)}>Clear Date Range</button>
     </div>
   )
-  return { Select, SelectItem, Button, Card, CardHeader, CardBody, DateRangePicker }
+  return { ...actual, Select, SelectItem, Button, Card, CardHeader, CardBody, DateRangePicker }
 })
 
-vi.mock('react-hot-toast', () => {
+vi.mock('react-hot-toast', async (importOriginal) => {
+  const actual: any = await importOriginal()
+  const toastFn: any = vi.fn()
+  toastFn.success = vi.fn()
+  toastFn.error = vi.fn()
+  return { ...actual, default: toastFn }
+})
+
+vi.mock('react-icons/pi', async (importOriginal) => {
+  const actual: any = await importOriginal()
+  return { ...actual, PiDownloadSimpleFill: () => null }
+})
+
+vi.mock('@internationalized/date', async (importOriginal) => {
+  const actual: any = await importOriginal()
   return {
-    default: {
-      success: vi.fn(),
-      error: vi.fn(),
-    },
+    ...actual,
+    parseDate: (s: string) => ({ toString: () => s }),
   }
 })
-
-vi.mock('react-icons/pi', () => ({
-  PiDownloadSimpleFill: () => null,
-}))
-
-vi.mock('@internationalized/date', () => ({
-  parseDate: (s: string) => ({ toString: () => s }),
-}))
 
 vi.mock('@/config/constants/main', () => ({
   DEFAULT_ICON_SIZE: 24,
@@ -79,7 +92,6 @@ vi.mock('@/app/lib/export-utils', () => {
   }
 })
 
-// Import mocks to assert call expectations
 import toast from 'react-hot-toast'
 import {
   generateCSV,
@@ -89,7 +101,6 @@ import {
   downloadFile,
 } from '@/app/lib/export-utils'
 
-// Import the component under test (must be after mocks)
 import ExportTransactions from '../../../../app/ui/home/export-transactions'
 
 afterEach(() => {
@@ -232,7 +243,6 @@ describe('ExportTransactions', () => {
       expect(downloadFile).not.toHaveBeenCalled()
     })
 
-    // Ensure loading state resets
     await waitFor(() => {
       expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument()
     })

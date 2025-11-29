@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { render, screen, cleanup } from '@testing-library/react'
-import '@testing-library/jest-dom'
 import React from 'react'
 
 // Shared constants used by mocks and tests
@@ -30,24 +29,21 @@ const TITLES = {
   ISSUE: 'Issue',
 }
 
-let useMediaMock: ReturnType<typeof vi.fn>
-let usePathnameMock: ReturnType<typeof vi.fn>
-
 // Mock react-use with importOriginal rule preserved
 vi.mock('react-use', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-use')>()
-  useMediaMock = vi.fn()
   return {
     ...actual,
-    useMedia: (...args: any[]) => useMediaMock(...args),
+    useMedia: vi.fn(),
   }
 })
 
-// Mock next/navigation usePathname
-vi.mock('next/navigation', () => {
-  usePathnameMock = vi.fn()
+// Mock next/navigation usePathname with importOriginal rule
+vi.mock('next/navigation', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('next/navigation')>()
   return {
-    usePathname: () => usePathnameMock(),
+    ...actual,
+    usePathname: vi.fn(),
   }
 })
 
@@ -71,7 +67,7 @@ vi.mock('@/app/lib/helpers', () => ({
 
 // Mock react-icons/pi to avoid rendering actual icons
 vi.mock('react-icons/pi', () => {
-  const Stub = (props: any) => null
+  const Stub = (_props: any) => null
   return {
     PiBugBeetle: Stub,
     PiBugBeetleFill: Stub,
@@ -116,23 +112,23 @@ vi.mock('../../../../app/ui/sidebar/logo', () => ({
 }))
 
 import Navbar from '../../../../app/ui/sidebar/navbar'
+import { useMedia } from 'react-use'
+import { usePathname } from 'next/navigation'
 
 afterEach(() => {
   cleanup()
   vi.clearAllMocks()
-  useMediaMock.mockReset()
-  usePathnameMock.mockReset()
 })
 
 describe('Navbar', () => {
   it('renders top nav links in order and filters disabled routes', () => {
-    useMediaMock.mockReturnValue(true)
-    usePathnameMock.mockReturnValue('/not-matching')
+    ;(useMedia as any).mockReturnValue(true)
+    ;(usePathname as any).mockReturnValue('/not-matching')
 
     render(<Navbar linksGroup="top" />)
 
-    // Ensure list exists
-    expect(screen.getByRole('list')).toBeInTheDocument()
+    // Ensure list exists (getByRole throws if not found)
+    screen.getByRole('list')
 
     const items = screen.getAllByTestId('hoverable-nav-link')
     // EXPORT is disabled => total 7 items
@@ -152,37 +148,36 @@ describe('Navbar', () => {
   })
 
   it('renders bottom nav links and filters disabled routes', () => {
-    useMediaMock.mockReturnValue(true)
-    usePathnameMock.mockReturnValue('/another')
+    ;(useMedia as any).mockReturnValue(true)
+    ;(usePathname as any).mockReturnValue('/another')
 
     render(<Navbar linksGroup="bottom" />)
 
     const items = screen.getAllByTestId('hoverable-nav-link')
     // ISSUE is disabled => only FEEDBACK remains
     expect(items).toHaveLength(1)
-    expect(items[0]).toHaveTextContent(TITLES.FEEDBACK)
+    expect(items[0].textContent).toBe(TITLES.FEEDBACK)
   })
 
   it('renders Logo when withLogo is true and respects media size', () => {
     // md and up
-    useMediaMock.mockReturnValue(true)
-    usePathnameMock.mockReturnValue('/any')
+    ;(useMedia as any).mockReturnValue(true)
+    ;(usePathname as any).mockReturnValue('/any')
 
     const { rerender } = render(<Navbar linksGroup="top" withLogo />)
     const logoMd = screen.getByTestId('logo')
-    expect(logoMd).toBeInTheDocument()
-    expect(logoMd).toHaveAttribute('data-size', 'sm')
+    expect(logoMd.getAttribute('data-size')).toBe('sm')
 
     // below md
-    useMediaMock.mockReturnValue(false)
+    ;(useMedia as any).mockReturnValue(false)
     rerender(<Navbar linksGroup="top" withLogo />)
     const logoSm = screen.getByTestId('logo')
-    expect(logoSm).toHaveAttribute('data-size', 'xxs')
+    expect(logoSm.getAttribute('data-size')).toBe('xxs')
   })
 
   it('marks the current route as active', () => {
-    useMediaMock.mockReturnValue(true)
-    usePathnameMock.mockReturnValue(ROUTES.CHART)
+    ;(useMedia as any).mockReturnValue(true)
+    ;(usePathname as any).mockReturnValue(ROUTES.CHART)
 
     render(<Navbar linksGroup="top" />)
 
@@ -191,7 +186,7 @@ describe('Navbar', () => {
     for (const item of items) {
       const title = item.textContent
       const isChart = title === TITLES.CHART
-      expect(item).toHaveAttribute('data-active', String(isChart))
+      expect(item.getAttribute('data-active')).toBe(String(isChart))
     }
   })
 })
