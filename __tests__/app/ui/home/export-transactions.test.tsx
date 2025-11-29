@@ -3,67 +3,123 @@ import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/re
 import '@testing-library/jest-dom'
 import React from 'react'
 
-vi.mock('date-fns', () => ({
-  format: vi.fn(() => '2024-01-31'),
-  subMonths: vi.fn(() => new Date('2023-12-31T00:00:00.000Z')),
-}))
-
-vi.mock('react-hot-toast', () => ({
-  default: {
-    success: vi.fn(),
-    error: vi.fn(),
-  },
-}))
-
-vi.mock('@heroui/react', () => {
-  const React = require('react')
-  const Button = ({ children, onPress, isLoading }: any) => (
-    <button onClick={onPress} disabled={isLoading}>{isLoading ? 'Exporting...' : children}</button>
-  )
-  const Card = ({ children }: any) => <div>{children}</div>
-  const CardBody = ({ children }: any) => <div>{children}</div>
-  const CardHeader = ({ children }: any) => <div>{children}</div>
-  const Select = ({ label, selectedKeys, onChange, children }: any) => (
-    <label>
-      <span>{label}</span>
-      <select
-        aria-label={label}
-        data-testid="export-format"
-        defaultValue={selectedKeys?.[0]}
-        onChange={(e) => onChange?.({ target: { value: (e.target as HTMLSelectElement).value } })}
-      >
-        {children}
-      </select>
-    </label>
-  )
-  const SelectItem = ({ children, value, key: keyProp }: any) => (
-    <option value={value ?? keyProp}>{children}</option>
-  )
-  const DateRangePicker = ({ label, onChange }: any) => {
-    const ReactLocal = React as typeof React
-    const [start, setStart] = ReactLocal.useState('')
-    const [end, setEnd] = ReactLocal.useState('')
-    return (
-      <div>
-        <span>{label}</span>
-        <input aria-label="start" placeholder="start" value={start} onChange={(e) => setStart((e.target as HTMLInputElement).value)} />
-        <input aria-label="end" placeholder="end" value={end} onChange={(e) => setEnd((e.target as HTMLInputElement).value)} />
-        <button onClick={() => onChange?.({ start: { toString: () => start }, end: { toString: () => end } })}>
-          Apply Range
-        </button>
-      </div>
-    )
+vi.mock('date-fns', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('date-fns')>()
+  const { vi: viLocal } = await import('vitest')
+  return {
+    ...actual,
+    format: viLocal.fn(() => '2024-01-31'),
+    subMonths: viLocal.fn(() => new Date('2023-12-31T00:00:00.000Z')),
   }
-  return { Button, Card, CardBody, CardHeader, Select, SelectItem, DateRangePicker }
 })
 
-vi.mock('../../../../app/lib/export-utils', () => ({
-  downloadFile: vi.fn(),
-  generateCSV: vi.fn(() => 'csv-data'),
-  generateJSON: vi.fn(() => 'json-data'),
-  getExportFilename: vi.fn((fmt: string) => (fmt === 'csv' ? 'export.csv' : 'export.json')),
-  getMimeType: vi.fn((fmt: string) => (fmt === 'csv' ? 'text/csv' : 'application/json')),
-}))
+vi.mock('react-hot-toast', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-hot-toast')>()
+  const { vi: viLocal } = await import('vitest')
+  const mockedDefault = {
+    success: viLocal.fn(),
+    error: viLocal.fn(),
+  } as any
+  return {
+    ...actual,
+    default: mockedDefault,
+  }
+})
+
+vi.mock('@heroui/react', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@heroui/react')>()
+  const ReactMod: any = await import('react')
+  const ReactLocal = ReactMod.default ?? ReactMod
+
+  const Button = ({ children, onPress, isLoading }: any) =>
+    ReactLocal.createElement(
+      'button',
+      { onClick: onPress, disabled: isLoading },
+      isLoading ? 'Exporting...' : children
+    )
+
+  const Card = ({ children }: any) => ReactLocal.createElement('div', null, children)
+  const CardBody = ({ children }: any) => ReactLocal.createElement('div', null, children)
+  const CardHeader = ({ children }: any) => ReactLocal.createElement('div', null, children)
+
+  const Select = ({ label, selectedKeys, onChange, children }: any) =>
+    ReactLocal.createElement(
+      'label',
+      null,
+      ReactLocal.createElement('span', null, label),
+      ReactLocal.createElement(
+        'select',
+        {
+          'aria-label': label,
+          'data-testid': 'export-format',
+          defaultValue: selectedKeys?.[0],
+          onChange: (e: any) =>
+            onChange?.({ target: { value: (e.target as HTMLSelectElement).value } }),
+        },
+        children
+      )
+    )
+
+  const SelectItem = ({ children, value, key: keyProp }: any) =>
+    ReactLocal.createElement('option', { value: value ?? keyProp }, children)
+
+  const DateRangePicker = ({ label, onChange }: any) => {
+    const [start, setStart] = ReactLocal.useState('')
+    const [end, setEnd] = ReactLocal.useState('')
+    return ReactLocal.createElement(
+      'div',
+      null,
+      ReactLocal.createElement('span', null, label),
+      ReactLocal.createElement('input', {
+        'aria-label': 'start',
+        placeholder: 'start',
+        value: start,
+        onChange: (e: any) => setStart((e.target as HTMLInputElement).value),
+      }),
+      ReactLocal.createElement('input', {
+        'aria-label': 'end',
+        placeholder: 'end',
+        value: end,
+        onChange: (e: any) => setEnd((e.target as HTMLInputElement).value),
+      }),
+      ReactLocal.createElement(
+        'button',
+        {
+          onClick: () =>
+            onChange?.({
+              start: { toString: () => start },
+              end: { toString: () => end },
+            }),
+        },
+        'Apply Range'
+      )
+    )
+  }
+
+  return {
+    ...actual,
+    Button,
+    Card,
+    CardBody,
+    CardHeader,
+    Select,
+    SelectItem,
+    DateRangePicker,
+  }
+})
+
+vi.mock('../../../../app/lib/export-utils', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../../../app/lib/export-utils')>()
+  const { vi: viLocal } = await import('vitest')
+  return {
+    ...actual,
+    downloadFile: viLocal.fn(),
+    generateCSV: viLocal.fn(() => 'csv-data'),
+    generateJSON: viLocal.fn(() => 'json-data'),
+    getExportFilename: viLocal.fn((fmt: string) => (fmt === 'csv' ? 'export.csv' : 'export.json')),
+    getMimeType: viLocal.fn((fmt: string) => (fmt === 'csv' ? 'text/csv' : 'application/json')),
+  }
+})
 
 import ExportTransactions from '../../../../app/ui/home/export-transactions'
 import toast from 'react-hot-toast'
@@ -114,16 +170,13 @@ describe('ExportTransactions', () => {
 
     render(<ExportTransactions transactions={initialTransactions} onExport={onExport} />)
 
-    // Change format to JSON
     const select = screen.getByTestId('export-format') as HTMLSelectElement
     fireEvent.change(select, { target: { value: 'json' } })
 
-    // Set date range and apply
     fireEvent.change(screen.getByLabelText('start'), { target: { value: '2024-05-01' } })
     fireEvent.change(screen.getByLabelText('end'), { target: { value: '2024-05-31' } })
     fireEvent.click(screen.getByText('Apply Range'))
 
-    // Verify info text reflects date range
     expect(
       screen.getByText('Exporting transactions from 2024-05-01 to 2024-05-31')
     ).toBeInTheDocument()
@@ -134,12 +187,10 @@ describe('ExportTransactions', () => {
       expect(onExport).toHaveBeenCalledTimes(1)
     })
 
-    const [startArg, endArg] = onExport.mock.calls[0]
+    const [startArg, endArg] = (onExport as any).mock.calls[0]
     expect(startArg).toBeInstanceOf(Date)
     expect(endArg).toBeInstanceOf(Date)
-    // Start date should match the provided start
     expect((startArg as Date).toISOString().slice(0, 10)).toBe('2024-05-01')
-    // End date should be end of day
     const end = endArg as Date
     expect(end.getHours()).toBe(23)
     expect(end.getMinutes()).toBe(59)
@@ -193,7 +244,6 @@ describe('ExportTransactions', () => {
     })
     expect(errorSpy).toHaveBeenCalled()
 
-    // Button should return to non-loading state
     expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument()
 
     errorSpy.mockRestore()

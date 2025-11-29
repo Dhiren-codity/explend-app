@@ -3,19 +3,19 @@ import { render, screen, fireEvent, cleanup, within } from '@testing-library/rea
 import '@testing-library/jest-dom'
 import React from 'react'
 
-const mockGetCachedAuthSession = vi.fn()
-const mockGetCachedAllTransactions = vi.fn()
-const mockGetTransactionsForExport = vi.fn()
-
 vi.mock('@/config/constants/navigation', () => ({
   NAV_TITLE: { EXPORT: 'Export' },
 }))
 
-vi.mock('../../../app/export/lib/actions', () => ({
-  getCachedAuthSession: mockGetCachedAuthSession,
-  getCachedAllTransactions: mockGetCachedAllTransactions,
-  getTransactionsForExport: mockGetTransactionsForExport,
-}))
+vi.mock('../../../app/export/lib/actions', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../../app/export/lib/actions')>()
+  return {
+    ...actual,
+    getCachedAuthSession: vi.fn(),
+    getCachedAllTransactions: vi.fn(),
+    getTransactionsForExport: vi.fn(),
+  }
+})
 
 vi.mock('../../../app/export/ui/no-transactions-plug', () => ({
   __esModule: true,
@@ -45,6 +45,7 @@ vi.mock('../../../app/export/ui/sidebar/with-sidebar', () => ({
   ),
 }))
 
+import * as actions from '../../../app/export/lib/actions'
 import Page from '../../../app/export/page'
 
 afterEach(() => {
@@ -54,6 +55,9 @@ afterEach(() => {
 
 describe('app/export/page', () => {
   it('renders title and no-transactions plug when there are no transactions', async () => {
+    const mockGetCachedAuthSession = actions.getCachedAuthSession as unknown as vi.Mock
+    const mockGetCachedAllTransactions = actions.getCachedAllTransactions as unknown as vi.Mock
+
     mockGetCachedAuthSession.mockResolvedValue({ user: { email: 'user@example.com' } })
     mockGetCachedAllTransactions.mockResolvedValue([])
 
@@ -77,6 +81,10 @@ describe('app/export/page', () => {
   })
 
   it('renders export component when transactions exist and triggers export action', async () => {
+    const mockGetCachedAuthSession = actions.getCachedAuthSession as unknown as vi.Mock
+    const mockGetCachedAllTransactions = actions.getCachedAllTransactions as unknown as vi.Mock
+    const mockGetTransactionsForExport = actions.getTransactionsForExport as unknown as vi.Mock
+
     const userEmail = 'user2@example.com'
     mockGetCachedAuthSession.mockResolvedValue({ user: { email: userEmail } })
     mockGetCachedAllTransactions.mockResolvedValue([{ id: 't1' }, { id: 't2' }])

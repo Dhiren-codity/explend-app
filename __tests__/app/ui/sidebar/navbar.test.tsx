@@ -32,7 +32,6 @@ vi.mock('@/config/constants/routes', () => ({
     FEEDBACK: '/feedback',
     ISSUE: '/issue',
   },
-  // Disable only the EXPORT route to verify filtering behavior
   DISABLED_ROUTES: ['/export'],
 }))
 
@@ -43,6 +42,13 @@ vi.mock('@/app/lib/helpers', () => ({
   },
 }))
 
+vi.mock('date-fns', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('date-fns')>()
+  return {
+    ...actual,
+  }
+})
+
 vi.mock('react-use', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-use')>()
   return {
@@ -51,28 +57,38 @@ vi.mock('react-use', async (importOriginal) => {
   }
 })
 
-vi.mock('next/navigation', () => ({
-  usePathname: vi.fn(),
-}))
-
-vi.mock('../../../../app/ui/sidebar/hoverables', () => {
+vi.mock('next/navigation', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('next/navigation')>()
   return {
-    HoverableNavLink: ({ idx, link, isActiveLink }: any) => (
-      <li
-        role="listitem"
-        data-testid="nav-link"
-        data-idx={String(idx)}
-        data-active={isActiveLink ? 'true' : 'false'}
-      >
-        <span>{link.title}</span>
-      </li>
-    ),
+    ...actual,
+    usePathname: vi.fn(),
   }
 })
 
-vi.mock('../../../../app/ui/sidebar/logo', () => ({
-  default: ({ size }: any) => <div data-testid="logo" data-size={size} />,
-}))
+vi.mock('../../../../app/ui/sidebar/hoverables', async () => {
+  const ReactMod = await import('react')
+  return {
+    HoverableNavLink: ({ idx, link, isActiveLink }: any) =>
+      ReactMod.createElement(
+        'li',
+        {
+          role: 'listitem',
+          'data-testid': 'nav-link',
+          'data-idx': String(idx),
+          'data-active': isActiveLink ? 'true' : 'false',
+        },
+        ReactMod.createElement('span', null, link.title),
+      ),
+  }
+})
+
+vi.mock('../../../../app/ui/sidebar/logo', async () => {
+  const ReactMod = await import('react')
+  return {
+    default: ({ size }: any) =>
+      ReactMod.createElement('div', { 'data-testid': 'logo', 'data-size': size }),
+  }
+})
 
 import Navbar from '../../../../app/ui/sidebar/navbar'
 import { useMedia } from 'react-use'
