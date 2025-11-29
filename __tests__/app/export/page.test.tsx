@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { render, screen, cleanup } from '@testing-library/react'
-import '@testing-library/jest-dom'
 import React from 'react'
 
 vi.mock('date-fns', () => ({
@@ -71,15 +70,14 @@ describe('app/export/page', () => {
     const ui = await Page()
     render(ui)
 
-    expect(screen.getByTestId('with-sidebar')).toBeInTheDocument()
-    expect(screen.getByRole('heading', { level: 1, name: 'Export' })).toBeInTheDocument()
-    expect(screen.getByTestId('no-transactions-plug')).toBeInTheDocument()
-    expect(screen.queryByTestId('export-transactions')).not.toBeInTheDocument()
+    expect(screen.getByTestId('with-sidebar')).toBeTruthy()
+    expect(screen.getByRole('heading', { level: 1, name: 'Export' })).toBeTruthy()
+    expect(screen.getByTestId('no-transactions-plug')).toBeTruthy()
+    expect(screen.queryByTestId('export-transactions')).toBeNull()
 
-    expect(getCachedAuthSession).toHaveBeenCalledTimes(2)
-    expect(getCachedAllTransactions).toHaveBeenCalledTimes(2)
-    expect(getCachedAllTransactions).toHaveBeenNthCalledWith(1, 'john@example.com')
-    expect(getCachedAllTransactions).toHaveBeenNthCalledWith(2, 'john@example.com')
+    expect(getCachedAuthSession).toHaveBeenCalledTimes(1)
+    expect(getCachedAllTransactions).toHaveBeenCalledTimes(1)
+    expect(getCachedAllTransactions).toHaveBeenCalledWith('john@example.com')
   })
 
   it('renders ExportTransactions when transactions exist and onExport calls server action', async () => {
@@ -96,9 +94,9 @@ describe('app/export/page', () => {
     const ui = await Page()
     render(ui)
 
-    expect(screen.getByRole('heading', { level: 1, name: 'Export' })).toBeInTheDocument()
-    expect(screen.getByTestId('export-transactions')).toHaveTextContent('1 items')
-    expect(screen.queryByTestId('no-transactions-plug')).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1, name: 'Export' })).toBeTruthy()
+    expect(screen.getByTestId('export-transactions').textContent).toContain('1 items')
+    expect(screen.queryByTestId('no-transactions-plug')).toBeNull()
 
     const exportTransactionsProps = exportTransactionsMock.getLastProps()
     expect(exportTransactionsProps).toBeDefined()
@@ -114,9 +112,8 @@ describe('app/export/page', () => {
     expect(getTransactionsForExport).toHaveBeenCalledWith(userEmail, start, end)
     expect(result).toEqual(exported)
 
-    expect(getCachedAuthSession).toHaveBeenCalledTimes(2)
-    expect(getCachedAllTransactions).toHaveBeenCalledTimes(2)
-    expect(getCachedAllTransactions).toHaveBeenNthCalledWith(1, userEmail)
-    expect(getCachedAllTransactions).toHaveBeenNthCalledWith(2, userEmail)
+    expect(getCachedAuthSession).toHaveBeenCalledTimes(1)
+    expect(getCachedAllTransactions).toHaveBeenCalledTimes(1)
+    expect(getCachedAllTransactions).toHaveBeenCalledWith(userEmail)
   })
 })

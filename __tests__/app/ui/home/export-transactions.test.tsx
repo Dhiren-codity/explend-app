@@ -21,10 +21,12 @@ vi.mock('react-hot-toast', async (importOriginal) => {
 
 vi.mock('react-icons/pi', async (importOriginal) => {
   const actual = await importOriginal()
-  return {
-    ...actual,
-    PiDownloadSimpleFill: () => null,
-  }
+  return new Proxy(actual as object, {
+    get(target, prop) {
+      // return actual export if present, otherwise a noop component
+      return (target as any)[prop] ?? (() => null)
+    },
+  })
 })
 
 vi.mock('@/config/constants/main', () => ({
