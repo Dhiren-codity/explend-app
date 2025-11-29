@@ -1,13 +1,14 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { render, screen, waitFor, fireEvent, cleanup } from '@testing-library/react'
-import '@testing-library/jest-dom'
 import React from 'react'
 
-// Mock date-fns (npm package) with importOriginal as required
+// Mock date-fns (npm package) with importOriginal and provide needed fns
 vi.mock('date-fns', async (importOriginal) => {
   const actual = await importOriginal<typeof import('date-fns')>()
   return {
     ...actual,
+    format: vi.fn(() => '2024-01-01'),
+    subMonths: vi.fn(() => new Date('2024-01-01')),
   }
 })
 
@@ -81,10 +82,10 @@ describe('app/export/page', () => {
     const ui = await Page()
     render(ui)
 
-    expect(screen.getByRole('heading', { name: NAV_TITLE.EXPORT })).toBeInTheDocument()
-    expect(screen.getByTestId('with-sidebar')).toBeInTheDocument()
-    expect(screen.getByTestId('no-transactions-plug')).toBeInTheDocument()
-    expect(screen.queryByTestId('export-transactions')).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: NAV_TITLE.EXPORT })).toBeTruthy()
+    expect(screen.getByTestId('with-sidebar')).toBeTruthy()
+    expect(screen.getByTestId('no-transactions-plug')).toBeTruthy()
+    expect(screen.queryByTestId('export-transactions')).toBeNull()
   })
 
   it('renders ExportTransactions when transactions exist and triggers export handler', async () => {
@@ -95,9 +96,9 @@ describe('app/export/page', () => {
     const ui = await Page()
     render(ui)
 
-    expect(screen.getByRole('heading', { name: NAV_TITLE.EXPORT })).toBeInTheDocument()
-    expect(screen.queryByTestId('no-transactions-plug')).not.toBeInTheDocument()
-    expect(screen.getByTestId('export-transactions')).toHaveTextContent('count: 1')
+    expect(screen.getByRole('heading', { name: NAV_TITLE.EXPORT })).toBeTruthy()
+    expect(screen.queryByTestId('no-transactions-plug')).toBeNull()
+    expect(screen.getByTestId('export-transactions').textContent).toContain('count: 1')
 
     fireEvent.click(screen.getByRole('button', { name: 'Export Now' }))
 

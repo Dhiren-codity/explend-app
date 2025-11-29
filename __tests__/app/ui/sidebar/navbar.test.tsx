@@ -1,7 +1,14 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest'
 import { render, screen, cleanup } from '@testing-library/react'
-import '@testing-library/jest-dom'
+import '@testing-library/jest-dom/vitest'
 import React from 'react'
+
+vi.mock('date-fns', () => {
+  return {
+    format: vi.fn((date: Date | number, fmt: string) => '2024-01-01'),
+    subMonths: vi.fn((date: Date | number, n: number) => new Date('2024-01-01')),
+  }
+})
 
 vi.mock('react-use', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-use')>()
@@ -56,7 +63,6 @@ vi.mock('@/app/lib/helpers', () => {
   }
 })
 
-// Mock child components used by Navbar
 vi.mock('@/app/ui/sidebar/hoverables', async () => {
   const React = await import('react')
   return {
@@ -97,9 +103,7 @@ const setPathname = (value: string) => {
 
 beforeEach(() => {
   vi.clearAllMocks()
-  // reset disabled routes
   routesModule.DISABLED_ROUTES.length = 0
-  // defaults
   setMedia(true)
   setPathname('/')
 })
@@ -132,17 +136,14 @@ describe('Navbar', () => {
   })
 
   it('renders all top nav links when none are disabled and marks active based on pathname', () => {
-    // Ensure no disabled routes
     routesModule.DISABLED_ROUTES.length = 0
     setPathname(routesModule.ROUTE.HOME)
 
     render(<Navbar linksGroup="top" />)
 
-    // Expect 8 items for top links
     const items = screen.getAllByTestId('nav-item')
     expect(items).toHaveLength(8)
 
-    // Each title should be present
     expect(screen.getByText(NAV_TITLE.HOME)).toBeInTheDocument()
     expect(screen.getByText(NAV_TITLE.MONTHLY_REPORT)).toBeInTheDocument()
     expect(screen.getByText(NAV_TITLE.CHART)).toBeInTheDocument()
@@ -152,7 +153,6 @@ describe('Navbar', () => {
     expect(screen.getByText(NAV_TITLE.EXPORT)).toBeInTheDocument()
     expect(screen.getByText(NAV_TITLE.SETTINGS)).toBeInTheDocument()
 
-    // Active state is set for current path
     const activeItems = items.filter((el) => el.getAttribute('data-active') === 'true')
     expect(activeItems).toHaveLength(1)
     expect(activeItems[0]).toHaveAttribute('data-url', routesModule.ROUTE.HOME)
@@ -166,12 +166,10 @@ describe('Navbar', () => {
     render(<Navbar linksGroup="top" />)
 
     const items = screen.getAllByTestId('nav-item')
-    // 8 total minus 2 disabled
     expect(items).toHaveLength(6)
     expect(screen.queryByText(NAV_TITLE.LIMITS)).not.toBeInTheDocument()
     expect(screen.queryByText(NAV_TITLE.EXPORT)).not.toBeInTheDocument()
 
-    // Ensure other titles still render
     expect(screen.getByText(NAV_TITLE.HOME)).toBeInTheDocument()
     expect(screen.getByText(NAV_TITLE.MONTHLY_REPORT)).toBeInTheDocument()
     expect(screen.getByText(NAV_TITLE.CHART)).toBeInTheDocument()

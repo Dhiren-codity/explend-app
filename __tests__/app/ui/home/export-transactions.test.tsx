@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import React from 'react'
 import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react'
-import '@testing-library/jest-dom'
 
 // Mocks
 vi.mock('react-hot-toast', async (importOriginal) => {
@@ -186,13 +185,13 @@ describe('ExportTransactions component', () => {
     const onExport = vi.fn()
     render(<ExportTransactions transactions={sampleTransactions} onExport={onExport} />)
 
-    expect(screen.getByRole('heading', { name: /Export Transactions/i })).toBeInTheDocument()
-    expect(screen.getByLabelText('Export Format')).toBeInTheDocument()
-    expect(screen.getByLabelText('Date Range (Optional) start')).toBeInTheDocument()
-    expect(screen.getByLabelText('Date Range (Optional) end')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Export/i })).toBeInTheDocument()
+    screen.getByRole('heading', { name: /Export Transactions/i })
+    screen.getByLabelText('Export Format')
+    screen.getByLabelText('Date Range (Optional) start')
+    screen.getByLabelText('Date Range (Optional) end')
+    screen.getByRole('button', { name: /Export/i })
 
-    expect(screen.getByText('Ready to export all 2 transactions')).toBeInTheDocument()
+    screen.getByText('Ready to export all 2 transactions')
   })
 
   it('exports CSV by default without calling onExport when no date range is selected', async () => {
@@ -210,11 +209,12 @@ describe('ExportTransactions component', () => {
     expect(getMimeType).toHaveBeenCalledWith('csv')
     expect(downloadFile).toHaveBeenCalledWith('CSV_CONTENT', 'export.csv', 'text/csv')
 
-    expect(toast.success).toHaveBeenCalledWith('Exported 2 transactions')
-    expect(toast.error).not.toHaveBeenCalled()
+    expect((toast as any).success).toHaveBeenCalledWith('Exported 2 transactions')
+    expect((toast as any).error).not.toHaveBeenCalled()
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /Export/i })).toBeEnabled()
+      const btn = screen.getByRole('button', { name: /Export/i }) as HTMLButtonElement
+      expect(btn.disabled).toBe(false)
     })
   })
 
@@ -236,7 +236,7 @@ describe('ExportTransactions component', () => {
     expect(getMimeType).toHaveBeenCalledWith('json')
     expect(downloadFile).toHaveBeenCalledWith('JSON_CONTENT', 'export.json', 'application/json')
 
-    expect(toast.success).toHaveBeenCalledWith('Exported 2 transactions')
+    expect((toast as any).success).toHaveBeenCalledWith('Exported 2 transactions')
   })
 
   it('applies date range and calls onExport with start and end dates (end at 23:59:59.999)', async () => {
@@ -250,9 +250,7 @@ describe('ExportTransactions component', () => {
     fireEvent.change(startInput, { target: { value: '2024-01-01' } })
     fireEvent.change(endInput, { target: { value: '2024-01-31' } })
 
-    expect(
-      screen.getByText('Exporting transactions from 2024-01-01 to 2024-01-31'),
-    ).toBeInTheDocument()
+    screen.getByText('Exporting transactions from 2024-01-01 to 2024-01-31')
 
     fireEvent.click(screen.getByRole('button', { name: /Export/i }))
 
@@ -260,14 +258,13 @@ describe('ExportTransactions component', () => {
       expect(onExport).toHaveBeenCalledTimes(1)
     })
 
-    const [startArg, endArg] = onExport.mock.calls[0]
+    const [startArg, endArg] = (onExport as any).mock.calls[0]
     expect(startArg).toBeInstanceOf(Date)
     expect(endArg).toBeInstanceOf(Date)
 
     expect(startArg.getFullYear()).toBe(2024)
     expect(startArg.getMonth()).toBe(0)
     expect(startArg.getDate()).toBe(1)
-    // start time should be default 00:00:00.000 local time
     expect(startArg.getHours()).toBe(0)
     expect(startArg.getMinutes()).toBe(0)
 
@@ -280,7 +277,7 @@ describe('ExportTransactions component', () => {
     expect(endArg.getMilliseconds()).toBe(999)
 
     expect(generateCSV).toHaveBeenCalledWith(returned)
-    expect(toast.success).toHaveBeenCalledWith('Exported 1 transaction')
+    expect((toast as any).success).toHaveBeenCalledWith('Exported 1 transaction')
   })
 
   it('shows error toast when there are no transactions to export', async () => {
@@ -289,12 +286,13 @@ describe('ExportTransactions component', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /Export/i }))
 
-    expect(toast.error).toHaveBeenCalledWith('No transactions to export')
+    expect((toast as any).error).toHaveBeenCalledWith('No transactions to export')
     expect(downloadFile).not.toHaveBeenCalled()
-    expect(toast.success).not.toHaveBeenCalled()
+    expect((toast as any).success).not.toHaveBeenCalled()
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /Export/i })).toBeEnabled()
+      const btn = screen.getByRole('button', { name: /Export/i }) as HTMLButtonElement
+      expect(btn.disabled).toBe(false)
     })
   })
 
@@ -307,7 +305,7 @@ describe('ExportTransactions component', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /Export/i }))
 
-    expect(toast.error).toHaveBeenCalledWith('Failed to export transactions')
+    expect((toast as any).error).toHaveBeenCalledWith('Failed to export transactions')
   })
 
   it('when date range set and onExport returns empty, shows "No transactions to export"', async () => {
@@ -326,8 +324,8 @@ describe('ExportTransactions component', () => {
       expect(onExport).toHaveBeenCalledTimes(1)
     })
 
-    expect(toast.error).toHaveBeenCalledWith('No transactions to export')
+    expect((toast as any).error).toHaveBeenCalledWith('No transactions to export')
     expect(downloadFile).not.toHaveBeenCalled()
-    expect(toast.success).not.toHaveBeenCalled()
+    expect((toast as any).success).not.toHaveBeenCalled()
   })
 })
