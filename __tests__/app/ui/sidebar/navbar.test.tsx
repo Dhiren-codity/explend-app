@@ -1,7 +1,12 @@
-import { describe, it, expect, vi, afterEach } from 'vitest'
+import { describe, it, expect, vi, afterEach, type Mock } from 'vitest'
 import { render, screen, cleanup } from '@testing-library/react'
-import '@testing-library/jest-dom'
+import '@testing-library/jest-dom/vitest'
 import React from 'react'
+
+vi.mock('date-fns', () => ({
+  format: vi.fn(() => '2024-01-01'),
+  subMonths: vi.fn(() => new Date('2024-01-01')),
+}))
 
 vi.mock('next/navigation', () => ({
   usePathname: vi.fn(),
@@ -83,12 +88,11 @@ afterEach(() => {
 
 describe('Navbar', () => {
   it('renders top links, filters disabled ones, and marks active link', () => {
-    ;(useMedia as unknown as vi.Mock).mockReturnValue(true)
-    ;(usePathname as unknown as vi.Mock).mockReturnValue('/settings')
+    ;(useMedia as unknown as Mock).mockReturnValue(true)
+    ;(usePathname as unknown as Mock).mockReturnValue('/settings')
 
     render(<Navbar linksGroup="top" />)
 
-    // Present (filtered top links)
     expect(screen.getByTestId('nav-link-Home')).toBeInTheDocument()
     expect(screen.getByTestId('nav-link-Monthly report')).toBeInTheDocument()
     expect(screen.getByTestId('nav-link-Limits')).toBeInTheDocument()
@@ -96,37 +100,29 @@ describe('Navbar', () => {
     expect(screen.getByTestId('nav-link-Categories')).toBeInTheDocument()
     expect(screen.getByTestId('nav-link-Settings')).toBeInTheDocument()
 
-    // Disabled (should not render)
     expect(screen.queryByTestId('nav-link-Chart')).not.toBeInTheDocument()
     expect(screen.queryByTestId('nav-link-Export')).not.toBeInTheDocument()
 
-    // Active state
     expect(screen.getByTestId('nav-link-Settings')).toHaveAttribute('data-active', 'true')
     expect(screen.getByTestId('nav-link-Home')).toHaveAttribute('data-active', 'false')
 
-    // List role exists
     expect(screen.getByRole('list')).toBeInTheDocument()
   })
 
   it('renders bottom links, filters disabled ones, and marks active link', () => {
-    ;(useMedia as unknown as vi.Mock).mockReturnValue(true)
-    ;(usePathname as unknown as vi.Mock).mockReturnValue('/feedback')
+    ;(useMedia as unknown as Mock).mockReturnValue(true)
+    ;(usePathname as unknown as Mock).mockReturnValue('/feedback')
 
     render(<Navbar linksGroup="bottom" />)
 
-    // Present
     expect(screen.getByTestId('nav-link-Feedback')).toBeInTheDocument()
-
-    // Disabled
     expect(screen.queryByTestId('nav-link-Issue')).not.toBeInTheDocument()
-
-    // Active state
     expect(screen.getByTestId('nav-link-Feedback')).toHaveAttribute('data-active', 'true')
   })
 
   it('renders Logo when withLogo is true and uses sm size on md screens', () => {
-    ;(useMedia as unknown as vi.Mock).mockReturnValue(true)
-    ;(usePathname as unknown as vi.Mock).mockReturnValue('/')
+    ;(useMedia as unknown as Mock).mockReturnValue(true)
+    ;(usePathname as unknown as Mock).mockReturnValue('/')
 
     render(<Navbar linksGroup="top" withLogo />)
 
@@ -136,8 +132,8 @@ describe('Navbar', () => {
   })
 
   it('uses xxs logo size when not md screen', () => {
-    ;(useMedia as unknown as vi.Mock).mockReturnValue(false)
-    ;(usePathname as unknown as vi.Mock).mockReturnValue('/')
+    ;(useMedia as unknown as Mock).mockReturnValue(false)
+    ;(usePathname as unknown as Mock).mockReturnValue('/')
 
     render(<Navbar linksGroup="top" withLogo />)
 
@@ -147,8 +143,8 @@ describe('Navbar', () => {
   })
 
   it('does not render Logo when withLogo is false/omitted', () => {
-    ;(useMedia as unknown as vi.Mock).mockReturnValue(true)
-    ;(usePathname as unknown as vi.Mock).mockReturnValue('/')
+    ;(useMedia as unknown as Mock).mockReturnValue(true)
+    ;(usePathname as unknown as Mock).mockReturnValue('/')
 
     render(<Navbar linksGroup="top" />)
 

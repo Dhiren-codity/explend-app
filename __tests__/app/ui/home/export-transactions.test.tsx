@@ -1,31 +1,35 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import React from 'react'
 import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react'
-import '@testing-library/jest-dom'
+import '@testing-library/jest-dom/vitest'
 
 vi.mock('date-fns', async () => {
   let mod: any = {}
   try {
     mod = await vi.importActual<any>('date-fns')
   } catch {}
+  const formatFn = vi.fn((date: any) => {
+    if (typeof date === 'string') return date
+    if (date instanceof Date) {
+      const yyyy = date.getFullYear()
+      const mm = String(date.getMonth() + 1).padStart(2, '0')
+      const dd = String(date.getDate()).padStart(2, '0')
+      return `${yyyy}-${mm}-${dd}`
+    }
+    if (date && typeof date.toString === 'function') return date.toString()
+    return '2024-01-01'
+  })
+  const subMonthsFn = vi.fn((d: Date, n: number = 1) => {
+    const dt = new Date(d)
+    dt.setMonth(dt.getMonth() - n)
+    return dt
+  })
   return {
     ...mod,
-    format: vi.fn((date: any) => {
-      if (typeof date === 'string') return date
-      if (date instanceof Date) {
-        const yyyy = date.getFullYear()
-        const mm = String(date.getMonth() + 1).padStart(2, '0')
-        const dd = String(date.getDate()).padStart(2, '0')
-        return `${yyyy}-${mm}-${dd}`
-      }
-      if (date && typeof date.toString === 'function') return date.toString()
-      return '2024-01-01'
-    }),
-    subMonths: vi.fn((d: Date, n: number = 1) => {
-      const dt = new Date(d)
-      dt.setMonth(dt.getMonth() - n)
-      return dt
-    }),
+    format: formatFn,
+    format2: formatFn, // guard against bundler-renamed imports
+    subMonths: subMonthsFn,
+    subMonths2: subMonthsFn, // guard against bundler-renamed imports
   }
 })
 
@@ -49,11 +53,19 @@ vi.mock('@heroui/react', async () => {
   try {
     mod = await vi.importActual<any>('@heroui/react')
   } catch {}
+
+  const firstFromKeys = (keys: any) => {
+    if (!keys) return ''
+    if (Array.isArray(keys)) return keys[0] ?? ''
+    if (keys instanceof Set) {
+      const it = keys.values().next()
+      return it.done ? '' : it.value
+    }
+    return keys
+  }
+
   const Select = ({ label, selectedKeys, defaultSelectedKeys, onSelectionChange, onChange, children, className }: any) => {
-    const value =
-      (Array.isArray(selectedKeys) ? selectedKeys[0] : selectedKeys) ??
-      (Array.isArray(defaultSelectedKeys) ? defaultSelectedKeys[0] : defaultSelectedKeys) ??
-      ''
+    const value = firstFromKeys(selectedKeys) || firstFromKeys(defaultSelectedKeys) || ''
     const handleChange = (ev: React.ChangeEvent<HTMLSelectElement>) => {
       const v = (ev.target as HTMLSelectElement).value
       if (onSelectionChange) {
