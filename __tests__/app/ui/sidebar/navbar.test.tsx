@@ -1,14 +1,17 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, cleanup } from '@testing-library/react'
-import '@testing-library/jest-dom'
 import React from 'react'
 
-const useMediaMock = vi.fn().mockReturnValue(true)
+const { useMediaMock } = vi.hoisted(() => ({
+  useMediaMock: vi.fn().mockReturnValue(true),
+}))
 vi.mock('react-use', () => ({
   useMedia: (q: string, d?: boolean) => useMediaMock(q, d),
 }))
 
-const usePathnameMock = vi.fn().mockReturnValue('/')
+const { usePathnameMock } = vi.hoisted(() => ({
+  usePathnameMock: vi.fn().mockReturnValue('/'),
+}))
 vi.mock('next/navigation', () => ({
   usePathname: () => usePathnameMock(),
 }))
@@ -118,21 +121,22 @@ describe('Navbar', () => {
 
     await renderNavbar({ linksGroup: 'top' })
 
-    expect(screen.getByText(NAV_TITLE.HOME)).toBeInTheDocument()
-    expect(screen.getByText(NAV_TITLE.MONTHLY_REPORT)).toBeInTheDocument()
-    expect(screen.getByText(NAV_TITLE.CHART)).toBeInTheDocument()
-    expect(screen.getByText(NAV_TITLE.LIMITS)).toBeInTheDocument()
-    expect(screen.getByText(NAV_TITLE.SUBSCRIPTIONS)).toBeInTheDocument()
-    expect(screen.getByText(NAV_TITLE.CATEGORIES)).toBeInTheDocument()
-    expect(screen.getByText(NAV_TITLE.SETTINGS)).toBeInTheDocument()
+    expect(screen.getByText(NAV_TITLE.HOME)).toBeTruthy()
+    expect(screen.getByText(NAV_TITLE.MONTHLY_REPORT)).toBeTruthy()
+    expect(screen.getByText(NAV_TITLE.CHART)).toBeTruthy()
+    expect(screen.getByText(NAV_TITLE.LIMITS)).toBeTruthy()
+    expect(screen.getByText(NAV_TITLE.SUBSCRIPTIONS)).toBeTruthy()
+    expect(screen.getByText(NAV_TITLE.CATEGORIES)).toBeTruthy()
+    expect(screen.getByText(NAV_TITLE.SETTINGS)).toBeTruthy()
 
-    expect(screen.queryByText(NAV_TITLE.EXPORT)).not.toBeInTheDocument()
+    expect(screen.queryByText(NAV_TITLE.EXPORT)).toBeNull()
 
     const items = screen.getAllByRole('listitem')
     expect(items.length).toBe(7)
 
     const activeItem = screen.getByText(NAV_TITLE.SETTINGS).closest('[role="listitem"]')
-    expect(activeItem).toHaveAttribute('data-active', 'true')
+    expect(activeItem).not.toBeNull()
+    expect(activeItem?.getAttribute('data-active')).toBe('true')
   })
 
   it('renders bottom link group and respects disabled routes', async () => {
@@ -140,34 +144,34 @@ describe('Navbar', () => {
     const { NAV_TITLE } = await import('@/config/constants/navigation')
 
     await renderNavbar({ linksGroup: 'bottom' })
-    expect(screen.getByText(NAV_TITLE.FEEDBACK)).toBeInTheDocument()
-    expect(screen.getByText(NAV_TITLE.ISSUE)).toBeInTheDocument()
+    expect(screen.getByText(NAV_TITLE.FEEDBACK)).toBeTruthy()
+    expect(screen.getByText(NAV_TITLE.ISSUE)).toBeTruthy()
     expect(screen.getAllByRole('listitem').length).toBe(2)
 
     cleanup()
 
     DISABLED_ROUTES.push(ROUTE.ISSUE)
     await renderNavbar({ linksGroup: 'bottom' })
-    expect(screen.getByText(NAV_TITLE.FEEDBACK)).toBeInTheDocument()
-    expect(screen.queryByText(NAV_TITLE.ISSUE)).not.toBeInTheDocument()
+    expect(screen.getByText(NAV_TITLE.FEEDBACK)).toBeTruthy()
+    expect(screen.queryByText(NAV_TITLE.ISSUE)).toBeNull()
     expect(screen.getAllByRole('listitem').length).toBe(1)
   })
 
   it('renders Logo with correct size based on media query and withLogo flag', async () => {
     useMediaMock.mockReturnValue(true)
     await renderNavbar({ linksGroup: 'top', withLogo: true })
-    expect(screen.getByTestId('logo')).toHaveAttribute('data-size', 'sm')
+    expect(screen.getByTestId('logo').getAttribute('data-size')).toBe('sm')
 
     cleanup()
 
     useMediaMock.mockReturnValue(false)
     await renderNavbar({ linksGroup: 'top', withLogo: true })
-    expect(screen.getByTestId('logo')).toHaveAttribute('data-size', 'xxs')
+    expect(screen.getByTestId('logo').getAttribute('data-size')).toBe('xxs')
 
     cleanup()
 
     await renderNavbar({ linksGroup: 'top', withLogo: false })
-    expect(screen.queryByTestId('logo')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('logo')).toBeNull()
   })
 
   it('passes sequential idx to items', async () => {
@@ -177,7 +181,7 @@ describe('Navbar', () => {
     await renderNavbar({ linksGroup: 'top' })
     const items = screen.getAllByRole('listitem')
     items.forEach((item, i) => {
-      expect(item).toHaveAttribute('data-idx', String(i))
+      expect(item.getAttribute('data-idx')).toBe(String(i))
     })
   })
 })

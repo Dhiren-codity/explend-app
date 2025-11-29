@@ -1,36 +1,29 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react'
-import '@testing-library/jest-dom'
 import React from 'react'
 
 vi.mock('@/config/constants/main', () => ({
   DEFAULT_ICON_SIZE: 16,
 }))
 
-// Mock react-hot-toast
-const toastSuccess = vi.fn()
-const toastError = vi.fn()
 vi.mock('react-hot-toast', () => ({
   default: {
-    success: toastSuccess,
-    error: toastError,
+    success: vi.fn(),
+    error: vi.fn(),
   },
 }))
 
-// Mock export-utils
-const downloadFile = vi.fn()
-const generateCSV = vi.fn().mockReturnValue('csv-content')
-const generateJSON = vi.fn().mockReturnValue('json-content')
-const getExportFilename = vi.fn().mockImplementation((format: string) => `export.${format}`)
-const getMimeType = vi.fn().mockImplementation((format: string) => (format === 'csv' ? 'text/csv' : 'application/json'))
-
-vi.mock('@/app/lib/export-utils', () => ({
-  downloadFile,
-  generateCSV,
-  generateJSON,
-  getExportFilename,
-  getMimeType,
-}))
+vi.mock('@/app/lib/export-utils', () => {
+  return {
+    downloadFile: vi.fn(),
+    generateCSV: vi.fn().mockReturnValue('csv-content'),
+    generateJSON: vi.fn().mockReturnValue('json-content'),
+    getExportFilename: vi.fn().mockImplementation((format: string) => `export.${format}`),
+    getMimeType: vi.fn().mockImplementation((format: string) =>
+      format === 'csv' ? 'text/csv' : 'application/json'
+    ),
+  }
+})
 
 // Mock @heroui/react components with lightweight stand-ins
 vi.mock('@heroui/react', () => {
@@ -105,13 +98,13 @@ vi.mock('@heroui/react', () => {
   }
 })
 
+import toast from 'react-hot-toast'
+import * as exportUtils from '@/app/lib/export-utils'
 import ExportTransactions from '../../../../app/ui/home/export-transactions'
 
 afterEach(() => {
   cleanup()
   vi.clearAllMocks()
-  toastSuccess.mockClear()
-  toastError.mockClear()
 })
 
 function makeTransactions(n: number): any[] {
@@ -121,10 +114,10 @@ function makeTransactions(n: number): any[] {
 describe('ExportTransactions', () => {
   it('renders heading and default info text with pluralization', () => {
     render(<ExportTransactions transactions={makeTransactions(2)} onExport={vi.fn()} />)
-    expect(screen.getByText('Export Transactions')).toBeInTheDocument()
-    expect(screen.getByText('Ready to export all 2 transactions')).toBeInTheDocument()
-    expect(screen.getByLabelText('Export Format')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument()
+    expect(screen.getByText('Export Transactions')).toBeTruthy()
+    expect(screen.getByText('Ready to export all 2 transactions')).toBeTruthy()
+    expect(screen.getByLabelText('Export Format')).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Export' })).toBeTruthy()
   })
 
   it('exports existing transactions as CSV by default without calling onExport when no date range', async () => {
@@ -135,12 +128,12 @@ describe('ExportTransactions', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Export' }))
 
     expect(onExport).not.toHaveBeenCalled()
-    expect(generateCSV).toHaveBeenCalledTimes(1)
-    expect(generateCSV).toHaveBeenCalledWith(transactions)
-    expect(getExportFilename).toHaveBeenCalledWith('csv')
-    expect(getMimeType).toHaveBeenCalledWith('csv')
-    expect(downloadFile).toHaveBeenCalledWith('csv-content', 'export.csv', 'text/csv')
-    expect(toastSuccess).toHaveBeenCalledWith('Exported 3 transactions')
+    expect(exportUtils.generateCSV).toHaveBeenCalledTimes(1)
+    expect(exportUtils.generateCSV).toHaveBeenCalledWith(transactions)
+    expect(exportUtils.getExportFilename).toHaveBeenCalledWith('csv')
+    expect(exportUtils.getMimeType).toHaveBeenCalledWith('csv')
+    expect(exportUtils.downloadFile).toHaveBeenCalledWith('csv-content', 'export.csv', 'text/csv')
+    expect((toast.success as any)).toHaveBeenCalledWith('Exported 3 transactions')
   })
 
   it('shows error toast when there are no transactions to export', () => {
@@ -150,8 +143,8 @@ describe('ExportTransactions', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Export' }))
 
     expect(onExport).not.toHaveBeenCalled()
-    expect(downloadFile).not.toHaveBeenCalled()
-    expect(toastError).toHaveBeenCalledWith('No transactions to export')
+    expect(exportUtils.downloadFile).not.toHaveBeenCalled()
+    expect((toast.error as any)).toHaveBeenCalledWith('No transactions to export')
   })
 
   it('switches to JSON format when selected and uses JSON utils', () => {
@@ -164,12 +157,12 @@ describe('ExportTransactions', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Export' }))
 
-    expect(generateJSON).toHaveBeenCalledTimes(1)
-    expect(generateJSON).toHaveBeenCalledWith(transactions)
-    expect(getExportFilename).toHaveBeenCalledWith('json')
-    expect(getMimeType).toHaveBeenCalledWith('json')
-    expect(downloadFile).toHaveBeenCalledWith('json-content', 'export.json', 'application/json')
-    expect(toastSuccess).toHaveBeenCalledWith('Exported 1 transaction')
+    expect(exportUtils.generateJSON).toHaveBeenCalledTimes(1)
+    expect(exportUtils.generateJSON).toHaveBeenCalledWith(transactions)
+    expect(exportUtils.getExportFilename).toHaveBeenCalledWith('json')
+    expect(exportUtils.getMimeType).toHaveBeenCalledWith('json')
+    expect(exportUtils.downloadFile).toHaveBeenCalledWith('json-content', 'export.json', 'application/json')
+    expect((toast.success as any)).toHaveBeenCalledWith('Exported 1 transaction')
   })
 
   it('uses date range, calls onExport with adjusted end-of-day and exports result', async () => {
@@ -186,13 +179,13 @@ describe('ExportTransactions', () => {
     fireEvent.change(startInput, { target: { value: '2024-01-01' } })
     fireEvent.change(endInput, { target: { value: '2024-01-31' } })
 
-    expect(screen.getByText('Exporting transactions from 2024-01-01 to 2024-01-31')).toBeInTheDocument()
+    expect(screen.getByText('Exporting transactions from 2024-01-01 to 2024-01-31')).toBeTruthy()
 
     const exportButton = screen.getByRole('button', { name: 'Export' })
     fireEvent.click(exportButton)
 
-    // Button should indicate loading
-    expect(screen.getByRole('button', { name: 'Exporting...' })).toBeDisabled()
+    const loadingButton = screen.getByRole('button', { name: 'Exporting...' }) as HTMLButtonElement
+    expect(loadingButton.disabled).toBe(true)
 
     expect(onExport).toHaveBeenCalledTimes(1)
     const [startArg, endArg] = onExport.mock.calls[0]
@@ -204,19 +197,20 @@ describe('ExportTransactions', () => {
     expect((endArg as Date).getMilliseconds()).toBe(999)
 
     await waitFor(() => {
-      expect(generateCSV).toHaveBeenCalledWith(returnedTx)
+      expect(exportUtils.generateCSV).toHaveBeenCalledWith(returnedTx)
     })
-    expect(downloadFile).toHaveBeenCalled()
-    expect(toastSuccess).toHaveBeenCalledWith('Exported 1 transaction')
+    expect(exportUtils.downloadFile).toHaveBeenCalled()
+    expect((toast.success as any)).toHaveBeenCalledWith('Exported 1 transaction')
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: 'Export' })).toBeEnabled()
+      const btn = screen.getByRole('button', { name: 'Export' }) as HTMLButtonElement
+      expect(btn.disabled).toBe(false)
     })
   })
 
   it('handles export errors and shows failure toast', async () => {
     const onExport = vi.fn()
-    generateCSV.mockImplementationOnce(() => {
+    ;(exportUtils.generateCSV as any).mockImplementationOnce(() => {
       throw new Error('boom')
     })
     render(<ExportTransactions transactions={makeTransactions(2)} onExport={onExport} />)
@@ -224,8 +218,8 @@ describe('ExportTransactions', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Export' }))
 
     await waitFor(() => {
-      expect(toastError).toHaveBeenCalledWith('Failed to export transactions')
+      expect((toast.error as any)).toHaveBeenCalledWith('Failed to export transactions')
     })
-    expect(downloadFile).not.toHaveBeenCalled()
+    expect(exportUtils.downloadFile).not.toHaveBeenCalled()
   })
 })

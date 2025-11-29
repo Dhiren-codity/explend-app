@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react'
-import '@testing-library/jest-dom'
 import React from 'react'
 
 const mockGetCachedAuthSession = vi.fn()
@@ -74,10 +73,10 @@ describe('app/export/page', () => {
     const ui = await Page()
     render(ui)
 
-    expect(screen.getByRole('heading', { name: 'Export' })).toBeInTheDocument()
-    expect(screen.getByTestId('with-sidebar')).toBeInTheDocument()
-    expect(screen.getByTestId('no-transactions-plug')).toBeInTheDocument()
-    expect(screen.queryByTestId('export-transactions')).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Export' })).toBeTruthy()
+    expect(screen.getByTestId('with-sidebar')).toBeTruthy()
+    expect(screen.getByTestId('no-transactions-plug')).toBeTruthy()
+    expect(screen.queryByTestId('export-transactions')).toBeNull()
 
     expect(mockGetCachedAuthSession).toHaveBeenCalledTimes(2)
     expect(mockGetCachedAllTransactions).toHaveBeenCalledTimes(2)
@@ -93,10 +92,10 @@ describe('app/export/page', () => {
     const ui = await Page()
     render(ui)
 
-    expect(screen.getByRole('heading', { name: 'Export' })).toBeInTheDocument()
-    expect(screen.getByTestId('export-transactions')).toBeInTheDocument()
-    expect(screen.getByTestId('tx-count')).toHaveTextContent('2')
-    expect(screen.queryByTestId('no-transactions-plug')).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Export' })).toBeTruthy()
+    expect(screen.getByTestId('export-transactions')).toBeTruthy()
+    expect(screen.getByTestId('tx-count').textContent).toBe('2')
+    expect(screen.queryByTestId('no-transactions-plug')).toBeNull()
 
     fireEvent.click(screen.getByRole('button', { name: /trigger export/i }))
 
@@ -121,7 +120,7 @@ describe('app/export/page', () => {
     const ui = await Page()
     render(ui)
 
-    expect(screen.getByTestId('export-transactions')).toBeInTheDocument()
+    expect(screen.getByTestId('export-transactions')).toBeTruthy()
 
     fireEvent.click(screen.getByRole('button', { name: /trigger export/i }))
 
