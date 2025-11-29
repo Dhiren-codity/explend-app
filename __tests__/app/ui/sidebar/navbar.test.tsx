@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, within, cleanup } from '@testing-library/react'
-import '@testing-library/jest-dom/vitest'
+import '@testing-library/jest-dom'
 import React from 'react'
 
 vi.mock('@/config/constants/navigation', () => ({
