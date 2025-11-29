@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { render, screen, cleanup } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import React from 'react'
 
 vi.mock('../../../app/lib/actions', () => {
   return {
@@ -19,24 +18,31 @@ vi.mock('@/config/constants/navigation', () => ({
   },
 }))
 
-vi.mock('../../../app/ui/sidebar/with-sidebar', () => ({
-  __esModule: true,
-  default: ({ contentNearby }: { contentNearby: React.ReactNode }) => (
-    <div data-testid="with-sidebar">{contentNearby}</div>
-  ),
-}))
+vi.mock('../../../app/ui/sidebar/with-sidebar', async () => {
+  const React = await import('react')
+  return {
+    __esModule: true,
+    default: ({ contentNearby }: any) =>
+      React.createElement('div', { 'data-testid': 'with-sidebar' }, contentNearby),
+  }
+})
 
-vi.mock('../../../app/ui/no-transactions-plug', () => ({
-  __esModule: true,
-  default: () => <div data-testid="no-transactions-plug">No transactions</div>,
-}))
+vi.mock('../../../app/ui/no-transactions-plug', async () => {
+  const React = await import('react')
+  return {
+    __esModule: true,
+    default: () => React.createElement('div', { 'data-testid': 'no-transactions-plug' }, 'No transactions'),
+  }
+})
 
-vi.mock('../../../app/ui/home/export-transactions', () => ({
-  __esModule: true,
-  default: ({ transactions }: { transactions: any[]; onExport: (a?: Date, b?: Date) => Promise<any[]> }) => (
-    <div data-testid="export-transactions">count: {transactions?.length ?? 0}</div>
-  ),
-}))
+vi.mock('../../../app/ui/home/export-transactions', async () => {
+  const React = await import('react')
+  return {
+    __esModule: true,
+    default: ({ transactions }: any) =>
+      React.createElement('div', { 'data-testid': 'export-transactions' }, `count: ${transactions?.length ?? 0}`),
+  }
+})
 
 import Page from '../../../app/export/page'
 import { getCachedAuthSession, getCachedAllTransactions } from '../../../app/lib/actions'
@@ -52,7 +58,7 @@ describe('app/export/page', () => {
     ;(getCachedAllTransactions as any).mockResolvedValue([])
 
     const ui = await Page()
-    render(ui as unknown as React.ReactElement)
+    render(ui as any)
 
     expect(screen.getByRole('heading', { name: 'Export' })).toBeInTheDocument()
     expect(screen.getByTestId('with-sidebar')).toBeInTheDocument()
@@ -69,7 +75,7 @@ describe('app/export/page', () => {
     ;(getCachedAllTransactions as any).mockResolvedValue([{ id: 't1' }, { id: 't2' }])
 
     const ui = await Page()
-    render(ui as unknown as React.ReactElement)
+    render(ui as any)
 
     expect(screen.getByRole('heading', { name: 'Export' })).toBeInTheDocument()
     expect(screen.getByTestId('with-sidebar')).toBeInTheDocument()
@@ -87,7 +93,7 @@ describe('app/export/page', () => {
     ;(getCachedAllTransactions as any).mockResolvedValue([])
 
     const ui = await Page()
-    render(ui as unknown as React.ReactElement)
+    render(ui as any)
 
     expect(screen.getByRole('heading', { name: 'Export' })).toBeInTheDocument()
     expect(screen.getByTestId('no-transactions-plug')).toBeInTheDocument()
