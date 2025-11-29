@@ -1,9 +1,12 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest'
 import { render, screen, cleanup } from '@testing-library/react'
-import '@testing-library/jest-dom/vitest'
+import '@testing-library/jest-dom'
 import React from 'react'
 
-vi.mock('date-fns', () => {
+vi.mock('date-fns', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('date-fns')>()
+  return {
+    ...actual,
   return {
     format: vi.fn((date: Date | number, fmt: string) => '2024-01-01'),
     subMonths: vi.fn((date: Date | number, n: number) => new Date('2024-01-01')),
@@ -20,7 +23,10 @@ vi.mock('next/navigation', async (importOriginal) => {
   return { ...actual, usePathname: vi.fn() }
 })
 
-vi.mock('@/config/constants/navigation', () => {
+vi.mock('@/config/constants/navigation', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/config/constants/navigation')>()
+  return {
+    ...actual,
   return {
     NAV_ICON_SIZE: 20,
     NAV_TITLE: {
@@ -38,7 +44,10 @@ vi.mock('@/config/constants/navigation', () => {
   }
 })
 
-vi.mock('@/config/constants/routes', () => {
+vi.mock('@/config/constants/routes', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/config/constants/routes')>()
+  return {
+    ...actual,
   const disabledRoutes: string[] = []
   return {
     ROUTE: {
@@ -57,7 +66,10 @@ vi.mock('@/config/constants/routes', () => {
   }
 })
 
-vi.mock('@/app/lib/helpers', () => {
+vi.mock('@/app/lib/helpers', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/app/lib/helpers')>()
+  return {
+    ...actual,
   return {
     getBreakpointWidth: (bp: string) => `(min-width: ${bp === 'md' ? '768px' : '0px'})`,
   }
