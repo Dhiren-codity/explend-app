@@ -57,22 +57,24 @@ vi.mock('@/app/lib/helpers', () => {
 })
 
 // Mock child components used by Navbar
-vi.mock('../../../../app/ui/sidebar/hoverables', () => {
+vi.mock('@/app/ui/sidebar/hoverables', async () => {
+  const React = await import('react')
   return {
     HoverableNavLink: (props: { idx: number; link: { title: string; url: string }; isActiveLink: boolean; withScale?: boolean }) => {
       const { link, isActiveLink } = props
-      return (
-        <li data-testid="nav-item" data-url={link.url} data-active={isActiveLink ? 'true' : 'false'}>
-          {link.title}
-        </li>
+      return React.createElement(
+        'li',
+        { 'data-testid': 'nav-item', 'data-url': link.url, 'data-active': isActiveLink ? 'true' : 'false' } as any,
+        link.title
       )
     },
   }
 })
 
-vi.mock('../../../../app/ui/sidebar/logo', () => {
+vi.mock('@/app/ui/sidebar/logo', async () => {
+  const React = await import('react')
   return {
-    default: (props: { size: string }) => <div data-testid="logo" data-size={props.size} />,
+    default: (props: { size: string }) => React.createElement('div', { 'data-testid': 'logo', 'data-size': props.size } as any),
   }
 })
 
