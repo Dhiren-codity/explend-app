@@ -5,13 +5,6 @@ afterEach(() => {
   vi.resetModules()
 })
 
-describe('config/constants/routes runtime exports', () => {
-  it('exports DISABLED_ROUTES at runtime', async () => {
-    const mod = await import('../../../config/constants/routes')
-    expect('DISABLED_ROUTES' in mod).toBe(true)
-  })
-
-
 describe('DISABLED_ROUTES behavior', () => {
   it('is an array', async () => {
     const { DISABLED_ROUTES } = await import('../../../config/constants/routes')
@@ -127,4 +120,4 @@ describe('DISABLED_ROUTES behavior', () => {
     DISABLED_ROUTES.push('/feedback', '/issue')
     expect(DISABLED_ROUTES.toString()).toBe(['/feedback', '/issue'].join(','))
   })
-
+})

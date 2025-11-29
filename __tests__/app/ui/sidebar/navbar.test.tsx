@@ -3,10 +3,8 @@ import { render, screen, cleanup } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import React from 'react'
 
-const mockedUsePathname = vi.fn()
-
 vi.mock('next/navigation', () => ({
-  usePathname: mockedUsePathname,
+  usePathname: vi.fn(),
 }))
 
 vi.mock('react-use', async (importOriginal) => {
@@ -75,6 +73,7 @@ vi.mock('@/config/constants/routes', () => {
 })
 
 import { useMedia } from 'react-use'
+import { usePathname } from 'next/navigation'
 import Navbar from '../../../../app/ui/sidebar/navbar'
 
 afterEach(() => {
@@ -85,7 +84,7 @@ afterEach(() => {
 describe('Navbar', () => {
   it('renders top links, filters disabled ones, and marks active link', () => {
     ;(useMedia as unknown as vi.Mock).mockReturnValue(true)
-    mockedUsePathname.mockReturnValue('/settings')
+    ;(usePathname as unknown as vi.Mock).mockReturnValue('/settings')
 
     render(<Navbar linksGroup="top" />)
 
@@ -111,7 +110,7 @@ describe('Navbar', () => {
 
   it('renders bottom links, filters disabled ones, and marks active link', () => {
     ;(useMedia as unknown as vi.Mock).mockReturnValue(true)
-    mockedUsePathname.mockReturnValue('/feedback')
+    ;(usePathname as unknown as vi.Mock).mockReturnValue('/feedback')
 
     render(<Navbar linksGroup="bottom" />)
 
@@ -127,7 +126,7 @@ describe('Navbar', () => {
 
   it('renders Logo when withLogo is true and uses sm size on md screens', () => {
     ;(useMedia as unknown as vi.Mock).mockReturnValue(true)
-    mockedUsePathname.mockReturnValue('/')
+    ;(usePathname as unknown as vi.Mock).mockReturnValue('/')
 
     render(<Navbar linksGroup="top" withLogo />)
 
@@ -138,7 +137,7 @@ describe('Navbar', () => {
 
   it('uses xxs logo size when not md screen', () => {
     ;(useMedia as unknown as vi.Mock).mockReturnValue(false)
-    mockedUsePathname.mockReturnValue('/')
+    ;(usePathname as unknown as vi.Mock).mockReturnValue('/')
 
     render(<Navbar linksGroup="top" withLogo />)
 
@@ -149,7 +148,7 @@ describe('Navbar', () => {
 
   it('does not render Logo when withLogo is false/omitted', () => {
     ;(useMedia as unknown as vi.Mock).mockReturnValue(true)
-    mockedUsePathname.mockReturnValue('/')
+    ;(usePathname as unknown as vi.Mock).mockReturnValue('/')
 
     render(<Navbar linksGroup="top" />)
 

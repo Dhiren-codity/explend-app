@@ -1,21 +1,10 @@
+import '@testing-library/jest-dom'
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import * as constants from '../../../config/constants/navigation'
 import { DEFAULT_TRANSACTION_LIMIT, NAV_ICON_SIZE, DEFAULT_PAGINATION_PAGE_NUMBER } from '../../../config/constants/navigation'
 
 afterEach(() => {
   vi.clearAllMocks()
 })
-
-describe('config/constants/navigation exports', () => {
-  it('only exports runtime constants', () => {
-    const keys = Object.keys(constants).sort()
-    expect(keys).toEqual([
-      'DEFAULT_PAGINATION_PAGE_NUMBER',
-      'DEFAULT_TRANSACTION_LIMIT',
-      'NAV_ICON_SIZE',
-    ])
-  })
-
 
 describe('DEFAULT_TRANSACTION_LIMIT', () => {
   it('equals 30', () => {

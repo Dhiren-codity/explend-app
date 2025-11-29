@@ -3,36 +3,86 @@ import React from 'react'
 import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
-vi.mock('date-fns', () => ({
-  format: vi.fn(() => '2024-01-01'),
-  subMonths: vi.fn(() => new Date('2023-12-01')),
-}))
+vi.mock('date-fns', async () => {
+  let mod: any = {}
+  try {
+    mod = await vi.importActual<any>('date-fns')
+  } catch {}
+  return {
+    ...mod,
+    format: vi.fn((date: any) => {
+      if (typeof date === 'string') return date
+      if (date instanceof Date) {
+        const yyyy = date.getFullYear()
+        const mm = String(date.getMonth() + 1).padStart(2, '0')
+        const dd = String(date.getDate()).padStart(2, '0')
+        return `${yyyy}-${mm}-${dd}`
+      }
+      if (date && typeof date.toString === 'function') return date.toString()
+      return '2024-01-01'
+    }),
+    subMonths: vi.fn((d: Date, n: number = 1) => {
+      const dt = new Date(d)
+      dt.setMonth(dt.getMonth() - n)
+      return dt
+    }),
+  }
+})
 
-const toastSuccess = vi.fn()
-const toastError = vi.fn()
-vi.mock('react-hot-toast', () => ({
-  default: {
-    success: toastSuccess,
-    error: toastError,
-  },
-}))
+vi.mock('react-hot-toast', async () => {
+  let mod: any = {}
+  try {
+    mod = await vi.importActual<any>('react-hot-toast')
+  } catch {}
+  return {
+    ...mod,
+    default: {
+      ...(mod?.default ?? {}),
+      success: vi.fn(),
+      error: vi.fn(),
+    },
+  }
+})
 
-vi.mock('@heroui/react', () => {
-  const Select = ({ label, selectedKeys, onChange, children, className }: any) => {
-    const value = Array.isArray(selectedKeys) ? selectedKeys[0] : selectedKeys
+vi.mock('@heroui/react', async () => {
+  let mod: any = {}
+  try {
+    mod = await vi.importActual<any>('@heroui/react')
+  } catch {}
+  const Select = ({ label, selectedKeys, defaultSelectedKeys, onSelectionChange, onChange, children, className }: any) => {
+    const value =
+      (Array.isArray(selectedKeys) ? selectedKeys[0] : selectedKeys) ??
+      (Array.isArray(defaultSelectedKeys) ? defaultSelectedKeys[0] : defaultSelectedKeys) ??
+      ''
+    const handleChange = (ev: React.ChangeEvent<HTMLSelectElement>) => {
+      const v = (ev.target as HTMLSelectElement).value
+      if (onSelectionChange) {
+        onSelectionChange(new Set([v]))
+      }
+      if (onChange) {
+        onChange(ev)
+      }
+    }
     return (
       <label>
         {label}
-        <select aria-label={label} value={value} onChange={onChange} data-testid="export-format-select" className={className}>
+        <select
+          aria-label={label}
+          value={value}
+          onChange={handleChange}
+          data-testid="export-format-select"
+          className={className}
+        >
           {children}
         </select>
       </label>
     )
   }
 
-  const SelectItem = ({ value, children }: any) => {
+  const SelectItem = ({ value, children, id, key }: any) => {
+    const val = value ?? key ?? id
     return (
-      <option value={value} data-testid={`option-${value}`}>
+      <option value={val} data-testid={`option-${val}`}>
         {children}
       </option>
     )
@@ -93,6 +143,7 @@ vi.mock('@heroui/react', () => {
   const CardBody = ({ children, className }: any) => <div className={className}>{children}</div>
 
   return {
+    ...mod,
     Select,
     SelectItem,
     DateRangePicker,
@@ -139,9 +190,7 @@ describe('ExportTransactions', () => {
     expect(screen.getByText('Date Range (Optional)')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument()
 
-    expect(
-      screen.getByText('Ready to export all 2 transactions'),
-    ).toBeInTheDocument()
+    expect(screen.getByText('Ready to export all 2 transactions')).toBeInTheDocument()
   })
 
   it('exports CSV without date range using provided transactions', async () => {
@@ -211,9 +260,7 @@ describe('ExportTransactions', () => {
     fireEvent.change(startInput, { target: { value: '2024-01-01' } })
     fireEvent.change(endInput, { target: { value: '2024-01-31' } })
 
-    expect(
-      screen.getByText('Exporting transactions from 2024-01-01 to 2024-01-31'),
-    ).toBeInTheDocument()
+    expect(screen.getByText('Exporting transactions from 2024-01-01 to 2024-01-31')).toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: 'Export' }))
 
@@ -225,12 +272,10 @@ describe('ExportTransactions', () => {
     expect(startDateArg).toBeInstanceOf(Date)
     expect(endDateArg).toBeInstanceOf(Date)
 
-    // Start date should reflect 2024-01-01 (date check to avoid TZ issues on time)
     expect(startDateArg.getFullYear()).toBe(2024)
-    expect(startDateArg.getMonth()).toBe(0) // Jan
+    expect(startDateArg.getMonth()).toBe(0)
     expect(startDateArg.getDate()).toBe(1)
 
-    // End date should be adjusted to 23:59:59.999 local time
     expect(endDateArg.getHours()).toBe(23)
     expect(endDateArg.getMinutes()).toBe(59)
     expect(endDateArg.getSeconds()).toBe(59)
