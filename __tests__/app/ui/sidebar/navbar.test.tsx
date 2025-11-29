@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, afterEach, type Mock } from 'vitest'
 import { render, screen, cleanup } from '@testing-library/react'
-import '@testing-library/jest-dom/vitest'
+import '@testing-library/jest-dom'
 import React from 'react'
 
 vi.mock('date-fns', () => ({
@@ -60,7 +60,10 @@ vi.mock('@/config/constants/navigation', () => ({
   },
 }))
 
-vi.mock('@/config/constants/routes', () => {
+vi.mock('@/config/constants/routes', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/config/constants/routes')>()
+  return {
+    ...actual,
   const ROUTE = {
     HOME: '/',
     MONTHLY_REPORT: '/monthly-report',

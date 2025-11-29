@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import React from 'react'
 import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react'
-import '@testing-library/jest-dom/vitest'
+import '@testing-library/jest-dom'
 
 vi.mock('date-fns', async () => {
   let mod: any = {}
@@ -166,7 +166,10 @@ vi.mock('@heroui/react', async () => {
   }
 })
 
-vi.mock('@/app/lib/export-utils', () => {
+vi.mock('@/app/lib/export-utils', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/app/lib/export-utils')>()
+  return {
+    ...actual,
   return {
     generateCSV: vi.fn(() => 'csv-content'),
     generateJSON: vi.fn(() => 'json-content'),
