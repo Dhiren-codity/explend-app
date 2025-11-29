@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { render, screen, cleanup } from '@testing-library/react'
-import '@testing-library/jest-dom'
 
 vi.mock('../../../app/lib/actions', () => {
   return {
@@ -60,10 +59,10 @@ describe('app/export/page', () => {
     const ui = await Page()
     render(ui as any)
 
-    expect(screen.getByRole('heading', { name: 'Export' })).toBeInTheDocument()
-    expect(screen.getByTestId('with-sidebar')).toBeInTheDocument()
-    expect(screen.getByTestId('no-transactions-plug')).toBeInTheDocument()
-    expect(screen.queryByTestId('export-transactions')).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Export' })).toBeTruthy()
+    expect(screen.getByTestId('with-sidebar')).toBeTruthy()
+    expect(screen.getByTestId('no-transactions-plug')).toBeTruthy()
+    expect(screen.queryByTestId('export-transactions')).toBeNull()
 
     expect(getCachedAuthSession).toHaveBeenCalledTimes(1)
     expect(getCachedAllTransactions).toHaveBeenCalledTimes(1)
@@ -77,11 +76,12 @@ describe('app/export/page', () => {
     const ui = await Page()
     render(ui as any)
 
-    expect(screen.getByRole('heading', { name: 'Export' })).toBeInTheDocument()
-    expect(screen.getByTestId('with-sidebar')).toBeInTheDocument()
-    expect(screen.getByTestId('export-transactions')).toBeInTheDocument()
-    expect(screen.getByTestId('export-transactions')).toHaveTextContent('count: 2')
-    expect(screen.queryByTestId('no-transactions-plug')).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Export' })).toBeTruthy()
+    expect(screen.getByTestId('with-sidebar')).toBeTruthy()
+    const exportEl = screen.getByTestId('export-transactions')
+    expect(exportEl).toBeTruthy()
+    expect(exportEl.textContent).toContain('count: 2')
+    expect(screen.queryByTestId('no-transactions-plug')).toBeNull()
 
     expect(getCachedAuthSession).toHaveBeenCalledTimes(1)
     expect(getCachedAllTransactions).toHaveBeenCalledTimes(1)
@@ -95,8 +95,8 @@ describe('app/export/page', () => {
     const ui = await Page()
     render(ui as any)
 
-    expect(screen.getByRole('heading', { name: 'Export' })).toBeInTheDocument()
-    expect(screen.getByTestId('no-transactions-plug')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Export' })).toBeTruthy()
+    expect(screen.getByTestId('no-transactions-plug')).toBeTruthy()
 
     expect(getCachedAuthSession).toHaveBeenCalledTimes(1)
     expect(getCachedAllTransactions).toHaveBeenCalledTimes(1)
