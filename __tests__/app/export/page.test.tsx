@@ -3,15 +3,20 @@ import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react'
 import React from 'react'
 
-vi.mock('next/server', () => ({ env: {} }))
+vi.mock('next/server', async (importOriginal) => {
+  const actual = await importOriginal()
+  return { ...actual, env: {} }
+})
 
 vi.mock('@/config/constants/navigation', () => ({
   __esModule: true,
   NAV_TITLE: { EXPORT: 'Export' },
 }))
 
-vi.mock('../lib/actions', () => {
+vi.mock('../../../app/lib/actions', async (importOriginal) => {
+  const actual = await importOriginal()
   return {
+    ...actual,
     __esModule: true,
     getCachedAuthSession: vi.fn(),
     getCachedAllTransactions: vi.fn(),
@@ -19,7 +24,7 @@ vi.mock('../lib/actions', () => {
   }
 })
 
-vi.mock('../ui/sidebar/with-sidebar', async () => {
+vi.mock('../../../app/ui/sidebar/with-sidebar', async () => {
   const React = await import('react')
   return {
     __esModule: true,
@@ -28,7 +33,7 @@ vi.mock('../ui/sidebar/with-sidebar', async () => {
   }
 })
 
-vi.mock('../ui/home/export-transactions', async () => {
+vi.mock('../../../app/ui/home/export-transactions', async () => {
   const React = await import('react')
   return {
     __esModule: true,
@@ -57,7 +62,7 @@ vi.mock('../ui/home/export-transactions', async () => {
   }
 })
 
-vi.mock('../ui/no-transactions-plug', async () => {
+vi.mock('../../../app/ui/no-transactions-plug', async () => {
   const React = await import('react')
   return {
     __esModule: true,
@@ -65,7 +70,7 @@ vi.mock('../ui/no-transactions-plug', async () => {
   }
 })
 
-import * as actions from '../lib/actions'
+import * as actions from '../../../app/lib/actions'
 import Page, { metadata } from '../../../app/export/page'
 
 describe('app/export/page', () => {
