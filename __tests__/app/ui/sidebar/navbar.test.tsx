@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, within, cleanup } from '@testing-library/react'
-import '@testing-library/jest-dom'
+import '@testing-library/jest-dom/vitest'
 import React from 'react'
 
 vi.mock('@/config/constants/navigation', () => ({
@@ -42,12 +42,10 @@ vi.mock('@/app/lib/helpers', () => ({
   },
 }))
 
-vi.mock('date-fns', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('date-fns')>()
-  return {
-    ...actual,
-  }
-})
+vi.mock('date-fns', () => ({
+  format: vi.fn((date: Date | number, fmt: string) => '2024-01-01'),
+  subMonths: vi.fn((date: Date | number, n: number) => new Date('2024-01-01')),
+}))
 
 vi.mock('react-use', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-use')>()

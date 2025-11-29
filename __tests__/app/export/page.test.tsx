@@ -1,14 +1,24 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { render, screen, fireEvent, cleanup, within } from '@testing-library/react'
-import '@testing-library/jest-dom'
+import '@testing-library/jest-dom/vitest'
 import React from 'react'
+
+vi.mock('date-fns', () => ({
+  format: vi.fn(() => '2024-01-01'),
+  subMonths: vi.fn(() => new Date('2024-01-01')),
+}))
+
+vi.mock('react-use', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-use')>()
+  return { ...actual, useMedia: vi.fn() }
+})
 
 vi.mock('@/config/constants/navigation', () => ({
   NAV_TITLE: { EXPORT: 'Export' },
 }))
 
-vi.mock('../../../app/export/lib/actions', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../../app/export/lib/actions')>()
+vi.mock('../../app/export/lib/actions', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../app/export/lib/actions')>()
   return {
     ...actual,
     getCachedAuthSession: vi.fn(),
@@ -17,12 +27,12 @@ vi.mock('../../../app/export/lib/actions', async (importOriginal) => {
   }
 })
 
-vi.mock('../../../app/export/ui/no-transactions-plug', () => ({
+vi.mock('../../app/export/ui/no-transactions-plug', () => ({
   __esModule: true,
   default: () => <div data-testid="no-transactions-plug">No transactions</div>,
 }))
 
-vi.mock('../../../app/export/ui/home/export-transactions', () => ({
+vi.mock('../../app/export/ui/home/export-transactions', () => ({
   __esModule: true,
   default: (props: { transactions: any[]; onExport?: (start?: Date, end?: Date) => Promise<any[]> }) => (
     <div data-testid="export-transactions">
@@ -38,15 +48,15 @@ vi.mock('../../../app/export/ui/home/export-transactions', () => ({
   ),
 }))
 
-vi.mock('../../../app/export/ui/sidebar/with-sidebar', () => ({
+vi.mock('../../app/export/ui/sidebar/with-sidebar', () => ({
   __esModule: true,
   default: ({ contentNearby }: { contentNearby: React.ReactNode }) => (
     <div data-testid="with-sidebar">{contentNearby}</div>
   ),
 }))
 
-import * as actions from '../../../app/export/lib/actions'
-import Page from '../../../app/export/page'
+import * as actions from '../../app/export/lib/actions'
+import Page from '../../app/export/page'
 
 afterEach(() => {
   cleanup()

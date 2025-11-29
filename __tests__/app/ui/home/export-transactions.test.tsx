@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react'
-import '@testing-library/jest-dom'
+import '@testing-library/jest-dom/vitest'
 import React from 'react'
 
 vi.mock('date-fns', async (importOriginal) => {
@@ -16,10 +16,10 @@ vi.mock('date-fns', async (importOriginal) => {
 vi.mock('react-hot-toast', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-hot-toast')>()
   const { vi: viLocal } = await import('vitest')
-  const mockedDefault = {
+  const mockedDefault: any = {
     success: viLocal.fn(),
     error: viLocal.fn(),
-  } as any
+  }
   return {
     ...actual,
     default: mockedDefault,
@@ -42,8 +42,16 @@ vi.mock('@heroui/react', async (importOriginal) => {
   const CardBody = ({ children }: any) => ReactLocal.createElement('div', null, children)
   const CardHeader = ({ children }: any) => ReactLocal.createElement('div', null, children)
 
-  const Select = ({ label, selectedKeys, onChange, children }: any) =>
-    ReactLocal.createElement(
+  const Select = ({ label, selectedKeys, onChange, onSelectionChange, children }: any) => {
+    let initial: any = undefined
+    if (selectedKeys instanceof Set) {
+      initial = Array.from(selectedKeys)[0]
+    } else if (Array.isArray(selectedKeys)) {
+      initial = selectedKeys[0]
+    } else if (selectedKeys) {
+      initial = selectedKeys
+    }
+    return ReactLocal.createElement(
       'label',
       null,
       ReactLocal.createElement('span', null, label),
@@ -52,16 +60,20 @@ vi.mock('@heroui/react', async (importOriginal) => {
         {
           'aria-label': label,
           'data-testid': 'export-format',
-          defaultValue: selectedKeys?.[0],
-          onChange: (e: any) =>
-            onChange?.({ target: { value: (e.target as HTMLSelectElement).value } }),
+          defaultValue: initial,
+          onChange: (e: any) => {
+            const value = (e.target as HTMLSelectElement).value
+            onChange?.({ target: { value } })
+            onSelectionChange?.(new Set([value]))
+          },
         },
         children
       )
     )
+  }
 
-  const SelectItem = ({ children, value, key: keyProp }: any) =>
-    ReactLocal.createElement('option', { value: value ?? keyProp }, children)
+  const SelectItem = ({ children, value }: any) =>
+    ReactLocal.createElement('option', { value }, children)
 
   const DateRangePicker = ({ label, onChange }: any) => {
     const [start, setStart] = ReactLocal.useState('')
@@ -139,9 +151,7 @@ describe('ExportTransactions', () => {
 
     expect(screen.getByText('Export Transactions')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument()
-    expect(
-      screen.getByText('Ready to export all 2 transactions')
-    ).toBeInTheDocument()
+    expect(screen.getByText('Ready to export all 2 transactions')).toBeInTheDocument()
   })
 
   it('exports CSV using provided transactions when no date range is set', async () => {
