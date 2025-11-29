@@ -1,0 +1,270 @@
+import { describe, it, expect, vi, afterEach } from 'vitest'
+import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react'
+import '@testing-library/jest-dom'
+import React from 'react'
+
+vi.mock('date-fns', () => ({
+  format: vi.fn((date, fmt) => '2000-01-01'),
+  subMonths: vi.fn((date, n) => new Date('1999-12-01')),
+}))
+
+vi.mock('react-hot-toast', () => ({
+  default: {
+    success: vi.fn(),
+    error: vi.fn(),
+  },
+}))
+
+vi.mock('react-icons/pi', () => ({
+  PiDownloadSimpleFill: () => null,
+}))
+
+vi.mock('@/config/constants/main', () => ({
+  DEFAULT_ICON_SIZE: 20,
+}))
+
+vi.mock('@heroui/react', () => {
+  const React = require('react')
+  const SelectItem = ({ children, ...props }: any) => {
+    const value = props.value ?? props.key ?? props['data-key'] ?? ''
+    return <option value={value}>{children}</option>
+  }
+  const Select = ({ label, selectedKeys, onChange, children, className }: any) => {
+    const value = Array.isArray(selectedKeys) ? selectedKeys[0] : selectedKeys
+    return (
+      <label>
+        {label}
+        <select aria-label={label} value={value} onChange={onChange} className={className}>
+          {children}
+        </select>
+      </label>
+    )
+  }
+  const Button = ({ children, onPress, isLoading, startContent, className }: any) => {
+    return (
+      <button
+        type="button"
+        onClick={() => onPress?.()}
+        disabled={!!isLoading}
+        aria-busy={!!isLoading}
+        className={className}
+      >
+        {isLoading ? 'Exporting...' : (
+          <>
+            {startContent}
+            {children}
+          </>
+        )}
+      </button>
+    )
+  }
+  const Card = ({ children }: any) => <div>{children}</div>
+  const CardHeader = ({ children }: any) => <div>{children}</div>
+  const CardBody = ({ children, className }: any) => <div className={className}>{children}</div>
+  const DateRangePicker = ({ label, onChange, className }: any) => {
+    const React = require('react')
+    const [start, setStart] = React.useState('')
+    const [end, setEnd] = React.useState('')
+    return (
+      <div className={className}>
+        <span>{label}</span>
+        <input
+          aria-label="start-date"
+          placeholder="start"
+          value={start}
+          onChange={(e) => setStart(e.target.value)}
+        />
+        <input
+          aria-label="end-date"
+          placeholder="end"
+          value={end}
+          onChange={(e) => setEnd(e.target.value)}
+        />
+        <button
+          type="button"
+          onClick={() => {
+            if (start && end) {
+              onChange?.({
+                start: { toString: () => start },
+                end: { toString: () => end },
+              })
+            } else {
+              onChange?.(null)
+            }
+          }}
+        >
+          Apply Range
+        </button>
+      </div>
+    )
+  }
+  return { Button, Card, CardBody, CardHeader, DateRangePicker, Select, SelectItem }
+})
+
+vi.mock('@/app/lib/export-utils', () => {
+  return {
+    downloadFile: vi.fn(),
+    generateCSV: vi.fn(() => 'csv-content'),
+    generateJSON: vi.fn(() => 'json-content'),
+    getExportFilename: vi.fn((format: 'csv' | 'json') => (format === 'csv' ? 'export.csv' : 'export.json')),
+    getMimeType: vi.fn((format: 'csv' | 'json') => (format === 'csv' ? 'text/csv' : 'application/json')),
+  }
+})
+
+import toast from 'react-hot-toast'
+import {
+  downloadFile,
+  generateCSV,
+  generateJSON,
+  getExportFilename,
+  getMimeType,
+} from '@/app/lib/export-utils'
+import ExportTransactions from '../../../../app/ui/home/export-transactions'
+
+afterEach(() => {
+  cleanup()
+  vi.clearAllMocks()
+})
+
+describe('ExportTransactions', () => {
+  const sampleTransactions = [{ id: 't1' }, { id: 't2' }] as any
+
+  it('renders heading and default info text with pluralization', () => {
+    render(<ExportTransactions transactions={sampleTransactions} onExport={vi.fn()} />)
+
+    expect(screen.getByText('Export Transactions')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument()
+    expect(
+      screen.getByText('Ready to export all 2 transactions')
+    ).toBeInTheDocument()
+  })
+
+  it('renders singular when 1 transaction', () => {
+    render(<ExportTransactions transactions={[{ id: 't1' }] as any} onExport={vi.fn()} />)
+    expect(
+      screen.getByText('Ready to export all 1 transaction')
+    ).toBeInTheDocument()
+  })
+
+  it('exports CSV using in-memory transactions when no date range is set', async () => {
+    const onExport = vi.fn()
+
+    render(<ExportTransactions transactions={sampleTransactions} onExport={onExport} />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Export' }))
+
+    await waitFor(() => {
+      expect(onExport).not.toHaveBeenCalled()
+      expect(generateCSV).toHaveBeenCalledWith(sampleTransactions)
+      expect(generateJSON).not.toHaveBeenCalled()
+      expect(getExportFilename).toHaveBeenCalledWith('csv')
+      expect(getMimeType).toHaveBeenCalledWith('csv')
+      expect(downloadFile).toHaveBeenCalledWith('csv-content', 'export.csv', 'text/csv')
+      expect(toast.success).toHaveBeenCalledWith('Exported 2 transactions')
+    })
+  })
+
+  it('exports JSON when format is switched to json', async () => {
+    const onExport = vi.fn()
+    render(<ExportTransactions transactions={sampleTransactions} onExport={onExport} />)
+
+    const select = screen.getByLabelText('Export Format') as HTMLSelectElement
+    fireEvent.change(select, { target: { value: 'json' } })
+
+    fireEvent.click(screen.getByRole('button', { name: 'Export' }))
+
+    await waitFor(() => {
+      expect(generateJSON).toHaveBeenCalledWith(sampleTransactions)
+      expect(generateCSV).not.toHaveBeenCalled()
+      expect(getExportFilename).toHaveBeenCalledWith('json')
+      expect(getMimeType).toHaveBeenCalledWith('json')
+      expect(downloadFile).toHaveBeenCalledWith('json-content', 'export.json', 'application/json')
+      expect(toast.success).toHaveBeenCalledWith('Exported 2 transactions')
+    })
+  })
+
+  it('calls onExport with start and end of day and uses returned transactions', async () => {
+    const returned = [{ id: 'x1' }] as any
+    const onExport = vi.fn().mockResolvedValue(returned)
+
+    render(<ExportTransactions transactions={sampleTransactions} onExport={onExport} />)
+
+    // Set date range via mock DateRangePicker
+    const startInput = screen.getByLabelText('start-date')
+    const endInput = screen.getByLabelText('end-date')
+    fireEvent.change(startInput, { target: { value: '2024-05-01' } })
+    fireEvent.change(endInput, { target: { value: '2024-05-03' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Apply Range' }))
+
+    // Confirm info text updates
+    expect(
+      screen.getByText('Exporting transactions from 2024-05-01 to 2024-05-03')
+    ).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Export' }))
+
+    await waitFor(() => {
+      expect(onExport).toHaveBeenCalledTimes(1)
+      const [startDate, endDate] = onExport.mock.calls[0]
+
+      expect(startDate).toBeInstanceOf(Date)
+      expect(endDate).toBeInstanceOf(Date)
+
+      // Start date should be 2024-05-01 local midnight
+      const sd = startDate as Date
+      expect(sd.getFullYear()).toBe(2024)
+      expect(sd.getMonth()).toBe(4)
+      expect(sd.getDate()).toBe(1)
+      expect(sd.getHours()).toBe(0)
+      expect(sd.getMinutes()).toBe(0)
+
+      // End date should be end of day (23:59:59.999)
+      const ed = endDate as Date
+      expect(ed.getFullYear()).toBe(2024)
+      expect(ed.getMonth()).toBe(4)
+      expect(ed.getDate()).toBe(3)
+      expect(ed.getHours()).toBe(23)
+      expect(ed.getMinutes()).toBe(59)
+      expect(ed.getSeconds()).toBe(59)
+      expect(ed.getMilliseconds()).toBe(999)
+
+      // Uses returned transactions for export
+      expect(generateCSV).toHaveBeenCalledWith(returned)
+      expect(downloadFile).toHaveBeenCalled()
+      expect(toast.success).toHaveBeenCalledWith('Exported 1 transaction')
+    })
+  })
+
+  it('shows error toast when there are no transactions to export', async () => {
+    const onExport = vi.fn()
+
+    render(<ExportTransactions transactions={[]} onExport={onExport} />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Export' }))
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith('No transactions to export')
+      expect(downloadFile).not.toHaveBeenCalled()
+      expect(generateCSV).not.toHaveBeenCalled()
+      expect(generateJSON).not.toHaveBeenCalled()
+    })
+  })
+
+  it('handles export failure and shows error toast', async () => {
+    const onExport = vi.fn().mockRejectedValue(new Error('boom'))
+
+    render(<ExportTransactions transactions={sampleTransactions} onExport={onExport} />)
+
+    // Trigger date range so onExport is used
+    fireEvent.change(screen.getByLabelText('start-date'), { target: { value: '2024-06-01' } })
+    fireEvent.change(screen.getByLabelText('end-date'), { target: { value: '2024-06-10' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Apply Range' }))
+
+    fireEvent.click(screen.getByRole('button', { name: 'Export' }))
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith('Failed to export transactions')
+      expect(downloadFile).not.toHaveBeenCalled()
+    })
+  })
+})
